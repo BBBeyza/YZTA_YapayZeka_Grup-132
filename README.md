@@ -6,8 +6,16 @@ Yapay Zeka ve Veri Bilimi-132- NeuroGraph
 
 **Takım Üyeleri**
 Beyza Yaylak * Scrum Master
+
+
 Melisa Bayramoğlu * Product Owner
+
+
 Harun Benli * Developer
+
+
 Muhammet Emin Balmuk * Developer
+
+
 Fatma Işıl Fidan * Developer
 
