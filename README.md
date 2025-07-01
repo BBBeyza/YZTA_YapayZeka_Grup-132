@@ -1,5 +1,6 @@
 # Takım ve Ürün Adı
-
+![Logo](./images/logo.png)
+Yapay Zeka ve Veri Bilimi Grup-132- NeuroGraph
 
 ## Takım ve Ürün Hakkında Bilgiler
 
