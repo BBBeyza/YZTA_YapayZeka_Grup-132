@@ -22,7 +22,7 @@ Muhammet Emin Balmuk * Developer
 Fatma Işıl Fidan * Developer
 
 <details>
-  <summary><strong><h3>Sprint 1</h3></strong></summary>
+  <summary><strong><h5>Sprint 1</h5></strong></summary>
 
 aaaa
 
