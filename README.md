@@ -21,3 +21,9 @@ Muhammet Emin Balmuk * Developer
 
 Fatma Işıl Fidan * Developer
 
+<details>
+  <summary>Sprint 1</summary>
+
+  
+
+</details>
