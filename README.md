@@ -5,6 +5,8 @@ Yapay Zeka ve Veri Bilimi-132- NeuroGraph
 ## Takım ve Ürün Hakkında Bilgiler
 
 **Takım Üyeleri**
+
+
 Beyza Yaylak * Scrum Master
 
 
