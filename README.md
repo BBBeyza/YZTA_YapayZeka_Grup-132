@@ -12,13 +12,3 @@ Yapay Zeka ve Veri Bilimi-132- NeuroGraph
 | Harun Benli   | Developer      |
 | Muhammet Emin Balmuk       | Developer      |
 | Fatma Işıl Fidan       | Developer      |
-
-
-
-
-<details>
-  <summary><strong><h5>Sprint 1</h5></strong></summary>
-
-aaaa
-
-</details>
