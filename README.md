@@ -10,4 +10,3 @@ Harun Benli * Developer
 Muhammet Emin Balmuk * Developer
 Fatma Işıl Fidan * Developer
 
-- **Sprint Notes**:
