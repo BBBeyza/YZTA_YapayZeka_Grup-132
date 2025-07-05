@@ -38,7 +38,15 @@ Melisa Bayramoğlu
 Harun Benli
 Muhammet Emin Balmuk
 Fatma Işıl Fidan
-**Sprint Retrospective:** "İkinci sprintte uygulamaya yoğunlaşılmasına karar verildi."
+**Sprint Retrospective:** "İkinci sprintte uygulamaya yoğunlaşılmasına karar verildi.
+Takım içi iletişim güçlüydü.
+Görevler zamanında tamamlandı.
+Planlama toplantısı verimli geçti.
+Kod gözden geçirme süreci etkiliydi.
+Neler İyileştirilmeli?
+Bazı görevlerin tanımı yeterince net değildi.
+Gelecek Sprint İçin Aksiyonlar
+Görev açıklamaları daha ayrıntılı yazılacak."
  </details>
 
 
