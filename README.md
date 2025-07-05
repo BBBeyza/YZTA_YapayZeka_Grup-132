@@ -47,7 +47,7 @@ Yapay Zeka ve Veri Bilimi-132- NeuroGraph
 <details>
   <summary><h3>Sprint 1 - Sprint Board Update Screenshots</h3></summary>
   <p align="center">
-  <img src="images/sprint_board_update_ss_1.jpg" alt="Screenshoot 1" width="600" />
+  <img src="images/sprint_board_update_ss_1.jpg" alt="Screenshoot 1" />
   </p>
 </details>
 
@@ -59,7 +59,6 @@ Yapay Zeka ve Veri Bilimi-132- NeuroGraph
   - Tamamlanan: 200 puan 
 
 - **Puan Tamamlama Mantığı**:  
-  `(200 points completed)`  
   Ekibin iş yoğunluğu ve okul durumu olsa da görevler tamamlanmaya çalışıldı.
 
 - **Daily Scrum**:  
