@@ -61,7 +61,7 @@ Yapay Zeka ve Veri Bilimi-132- NeuroGraph
 - **Puan Tamamlama Mantığı**:  
   Ekibin iş yoğunluğu ve okul durumu olsa da görevler tamamlanmaya çalışıldı.
 
-- **Daily Scrum**:  
+- <h3>Daily Scrum<h3>:  
   Ekip olarak yeni bir ürün fikri geliştirmek amacıyla işe koyulduk ve ilk adım olarak tüm ekip üyelerinin fikir üretip paylaşabileceği bir ortam oluşturduk.  
   Bu süreç için belirli bir zaman sınırı belirlendi ve Beyza Yaylak, Melisa Bayramoğlu, Harun Benli, Muhammet Emin Balmuk ve Fatma Işıl Fidan kendi fikirlerini ekip ile paylaştı.  
 
