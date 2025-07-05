@@ -34,23 +34,23 @@ Yapay Zeka ve Veri Bilimi-132- NeuroGraph
   </p>
 
 <details>
-  <summary><h3>Sprint 1</h3></summary>
+  <summary><h2>Sprint 1</h2></summary>
 
 ---
 
 <details>
-  <summary><strong>Sprint 1 - App Screenshots</strong></summary>
+  <summary><h3>Sprint 1 - App Screenshots</h3></summary>
 </details>
 
 <details>
-  <summary><strong>Sprint 1 - Sprint Board Update Screenshots</strong></summary>
+  <summary><h3>Sprint 1 - Sprint Board Update Screenshots</h3></summary>
 </details>
 
 - **Sprint Notes**:  
   İlk sprintte konu belirlendi. Herkesten bir konu istenildi ve bu konuda çalışmaların araştırılması istendi. Genel olarak iyi bir sprint süreci geçirdiğimizi düşünüyoruz. İş tempomuz olsa da zamanı iyi kullandığımızı düşünüyoruz.
 
 - **Sprint içinde beklenen puan tamamlama**:  
-  **200 puan**
+  200 puan
 
 - **Puan Tamamlama Mantığı**:  
   `(200 points completed)`  
@@ -70,7 +70,7 @@ Yapay Zeka ve Veri Bilimi-132- NeuroGraph
   Tüm ekip üyeleri ortak bir hedef doğrultusunda uyumlu bir şekilde çalıştı.
 
 - **Product Backlog URL**:  
-  _(Link)_
+  _[(Link)](https://docs.google.com/spreadsheets/d/1Cv6z4U5Twf6dg4QvCqDg6eEn2MUoXFmWakvXuv8ObM0/edit?gid=0#gid=0)_
 
 - **Sprint Review**:  
   Ürün değerlendirme sürecinde ekip olarak proje seçimi konusunda herhangi bir zorluk yaşanmadı. Fikirlerin netliği ve ekip içi uyum sayesinde karar süreci hızlı bir şekilde tamamlandı.  
