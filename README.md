@@ -51,17 +51,17 @@ Yapay Zeka ve Veri Bilimi-132- NeuroGraph
   </p>
 </details>
 
-- **Sprint Notes**:  
+- <h3>Sprint Notes</h3>:  
   İlk sprintte konu belirlendi. Herkesten bir konu istenildi ve bu konuda çalışmaların araştırılması istendi. Genel olarak iyi bir sprint süreci geçirdiğimizi düşünüyoruz. İş tempomuz olsa da zamanı iyi kullandığımızı düşünüyoruz.
 
-- **Tahmin Edilen Puan ve Tamamlanan Puan**:  
+- <h3>Tahmin Edilen Puan ve Tamamlanan Puan</h3> 
   - Beklenen: 200 puan  
   - Tamamlanan: 200 puan 
 
-- **Puan Tamamlama Mantığı**:  
+- <h3>Puan Tamamlama Mantığı</h3> 
   Ekibin iş yoğunluğu ve okul durumu olsa da görevler tamamlanmaya çalışıldı.
 
-- <h3>Daily Scrum<h3>:  
+- <h3>Daily Scrum</h3>  
   Ekip olarak yeni bir ürün fikri geliştirmek amacıyla işe koyulduk ve ilk adım olarak tüm ekip üyelerinin fikir üretip paylaşabileceği bir ortam oluşturduk.  
   Bu süreç için belirli bir zaman sınırı belirlendi ve Beyza Yaylak, Melisa Bayramoğlu, Harun Benli, Muhammet Emin Balmuk ve Fatma Işıl Fidan kendi fikirlerini ekip ile paylaştı.  
 
@@ -74,10 +74,10 @@ Yapay Zeka ve Veri Bilimi-132- NeuroGraph
   Sprint boyunca ürünün temel yapısını oluşturan kodlama kısmına odaklanıldı. Özellikle giriş ekranı ve ana sayfa gibi temel kullanıcı arayüzleri tasarlanıp geliştirme aşamasına alındı.  
   Tüm ekip üyeleri ortak bir hedef doğrultusunda uyumlu bir şekilde çalıştı.
 
-- **Product Backlog URL**:  
+- <h3>Product Backlog URL</h3>  
   _[(Link)](https://docs.google.com/spreadsheets/d/1Cv6z4U5Twf6dg4QvCqDg6eEn2MUoXFmWakvXuv8ObM0/edit?gid=0#gid=0)_
 
-- **Sprint Review**:  
+- <h3>Sprint Review</h3>  
   Ürün değerlendirme sürecinde ekip olarak proje seçimi konusunda herhangi bir zorluk yaşanmadı. Fikirlerin netliği ve ekip içi uyum sayesinde karar süreci hızlı bir şekilde tamamlandı.  
   Melisa Bayramoğlu, projenin yapım aşamasında gösterdiği ekstra çaba ile projenin sürdürülebilirliğine büyük katkı sağladı.  
 
@@ -86,14 +86,14 @@ Yapay Zeka ve Veri Bilimi-132- NeuroGraph
   Bu sprint sürecindeki en büyük zorluk ise projenin temelini oturtmak oldu. Teknik yapıların planlanması ve ekip üyelerinin görevlerine adapte olması beklenenden uzun sürdü. Özellikle ekipteki kişilerin iş ve okul yoğunluğu, proje başlangıcını geciktiren temel etkenlerden biri oldu.  
   Tüm bu aksaklıklara rağmen ekip uyumu ve kararlılığı sayesinde proje adım adım ilerlemeye devam etti.
 
-- **Sprint Review Participants**:  
+- <h3>Sprint Review Participants</h3>  
   - Beyza Yaylak  
   - Melisa Bayramoğlu  
   - Harun Benli  
   - Muhammet Emin Balmuk  
   - Fatma Işıl Fidan
 
-- **Sprint Retrospective**:  
+- <h3>Sprint Retrospective</h3>  
   **Neler iyi gitti?**
   - İkinci sprintte uygulamaya yoğunlaşılmasına karar verildi.  
   - Takım içi iletişim güçlüydü.  
