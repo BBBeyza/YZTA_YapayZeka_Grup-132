@@ -86,11 +86,11 @@
     <br/>
     <img src="images/App Screenshots/MeanderTest.png" alt="Meander Test"/>
     <br/>
+    <img src="images/App Screenshots/HandwritingTest.png" alt="Hand Writing Test"/>
+    <br/>
     <img src="images/App Screenshots/DrawingTestResult1.png" alt="Drawing Test Result 1"/>
     <br/>
     <img src="images/App Screenshots/DrawingTestResult2.png" alt="Drawing Test Result 2"/>
-    <br/>
-    <img src="images/App Screenshots/HandwritingTest.png" alt="Hand Writing Test"/>
     <br/>
     <img src="images/App Screenshots/AudioReadingTest1.png" alt="Audio Reading Test 1"/>
     <br/>
