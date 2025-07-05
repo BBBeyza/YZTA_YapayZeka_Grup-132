@@ -100,7 +100,8 @@
   Bu sprint sürecindeki en büyük zorluk ise projenin temelini oturtmak oldu. Teknik yapıların planlanması ve ekip üyelerinin görevlerine adapte olması beklenenden uzun sürdü. Özellikle ekipteki kişilerin iş ve okul yoğunluğu, proje başlangıcını geciktiren temel etkenlerden biri oldu.  
   Tüm bu aksaklıklara rağmen ekip uyumu ve kararlılığı sayesinde proje adım adım ilerlemeye devam etti.
 
-- <h3>Sprint Review Participants</h3>  
+- <h3>Sprint Review Participants</h3>
+  
   - Beyza Yaylak  
   - Melisa Bayramoğlu  
   - Harun Benli  
@@ -108,7 +109,7 @@
   - Fatma Işıl Fidan
 
 - <h3>Sprint Retrospective</h3>
-  
+
   **Neler iyi gitti?**
   - İkinci sprintte uygulamaya yoğunlaşılmasına karar verildi.  
   - Takım içi iletişim güçlüydü.  
