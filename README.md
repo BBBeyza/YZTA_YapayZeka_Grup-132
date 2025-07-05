@@ -63,6 +63,39 @@
 
 <details>
   <summary><h3>Sprint 1 - App Screenshots</h3></summary>
+    <p align="center">
+    <img src="images/App Screenshots/Onboarding1.png" alt="Onboarding 1"/>
+    <br/>
+    <img src="images/App Screenshots/Onboarding2.png" alt="Onboarding 2"/>
+    <br/>
+    <img src="images/App Screenshots/LoginScreen.png" alt="Login Screen"/>
+    <br/>
+    <img src="images/App Screenshots/HomePage.png" alt="Home Page"/>
+    <br/>
+    <img src="images/App Screenshots/MeanderTest.png" alt="Meander Test"/>
+    <br/>
+    <img src="images/App Screenshots/SpiralTest.png" alt="Spiral Test"/>
+    <br/>
+    <img src="images/App Screenshots/HandwritingTest.png" alt="Hand Writing Test"/>
+    <br/>
+    <img src="images/App Screenshots/AudioReadingTest1.png" alt="Audio Reading Test 1"/>
+    <br/>
+    <img src="images/App Screenshots/AudioReadingTest2.png" alt="Audio Reading Test 2"/>
+    <br/>
+    <img src="images/App Screenshots/ClockDrawingTest.png" alt="Clock Drawing Test"/>
+    <br/>
+    <img src="images/App Screenshots/DrawingTestResult1.png" alt="Drawing Test Result 1"/>
+    <br/>
+    <img src="images/App Screenshots/DrawingTestResult2.png" alt="Drawing Test Result 2"/>
+    <br/>
+    <img src="images/App Screenshots/CognitiveTest1.png" alt="Cognitive Test 1"/>
+    <br/>
+    <img src="images/App Screenshots/CognitiveTest2.png" alt="Cognitive Test 2"/>
+    <br/>
+    <img src="images/App Screenshots/CognitiveTest3.png" alt="Cognitive Test 3"/>
+    <br/>
+    <img src="images/App Screenshots/CognitiveTest4.png" alt="Cognitive Test 4"/>
+  </p>
 </details>
 
 <details>
