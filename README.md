@@ -18,14 +18,22 @@
 | Muhammet Emin Balmuk       | Developer      |
 | Fatma Işıl Fidan       | Developer      |
 
-**Hedef Kitle**
-- Eklenecek
 
 **Ürün Açıklaması**
-- Eklenecek
+- NeuroGraph, bilişsel değerlendirme süreçlerini kolaylaştırmak ve kişiselleştirmek amacıyla tasarlanmış yenilikçi bir mobil uygulamadır. Kullanıcılara etkileşimli bir deneyim sunarak temel bilişsel fonksiyonlarını (oryantasyon, hafıza, dikkat, dil ve yürütücü işlevler gibi) kendi hızlarında ve konforlu bir ortamda test etme imkanı sağlar. Uygulama, yapay zeka destekli sorular aracılığıyla kullanıcıdan doğrudan yanıtlar alarak, bu veriler ışığında genel bilişsel durumlarına dair öncü bir değerlendirme raporu sunar.
+
+NeuroGraph'ın temel amacı, kullanıcıların bilişsel sağlıkları hakkında bilinçlenmelerine yardımcı olmak ve potansiyel güçlü veya zayıf alanları erken aşamada fark etmelerine olanak tanımaktır. Test sonuçları, kesin bir tıbbi tanı koymaktan ziyade, bireysel bilişsel profiller hakkında genel gözlemler ve içgörüler sağlar. Bu sayede kullanıcılar, gerekirse daha ileri tıbbi değerlendirmeler için bir sağlık uzmanına başvurma konusunda bilgiye dayalı kararlar alabilirler.
 
 **Ürün Özellikleri**
-- Eklenecek
+- NeuroGraph, kullanıcı dostu ve sezgisel bir arayüz ile tasarlanmıştır. Minimalist ve anlaşılır ekran tasarımları sayesinde her yaştan ve teknoloji okuryazarlığı seviyesinden kullanıcı, uygulamada kolayca gezinebilir ve bilişsel testleri herhangi bir zorluk yaşamadan tamamlayabilir.
+
+Uygulamanın kalbinde yapay zeka destekli dinamik soru akışı bulunur. Gemini teknolojisi ile entegre olan NeuroGraph, oryantasyon, hafıza (anlık ve gecikmeli hatırlama dahil), dikkat, dil becerileri (cümle dönüştürme gibi karmaşık görevler) ve yürütücü işlevler gibi temel bilişsel alanları kapsayan özelleştirilmiş sorular sunar. Bu dinamik yapı, testin her kullanıcı için adaptif olmasını ve farklı bilişsel fonksiyonları etkili bir şekilde değerlendirmesini sağlar.
+
+NeuroGraph, tamamlanan testlerin sonunda detaylı ancak anlaşılır bir ön değerlendirme raporu sunar. Bu rapor, kullanıcının bilişsel güçlü ve zayıf alanlarını vurgulayarak genel bir bakış sağlar. Raporlar, kesin tıbbi tanı niteliği taşımamakla birlikte, kullanıcılara bilişsel sağlıkları hakkında bilinçli bir farkındalık kazandırmak ve gerektiğinde profesyonel tıbbi yardım arayışında bulunmaları için yol göstermek amacıyla tasarlanmıştır. Tüm kullanıcı verileri ve test sonuçları, gizlilik ve güvenlik standartlarına uygun şekilde korunur.
+
+  
+**Hedef Kitle**
+- NeuroGraph'ın hedef kitlesi, bilişsel sağlıklarını proaktif bir şekilde takip etmek isteyen geniş bir yelpazedeki bireylerden oluşmaktadır. Bu kitlenin başında, yaşlanma süreciyle birlikte bilişsel fonksiyonlarında meydana gelebilecek değişiklikler hakkında endişeleri olan veya mevcut durumlarını gözlemlemek isteyen orta yaş ve üzeri yetişkinler gelmektedir. Ayrıca, yoğun iş temposu, stres veya uyku düzeni bozuklukları gibi nedenlerle dikkat, hafıza veya odaklanma sorunları yaşadığını düşünen genç ve orta yaşlı profesyoneller de NeuroGraph'ın potansiyel kullanıcıları arasındadır. Uygulama, herhangi bir ön bilgi veya tıbbi geçmiş gerektirmediği için, bilişsel testlere erişimi olmayan veya ön değerlendirme yapmak isteyen herkes için ideal bir başlangıç noktası sunar. Özetle, NeuroGraph, bilişsel farkındalığını artırmak ve zihinsel sağlık yolculuğunda ilk adımı atmak isteyen herkese hitap eden kapsayıcı bir araçtır.
 
 <details>
 <summary><h2>Product Backlog</h2></summary>
