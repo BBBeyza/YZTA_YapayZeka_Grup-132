@@ -1,5 +1,5 @@
 # Takım ve Ürün Adı
-![Logo](https://raw.githubusercontent.com/BBBeyza/YZTA_YapayZeka_Grup-132/main/logo.png)
+![Logo](https://raw.githubusercontent.com/BBBeyza/YZTA_YapayZeka_Grup-132/main/images/logo.png)
 
 Yapay Zeka ve Veri Bilimi-132- NeuroGraph
 
