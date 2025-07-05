@@ -25,6 +25,23 @@ Yapay Zeka ve Veri Bilimi-132- NeuroGraph
 
 <details>
   <summary><strong>Sprint 1 - Sprint Board Update Screenshots</strong></summary>
+    <p align="center">
+    <img src="images/1.png" alt="Sprint Board 1" width="600" />
+    <br/>
+    <img src="images/2.png" alt="Sprint Board 2" width="600" />
+    <br/>
+    <img src="images/3.png" alt="Sprint Board 3" width="600" />
+    <br/>
+    <img src="images/4.png" alt="Sprint Board 4" width="600" />
+    <br/>
+    <img src="images/5.png" alt="Sprint Board 5" width="600" />
+    <br/>
+    <img src="images/6.png" alt="Sprint Board 6" width="600" />
+    <br/>
+    <img src="images/7.png" alt="Sprint Board 7" width="600" />
+    <br/>
+    <img src="images/8.png" alt="Sprint Board 8" width="600" />
+  </p>
 </details>
 
 - **Sprint Notes**:  
