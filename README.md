@@ -107,7 +107,8 @@
   - Muhammet Emin Balmuk  
   - Fatma Işıl Fidan
 
-- <h3>Sprint Retrospective</h3>  
+- <h3>Sprint Retrospective</h3>
+  
   **Neler iyi gitti?**
   - İkinci sprintte uygulamaya yoğunlaşılmasına karar verildi.  
   - Takım içi iletişim güçlüydü.  
