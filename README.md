@@ -51,7 +51,7 @@ Yapay Zeka ve Veri Bilimi-132- NeuroGraph
   </p>
 </details>
 
-- <h3>Sprint Notes</h3>:  
+- <h3>Sprint Notes</h3>
   İlk sprintte konu belirlendi. Herkesten bir konu istenildi ve bu konuda çalışmaların araştırılması istendi. Genel olarak iyi bir sprint süreci geçirdiğimizi düşünüyoruz. İş tempomuz olsa da zamanı iyi kullandığımızı düşünüyoruz.
 
 - <h3>Tahmin Edilen Puan ve Tamamlanan Puan</h3> 
@@ -75,7 +75,7 @@ Yapay Zeka ve Veri Bilimi-132- NeuroGraph
   Tüm ekip üyeleri ortak bir hedef doğrultusunda uyumlu bir şekilde çalıştı.
 
 - <h3>Product Backlog URL</h3>  
-  _[(Link)](https://docs.google.com/spreadsheets/d/1Cv6z4U5Twf6dg4QvCqDg6eEn2MUoXFmWakvXuv8ObM0/edit?gid=0#gid=0)_
+  https://docs.google.com/spreadsheets/d/1Cv6z4U5Twf6dg4QvCqDg6eEn2MUoXFmWakvXuv8ObM0/edit?gid=0#gid=0
 
 - <h3>Sprint Review</h3>  
   Ürün değerlendirme sürecinde ekip olarak proje seçimi konusunda herhangi bir zorluk yaşanmadı. Fikirlerin netliği ve ekip içi uyum sayesinde karar süreci hızlı bir şekilde tamamlandı.  
