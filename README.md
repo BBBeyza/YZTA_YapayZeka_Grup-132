@@ -13,3 +13,6 @@ Yapay Zeka ve Veri Bilimi-132- NeuroGraph
 | Harun Benli   | Developer      |
 | Muhammet Emin Balmuk       | Developer      |
 | Fatma Işıl Fidan       | Developer      |
+
+
+## Ürün Açıklaması
