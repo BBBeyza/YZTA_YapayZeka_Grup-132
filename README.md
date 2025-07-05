@@ -20,5 +20,8 @@ Yapay Zeka ve Veri Bilimi-132- NeuroGraph
 
 
 
-<details>
+</details>
     <summary><h3>Sprint 1 - App Screenshots</h3></summary>
+     <details>
+    <summary><h3>Sprint 1 - Sprint Board Update Screenshots</h3></summary>
+    </details>
