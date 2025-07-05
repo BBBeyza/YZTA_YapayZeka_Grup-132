@@ -32,9 +32,9 @@ Yapay Zeka ve Veri Bilimi-132- NeuroGraph
     <br/>
     <img src="images/8.png" alt="Sprint Board 8" width="600" />
   </p>
-  
+
 <details>
-  <summary><strong>Sprint 1</strong></summary>
+  <summary><h3>Sprint 1</h3></summary>
 
 ---
 
