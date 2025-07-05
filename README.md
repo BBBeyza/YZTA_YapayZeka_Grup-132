@@ -6,7 +6,7 @@ Yapay Zeka ve Veri Bilimi-132- NeuroGraph
 ## Takım ve Ürün Hakkında Bilgiler
 
 **Takım Üyeleri**
-| Name                   | Title          |
+| İsim                   | Görev          |
 |------------------------|----------------|
 | Beyza Yaylak          | Scrum Master |
 | Melisa Bayramoğlu          | Product Owner  |
@@ -47,7 +47,7 @@ Yapay Zeka ve Veri Bilimi-132- NeuroGraph
 <details>
   <summary><h3>Sprint 1 - Sprint Board Update Screenshots</h3></summary>
   <p align="center">
-  <img src="images/sprint_board_update_ss_1.jpeg" alt="Screenshoot 1" width="600" />
+  <img src="images/sprint_board_update_ss_1.jpg" alt="Screenshoot 1" width="600" />
   </p>
 </details>
 
