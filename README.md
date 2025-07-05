@@ -14,6 +14,12 @@ Yapay Zeka ve Veri Bilimi-132- NeuroGraph
 | Muhammet Emin Balmuk       | Developer      |
 | Fatma Işıl Fidan       | Developer      |
 
+**Ürün Açıklaması**
+- Eklenecek
+
+**Ürün Özellikleri**
+- Eklenecek
+
 <details>
 <summary><h2>Product Backlog</h2></summary>
   <p align="center">
@@ -55,7 +61,8 @@ Yapay Zeka ve Veri Bilimi-132- NeuroGraph
   İlk sprintte konu belirlendi. Herkesten bir konu istenildi ve bu konuda çalışmaların araştırılması istendi. Genel olarak iyi bir sprint süreci geçirdiğimizi düşünüyoruz. İş tempomuz olsa da zamanı iyi kullandığımızı düşünüyoruz.
 
 - <h3>Tahmin Edilen Puan ve Tamamlanan Puan</h3> 
-  - Beklenen: 200 puan  
+  - Beklenen: 200 puan
+
   - Tamamlanan: 200 puan 
 
 - <h3>Puan Tamamlama Mantığı</h3> 
