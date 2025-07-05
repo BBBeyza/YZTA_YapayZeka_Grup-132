@@ -15,16 +15,16 @@ Yapay Zeka ve Veri Bilimi-132- NeuroGraph
 | Fatma Işıl Fidan       | Developer      |
 
 <details>
-  <summary><strong>🏁 Sprint 1</strong></summary>
+  <summary><strong>Sprint 1</strong></summary>
 
 ---
 
 <details>
-  <summary><strong>📱 Sprint 1 - App Screenshots</strong></summary>
+  <summary><strong>Sprint 1 - App Screenshots</strong></summary>
 </details>
 
 <details>
-  <summary><strong>📋 Sprint 1 - Sprint Board Update Screenshots</strong></summary>
+  <summary><strong>Sprint 1 - Sprint Board Update Screenshots</strong></summary>
 </details>
 
 - **Sprint Notes**:  
@@ -39,23 +39,23 @@ Yapay Zeka ve Veri Bilimi-132- NeuroGraph
 
 - **Daily Scrum**:  
   Ekip olarak yeni bir ürün fikri geliştirmek amacıyla işe koyulduk ve ilk adım olarak tüm ekip üyelerinin fikir üretip paylaşabileceği bir ortam oluşturduk.  
-  Bu süreç için belirli bir zaman sınırı belirlendi ve **Beyza Yaylak**, **Melisa Bayramoğlu**, **Harun Benli**, **Muhammet Emin Balmuk** ve **Fatma Işıl Fidan** kendi fikirlerini ekip ile paylaştı.  
+  Bu süreç için belirli bir zaman sınırı belirlendi ve Beyza Yaylak, Melisa Bayramoğlu, Harun Benli, Muhammet Emin Balmuk ve Fatma Işıl Fidan kendi fikirlerini ekip ile paylaştı.  
 
   Sunulan fikirler, sadece yaratıcılık açısından değil; aynı zamanda uygulanabilirlik, zaman yönetimi ve hedefe uygunluk bakımından detaylı şekilde değerlendirildi. Bu değerlendirmelere ek olarak, paydaşlarla yapılan toplantılarda da fikirlerin potansiyeli üzerine görüşler alındı.  
-  Tüm değerlendirmeler sonucunda **Melisa Bayramoğlu’nun fikrinin geliştirilmesine karar verildi.**  
+  Tüm değerlendirmeler sonucunda Melisa Bayramoğlu’nun fikrinin geliştirilmesine karar verildi.**  
 
-  Fikir netleştikten sonra tasarım sürecine geçildi ve **Beyza Yaylak** ile **Muhammet Emin Balmuk** iki farklı logo tasarımı hazırladı. Yapılan değerlendirme sonucunda **Emin’in tasarımı** ekip tarafından seçildi ve ürün logosu olarak belirlendi.
+  Fikir netleştikten sonra tasarım sürecine geçildi ve Beyza Yaylak ile Muhammet Emin Balmuk iki farklı logo tasarımı hazırladı. Yapılan değerlendirme sonucunda Emin’in tasarımı ekip tarafından seçildi ve ürün logosu olarak belirlendi.
 
   Bu kararın ardından proje için ilk sprint süreci başlatıldı ve ekip planlanan görevleri zamanında tamamladı.  
   Sprint boyunca ürünün temel yapısını oluşturan kodlama kısmına odaklanıldı. Özellikle giriş ekranı ve ana sayfa gibi temel kullanıcı arayüzleri tasarlanıp geliştirme aşamasına alındı.  
   Tüm ekip üyeleri ortak bir hedef doğrultusunda uyumlu bir şekilde çalıştı.
 
 - **Product Backlog URL**:  
-  _(Buraya bağlantıyı ekleyin)_
+  _(Link)_
 
 - **Sprint Review**:  
   Ürün değerlendirme sürecinde ekip olarak proje seçimi konusunda herhangi bir zorluk yaşanmadı. Fikirlerin netliği ve ekip içi uyum sayesinde karar süreci hızlı bir şekilde tamamlandı.  
-  **Melisa Bayramoğlu**, projenin yapım aşamasında gösterdiği ekstra çaba ile projenin sürdürülebilirliğine büyük katkı sağladı.  
+  Melisa Bayramoğlu, projenin yapım aşamasında gösterdiği ekstra çaba ile projenin sürdürülebilirliğine büyük katkı sağladı.  
 
   Proje isminin Türkçe mi yoksa İngilizce mi olması gerektiği üzerine bir süre düşünülse de, sonunda daha evrensel bir etki yaratmak amacıyla İngilizce olmasına karar verildi.  
 
