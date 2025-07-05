@@ -14,7 +14,8 @@ Yapay Zeka ve Veri Bilimi-132- NeuroGraph
 | Muhammet Emin Balmuk       | Developer      |
 | Fatma Işıl Fidan       | Developer      |
 
-## Product Backlog
+<details>
+<summary><h2>Product Backlog</h2></summary>
   <p align="center">
     <img src="images/1.png" alt="Product Backlog 1" width="600" />
     <br/>
@@ -32,6 +33,7 @@ Yapay Zeka ve Veri Bilimi-132- NeuroGraph
     <br/>
     <img src="images/8.png" alt="Product Backlog 8" width="600" />
   </p>
+</details>
 
 <details>
   <summary><h2>Sprint 1</h2></summary>
