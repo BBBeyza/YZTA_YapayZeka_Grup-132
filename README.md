@@ -1,7 +1,11 @@
 # Takım ve Ürün Adı
 ![Logo](https://raw.githubusercontent.com/BBBeyza/YZTA_YapayZeka_Grup-132/main/images/logo.png)
 
-Yapay Zeka ve Veri Bilimi-132- NeuroGraph
+**Takım Adı**
+- Yapay Zeka ve Veri Bilimi-132- 
+
+**Ürün Adı**
+- NeuroGraph
 
 ## Takım ve Ürün Hakkında Bilgiler
 
@@ -13,6 +17,9 @@ Yapay Zeka ve Veri Bilimi-132- NeuroGraph
 | Harun Benli   | Developer      |
 | Muhammet Emin Balmuk       | Developer      |
 | Fatma Işıl Fidan       | Developer      |
+
+**Hedef Kitle**
+- Eklenecek
 
 **Ürün Açıklaması**
 - Eklenecek
