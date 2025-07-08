@@ -117,8 +117,6 @@
 - <h3>Daily Scrum</h3>
   </br>
   <p align="center">
-    <img src="images/whatsapp_konu_oylaması.jpeg" alt="Whatsapp Konu Oylaması" width="500"/>
-    </br>
     <img src="images/Daily Scrum/dailyscrum_1.jpeg" alt="Daily Scrum 1" width="500"/>
     </br>
     <img src="images/Daily Scrum/dailyscrum_2.jpeg" alt="Daily Scrum 2" width="500"/>
