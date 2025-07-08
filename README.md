@@ -117,13 +117,16 @@
 - <h3>Daily Scrum</h3>
   </br>
   <p align="center">
-    <img src="images/Daily Scrum/dailyscrum_1.jpeg" alt="Daily Scrum 1" width="500"/>
+    <img src="images/Daily Scrum/dailyscrum_1.jpeg" alt="Daily Scrum 1" width="600"/>
     </br>
-    <img src="images/Daily Scrum/dailyscrum_2.jpeg" alt="Daily Scrum 2" width="500"/>
     </br>
-    <img src="images/Daily Scrum/dailyscrum_3.jpeg" alt="Daily Scrum 3" width="500"/>
+    <img src="images/Daily Scrum/dailyscrum_2.jpeg" alt="Daily Scrum 2" width="600"/>
     </br>
-    <img src="images/Daily Scrum/dailyscrum_4.jpeg" alt="Daily Scrum 4" width="500"/>
+    </br>
+    <img src="images/Daily Scrum/dailyscrum_3.jpeg" alt="Daily Scrum 3" width="600"/>
+    </br>
+    </br>
+    <img src="images/Daily Scrum/dailyscrum_4.jpeg" alt="Daily Scrum 4" width="600"/>
   </p>
   </br>
   </br>
