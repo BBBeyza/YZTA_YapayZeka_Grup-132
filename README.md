@@ -100,9 +100,7 @@
 
 <details>
   <summary><h3>Sprint 1 - Sprint Board Update Screenshots</h3></summary>
-  <p align="center">
-  <img src="images/sprint_board_update_ss_1.jpg" alt="Screenshoot 1" />
-  </p>
+  https://docs.google.com/spreadsheets/d/1Cv6z4U5Twf6dg4QvCqDg6eEn2MUoXFmWakvXuv8ObM0/edit?gid=0#gid=0
 </details>
 
 - <h3>Sprint Notes</h3>
@@ -114,8 +112,7 @@
   - Tamamlanan: 200 puan 
 
 - <h3>Puan Tamamlama Mantığı</h3> 
-  Ekibin iş yoğunluğu ve okul durumu olsa da görevler tamamlanmaya çalışıldı.
-
+  Ekibin iş yoğunluğu ve okul durumu gibi etkenlere rağmen, görevlerin tamamlanmasına öncelik verildi ve hedeflenen puan eksiksiz şekilde tamamlandı. Süreç boyunca planlamaya sadık kalınarak görev dağılımları yapıldı ve ortaya çıkan aksaklıklar ekip içi iletişimle giderildi.
 - <h3>Daily Scrum</h3>  
   Ekip olarak yeni bir ürün fikri geliştirmek amacıyla işe koyulduk ve ilk adım olarak tüm ekip üyelerinin fikir üretip paylaşabileceği bir ortam oluşturduk.  
   Bu süreç için belirli bir zaman sınırı belirlendi ve Beyza Yaylak, Melisa Bayramoğlu, Harun Benli, Muhammet Emin Balmuk ve Fatma Işıl Fidan kendi fikirlerini ekip ile paylaştı.  
@@ -129,8 +126,11 @@
   Sprint boyunca ürünün temel yapısını oluşturan kodlama kısmına odaklanıldı. Özellikle giriş ekranı ve ana sayfa gibi temel kullanıcı arayüzleri tasarlanıp geliştirme aşamasına alındı.  
   Tüm ekip üyeleri ortak bir hedef doğrultusunda uyumlu bir şekilde çalıştı.
 
-- <h3>Product Backlog URL</h3>  
-  https://docs.google.com/spreadsheets/d/1Cv6z4U5Twf6dg4QvCqDg6eEn2MUoXFmWakvXuv8ObM0/edit?gid=0#gid=0
+- <h3>Product Backlog URL</h3> 
+<p align="center">
+  <img src="images/sprint_board_update_ss_1.jpg" alt="Screenshoot 1" />
+  </p>
+  
 
 - <h3>Sprint Review</h3>  
   Ürün değerlendirme sürecinde ekip olarak proje seçimi konusunda herhangi bir zorluk yaşanmadı. Fikirlerin netliği ve ekip içi uyum sayesinde karar süreci hızlı bir şekilde tamamlandı.  
