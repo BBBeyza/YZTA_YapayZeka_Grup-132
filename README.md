@@ -116,8 +116,9 @@
   Ekibin iş yoğunluğu ve okul durumu gibi etkenlere rağmen, görevlerin tamamlanmasına öncelik verildi ve hedeflenen puan eksiksiz şekilde tamamlandı. Süreç boyunca planlamaya sadık kalınarak görev dağılımları yapıldı ve ortaya çıkan aksaklıklar ekip içi iletişimle giderildi.
 - <h3>Daily Scrum</h3>
   </br>
-  </br>
-  <img src="images/whatsapp_konu_oylaması.jpeg" alt="Whatsapp Konu Oylaması" width="400" />
+  <p align="center">
+    <img src="images/whatsapp_konu_oylaması.jpeg" alt="Whatsapp Konu Oylaması" width="500"/>
+  </p>
   </br>
   </br>
   Ekip olarak yeni bir ürün fikri geliştirmek amacıyla işe koyulduk ve ilk adım olarak tüm ekip üyelerinin fikir üretip paylaşabileceği bir ortam oluşturduk.  
