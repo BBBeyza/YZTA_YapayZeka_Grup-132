@@ -116,7 +116,7 @@
 - <h3>Daily Scrum</h3>
   </br>
   </br>
-  <img src="images/App Screenshots/whatsapp_konu_oylaması.jpeg" alt="Whatsapp Konu Oylaması"/>
+  <img src="images/whatsapp_konu_oylaması.jpeg" alt="Whatsapp Konu Oylaması"/>
   </br>
   </br>
   Ekip olarak yeni bir ürün fikri geliştirmek amacıyla işe koyulduk ve ilk adım olarak tüm ekip üyelerinin fikir üretip paylaşabileceği bir ortam oluşturduk.  
