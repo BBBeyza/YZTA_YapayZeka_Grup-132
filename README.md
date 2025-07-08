@@ -113,7 +113,12 @@
 
 - <h3>Puan Tamamlama Mantığı</h3> 
   Ekibin iş yoğunluğu ve okul durumu gibi etkenlere rağmen, görevlerin tamamlanmasına öncelik verildi ve hedeflenen puan eksiksiz şekilde tamamlandı. Süreç boyunca planlamaya sadık kalınarak görev dağılımları yapıldı ve ortaya çıkan aksaklıklar ekip içi iletişimle giderildi.
-- <h3>Daily Scrum</h3>  
+- <h3>Daily Scrum</h3>
+  </br>
+  </br>
+  <img src="images/App Screenshots/whatsapp_konu_oylaması.jpeg" alt="Whatsapp Konu Oylaması"/>
+  </br>
+  </br>
   Ekip olarak yeni bir ürün fikri geliştirmek amacıyla işe koyulduk ve ilk adım olarak tüm ekip üyelerinin fikir üretip paylaşabileceği bir ortam oluşturduk.  
   Bu süreç için belirli bir zaman sınırı belirlendi ve Beyza Yaylak, Melisa Bayramoğlu, Harun Benli, Muhammet Emin Balmuk ve Fatma Işıl Fidan kendi fikirlerini ekip ile paylaştı.  
 
