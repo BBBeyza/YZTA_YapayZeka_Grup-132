@@ -1,0 +1,37 @@
+# Flutter & Dart
+frontend/.dart_tool/
+.packages
+.pub-cache/
+build/
+.idea
+frontend/node_modules/
+
+# Android
+android/.gradle/
+android/app/build/
+*.iml
+.idea/
+
+# VS Code
+.vscode/
+
+# MacOS
+.DS_Store
+
+# Env dosyaları
+.env
+venv/
+
+# Firebase
+firebase-debug.log
+
+# Kişisel/Geçici
+*.log
+
+# Testler
+coverage/
+
+# Diğer
+*.swp
+backend/
+frontend/.idea/

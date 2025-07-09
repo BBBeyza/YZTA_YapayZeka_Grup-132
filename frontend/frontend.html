@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <title>MMSE Testi</title>
+</head>
+<body>
+  <h1>MMSE Testi</h1>
+  <form id="mmseForm">
+    <label for="input">Cevabınızı yazın:</label><br>
+    <input type="text" id="input" name="input" autocomplete="off"required><br><br>
+    <button type="submit">Gönder</button>
+  </form>
+
+  <h3>Yanıt:</h3>
+  <p id="loading" style="color: #888; display: none;">Gemini düşünüyor...</p>
+  <p id="response"></p>
+  <img id="modelImage" style="max-width:300px; display:none;" />
+
+  <script>
+    let history = [];
+
+    document.getElementById("mmseForm").addEventListener("submit", async function (e) {
+      e.preventDefault();
+      const input = document.getElementById("input").value;
+      document.getElementById("loading").style.display = "block";
+      document.getElementById("response").innerText = "";
+      await sendRequest(input);
+    });
+
+    async function sendRequest(input) {
+      // Kullanıcı cevabını geçmişe ekle
+      history.push({ rol: "kullanici", mesaj: input });
+
+      const res = await fetch("http://127.0.0.1:8000/mmse", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          input: input,
+          history: history
+        }),
+      });
+
+      const data = await res.json();
+      document.getElementById("loading").style.display = "none";
+      document.getElementById("response").innerText = data.response;
+
+      // Model yanıtını geçmişe ekle
+      history.push({ rol: "model", mesaj: data.response });
+      document.getElementById("input").value = "";  // kutuyu temizle
+
+      // Model bir görsel gönderdiyse göster
+      const modelImage = document.getElementById("modelImage");
+      if (data.image) {
+        modelImage.src = "data:image/png;base64," + data.image;
+        modelImage.style.display = "block";
+      } else {
+        modelImage.style.display = "none";
+      }
+    }
+  </script>
+</body>
+</html>
