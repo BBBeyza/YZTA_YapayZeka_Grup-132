@@ -15,15 +15,23 @@ class GeminiService {
     String? apiKey,
     String? modelName,
   })  : apiKey = apiKey ?? (dotenv.env['GEMINI_API_KEY'] ?? ''),
-        modelName = modelName ?? 'gemini-2.5-flash';
+        modelName = modelName ?? 'gemini-1.5-pro';
 
   Future<String> askGemini(String prompt) async {
-    if (apiKey == 'YOUR_GEMINI_API_KEY' || apiKey.isEmpty) {
-      return 'Hata: Gemini API anahtarı ayarlanmadı. Lütfen "lib/services/gemini_service.dart" dosyasını kontrol edin.';
+    // API anahtarı kontrolü - eğer .env dosyası yoksa veya API anahtarı ayarlanmamışsa
+    if (apiKey.isEmpty || apiKey == 'YOUR_GEMINI_API_KEY_HERE' || apiKey == 'YOUR_GEMINI_API_KEY') {
+      return 'Hata: Gemini API anahtarı ayarlanmadı.\n\n'
+          'Çözüm için:\n'
+          '1. frontend/.env dosyası oluşturun\n'
+          '2. İçine şunu yazın: GEMINI_API_KEY=your_actual_api_key_here\n'
+          '3. Uygulamayı yeniden başlatın\n\n'
+          'API anahtarınızı https://makersuite.google.com/app/apikey adresinden alabilirsiniz.';
     }
 
     final url = Uri.parse('$_apiBase$modelName:generateContent?key=$apiKey');
     final headers = const {'Content-Type': 'application/json'};
+    
+    // Her istek bağımsız olmalı, conversation history tutulmamalı
     final body = json.encode({
       'contents': [
         {
@@ -32,6 +40,19 @@ class GeminiService {
           ],
         },
       ],
+      // Safety settings ve generation config eklenebilir
+      'generationConfig': {
+        'temperature': 0.9,
+        'topK': 40,
+        'topP': 0.95,
+        'maxOutputTokens': 1024,
+      },
+      'safetySettings': [
+        {
+          'category': 'HARM_CATEGORY_DANGEROUS_CONTENT',
+          'threshold': 'BLOCK_NONE'
+        }
+      ]
     });
 
     try {
@@ -39,6 +60,10 @@ class GeminiService {
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
+        
+        // Debug: API yanıtının tam yapısını yazdır
+        print('[Gemini API Debug] Tam yanıt: ${json.encode(data)}');
+        
         if (data['candidates'] != null &&
             data['candidates'].isNotEmpty &&
             data['candidates'][0]['content'] != null &&
@@ -46,6 +71,17 @@ class GeminiService {
             data['candidates'][0]['content']['parts'].isNotEmpty) {
           return data['candidates'][0]['content']['parts'][0]['text'];
         }
+        
+        // Debug: Hangi koşulun başarısız olduğunu belirt
+        print('[Gemini API Debug] Yanıt yapısı kontrolü başarısız:');
+        print('  - candidates null: ${data['candidates'] == null}');
+        print('  - candidates empty: ${data['candidates']?.isEmpty ?? true}');
+        if (data['candidates'] != null && data['candidates'].isNotEmpty) {
+          print('  - content null: ${data['candidates'][0]['content'] == null}');
+          print('  - parts null: ${data['candidates'][0]['content']?['parts'] == null}');
+          print('  - parts empty: ${data['candidates'][0]['content']?['parts']?.isEmpty ?? true}');
+        }
+        
         return 'Yanıt alınamadı veya boş geldi.';
       } else {
         print('[Gemini API Hatası] ${response.statusCode} - ${response.body}');
@@ -57,9 +93,16 @@ class GeminiService {
     }
   }
 
+  // Yeni bir test sorusu için bağımsız istek gönder
+  Future<String> askFreshQuestion(String prompt) async {
+    // Bu metod özellikle test soruları için kullanılır
+    // Her istek tamamen bağımsızdır, önceki konuşma geçmişi yoktur
+    return await askGemini(prompt);
+  }
+
   // Debug için modelleri listeleyen geçici metod
   Future<void> listModels() async {
-    if (apiKey == 'YOUR_GEMINI_API_KEY' || apiKey.isEmpty) {
+    if (apiKey.isEmpty || apiKey == 'YOUR_GEMINI_API_KEY_HERE' || apiKey == 'YOUR_GEMINI_API_KEY') {
       print('Hata: Gemini API anahtarı ayarlanmadı.');
       return;
     }
