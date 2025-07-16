@@ -35,4 +35,3 @@ coverage/
 *.swp
 backend/
 frontend/.idea/
-README.md
