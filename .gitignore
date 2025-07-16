@@ -1,37 +1,44 @@
-# Flutter & Dart
-frontend/.dart_tool/
+# Dart / Flutter
+.dart_tool/
+.flutter-plugins-dependencies
 .packages
 .pub-cache/
+.build/
+.metadata
+
+# Flutter build output
 build/
-.idea
-frontend/node_modules/
+windows/
+web/
+android/
+ios/
 
-# Android
-android/.gradle/
-android/app/build/
-*.iml
+# IDE ayar dosyaları
 .idea/
-
-# VS Code
 .vscode/
+*.iml
+*.swp
 
-# MacOS
-.DS_Store
-
-# Env dosyaları
+# Ortam dosyaları
 .env
-venv/
+.env.*
 
-# Firebase
+# Sertifikalar
+*.keystore
+*.jks
+
+# Node.js
+node_modules/
+
+# Log dosyaları
+*.log
 firebase-debug.log
 
-# Kişisel/Geçici
-*.log
-
-# Testler
+# Test kapsamı
 coverage/
 
-# Diğer
-*.swp
+# Python sanal ortam
+venv/
+
+# Backend klasörü (eğer ayrıysa ve takip edilmemesi gerekiyorsa)
 backend/
-frontend/.idea/
