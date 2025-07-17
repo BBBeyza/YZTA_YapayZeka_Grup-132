@@ -39,6 +39,3 @@ coverage/
 
 # Python sanal ortam
 venv/
-
-# Backend klasörü (eğer ayrıysa ve takip edilmemesi gerekiyorsa)
-backend/
