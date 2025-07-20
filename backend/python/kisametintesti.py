@@ -4,7 +4,7 @@ from scipy.io.wavfile import write
 import Levenshtein
 
 fs = 16000
-seconds = 5
+seconds = 10
 
 print("Ses kaydı başladı...")
 recording = sd.rec(int(seconds * fs), samplerate=fs, channels=1)

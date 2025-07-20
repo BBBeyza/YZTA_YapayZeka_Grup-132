@@ -181,7 +181,3 @@
   - Görev açıklamaları daha ayrıntılı yazılacak.
 
 </details>
-
-
-
->>>>>>> edd4d2fa914381cd6d1715d10e5b8ac0a81d075a

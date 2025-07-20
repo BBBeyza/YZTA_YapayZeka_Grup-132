@@ -1,6 +1,6 @@
-import { getFirestore, collection, doc, setDoc, getDoc } from "firebase/firestore";
+import db from "../firebase.js";
+import { collection, doc, setDoc, getDoc } from "firebase/firestore";
 
-const db = getFirestore();
 const usersCollection = collection(db, "users");
 
 export const createUserInDB = async (userData) => {
