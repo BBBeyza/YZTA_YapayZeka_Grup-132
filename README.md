@@ -230,7 +230,7 @@
 </details>
 
 - <h3>Sprint Notes</h3>
-  İlk sprintte konu belirlendi. Herkesten bir konu istenildi ve bu konuda çalışmaların araştırılması istendi. Genel olarak iyi bir sprint süreci geçirdiğimizi düşünüyoruz. İş tempomuz olsa da zamanı iyi kullandığımızı düşünüyoruz.
+  İkinci sprintte ürün geliştirme sürecinde daha teknik ve fonksiyonel adımlara geçildi. Özellikle test altyapılarının kurulması, kullanıcı kimlik doğrulama sisteminin entegre edilmesi ve yapay zekâ destekli test sistemlerinin oluşturulması bu sprintin ana hedefleri arasında yer aldı. Ekip üyeleri, görev dağılımı ve zaman planlamasına sadık kalarak başarılı bir sprint süreci yürüttü.
 
 - <h3>Tahmin Edilen Puan ve Tamamlanan Puan</h3> 
 
@@ -239,7 +239,12 @@
   - Tamamlanan: 500 puan 
 
 - <h3>Puan Tamamlama Mantığı</h3> 
-  Ekibin iş yoğunluğu ve okul durumu gibi etkenlere rağmen, görevlerin tamamlanmasına öncelik verildi ve hedeflenen puan eksiksiz şekilde tamamlandı. Süreç boyunca planlamaya sadık kalınarak görev dağılımları yapıldı ve ortaya çıkan aksaklıklar ekip içi iletişimle giderildi.
+  İkinci sprintte toplam 500 puanlık bir hedef belirlenmesinin temel nedeni, ekibin ilk sprintte gösterdiği yüksek performans ve hızlı adaptasyon oldu. İlk sprint sonunda ekip üyeleri hem birbirine alıştı hem de proje yapısına hâkimiyet kazandı. Bu sayede görev dağılımı daha net yapılabildi ve iş akışı daha verimli ilerledi. 
+
+  Takım üyeleri arasındaki iletişim ve koordinasyon önemli ölçüde güçlendi. Görevlerin zamanında teslim edilmesi, teknik problemlere birlikte çözüm aranması ve sorumluluk bilinciyle hareket edilmesi, yüksek puanlı bir sprint planlamasını mümkün kıldı.
+
+  Bu sprintte hem frontend hem backend tarafında yoğun geliştirmeler yapıldığı, API entegrasyonları, test ekranları, veritabanı yapıları ve güvenlik sistemleri üzerinde çalışıldığı göz önüne alındığında; 500 puanlık hedef, sprintin kapsamına uygun ve gerçekçi bir hedef olarak belirlendi. Tüm görevler eksiksiz şekilde tamamlandı.
+
 - <h3>Daily Scrum</h3>
   </br>
   <p align="center">
@@ -256,17 +261,23 @@
   </p>
   </br>
   </br>
-  Ekip olarak yeni bir ürün fikri geliştirmek amacıyla işe koyulduk ve ilk adım olarak tüm ekip üyelerinin fikir üretip paylaşabileceği bir ortam oluşturduk.  
-  Bu süreç için belirli bir zaman sınırı belirlendi ve Beyza Yaylak, Melisa Bayramoğlu, Harun Benli, Muhammet Emin Balmuk ve Fatma Işıl Fidan kendi fikirlerini ekip ile paylaştı.  
+  Sprint 2 sürecinde ekip olarak ürünün işlevsel yönlerini geliştirmeye odaklandık. İlk sprintte temeli atılan yapının üzerine, bu kez kullanıcı etkileşimini sağlayacak sistemler ve test altyapıları inşa edilmeye başlandı. Her ekip üyesi, görev dağılımına uygun şekilde sorumluluklarını yerine getirdi ve teknik gelişmeler adım adım ilerletildi.
 
-  Sunulan fikirler, sadece yaratıcılık açısından değil; aynı zamanda uygulanabilirlik, zaman yönetimi ve hedefe uygunluk bakımından detaylı şekilde değerlendirildi. Bu değerlendirmelere ek olarak, paydaşlarla yapılan toplantılarda da fikirlerin potansiyeli üzerine görüşler alındı.  
-  Tüm değerlendirmeler sonucunda Melisa Bayramoğlu’nun fikrinin geliştirilmesine karar verildi.**  
+  Sprintin başında, uygulamanın kullanıcı giriş güvenliğini sağlamak amacıyla kimlik doğrulama sisteminin kurulmasına öncelik verildi. Fatma Işıl Fidan tarafından Firebase Authentication entegrasyonu gerçekleştirildi. Bu sayede kullanıcıların e-posta ve şifreyle güvenli şekilde giriş yapmaları sağlandı. Oturum açmış kullanıcıların uygulamayı yeniden açtıklarında otomatik olarak ana sayfaya yönlendirilmeleri sağlanarak kullanıcı deneyimi geliştirildi.
 
-  Fikir netleştikten sonra tasarım sürecine geçildi ve Beyza Yaylak ile Muhammet Emin Balmuk iki farklı logo tasarımı hazırladı. Yapılan değerlendirme sonucunda Emin’in tasarımı ekip tarafından seçildi ve ürün logosu olarak belirlendi.
+  Cognitive test ekranı, Melisa Bayramoğlu tarafından oluşturuldu. Melisa, bu bölümde kullanılan soruların MMSE (Mini Mental State Examination) ve MoCA (Montreal Cognitive Assessment) testlerinden uyarlanarak hazırlandığını belirtti. cognitive_test.dart dosyasında geliştirilen arayüz üzerinden kullanıcıya Gemini API aracılığıyla dinamik sorular sunulmakta ve kullanıcı cevapları toplanmaktadır. API’nin puanlaması ve değerlendirme çıktıları, Firebase Firestore veritabanına, kullanıcıların benzersiz UID’leri altında düzenli şekilde kaydedilmektedir.
 
-  Bu kararın ardından proje için ilk sprint süreci başlatıldı ve ekip planlanan görevleri zamanında tamamladı.  
-  Sprint boyunca ürünün temel yapısını oluşturan kodlama kısmına odaklanıldı. Özellikle giriş ekranı ve ana sayfa gibi temel kullanıcı arayüzleri tasarlanıp geliştirme aşamasına alındı.  
-  Tüm ekip üyeleri ortak bir hedef doğrultusunda uyumlu bir şekilde çalıştı.
+  Ayrıca Melisa, testin yalnızca doğru cevap odaklı olmaması gerektiğini; özellikle metin okuma testinde ses tonu, vurgu ve konuşma ritmi gibi faktörlerin de değerlendirilmesi gerektiğini ifade etti. Bu doğrultuda ses analizi özellikleri ileriki sprintlerde test sistemine entegre edilecektir.
+
+  Muhammet Emin Balmuk, kısa metin anlatımı ve detaylı paragraf okuma testlerinin backend altyapısını oluşturdu. Giriş ekranına dair sunucu taraflı kodlamalar ve kullanıcı yönlendirme mekanizmaları da bu sprintte başarıyla tamamlandı.
+
+  Fatma Işıl Fidan, Firebase Authentication dışında, test sonuçlarının güvenli ve doğru şekilde veritabanına aktarılmasını sağladı. Ayrıca çizim testlerine yönelik el yazısı verileriyle çalışan makine öğrenmesi modelleri eğitildi ve prototip süreci başlatıldı.
+
+  Harun Benli, testlerin bilimsel altyapısı konusunda destek sağladı. MMSE ve MoCA test yapılarına yönelik içerik araştırmaları yaparak, kullanılabilecek soru formatlarının oluşturulmasına katkıda bulundu.
+
+  Sprint boyunca tüm bu süreçlerin takibi, dökümantasyonu ve toplantı planlamaları Beyza Yaylak tarafından yürütüldü. Ekip içi koordinasyon sağlandı, ilerlemeler gözlemlendi ve günlük görev takibi titizlikle sürdürüldü.
+
+  Sprint 2, ürünün teknik altyapısının derinleştirildiği ve kullanıcı deneyimi boyutunun güçlendirildiği bir dönem olarak başarıyla tamamlandı.
 
 - <h3>Product Backlog URL</h3> 
 <p align="center">
@@ -275,13 +286,8 @@
   
 
 - <h3>Sprint Review</h3>  
-  Ürün değerlendirme sürecinde ekip olarak proje seçimi konusunda herhangi bir zorluk yaşanmadı. Fikirlerin netliği ve ekip içi uyum sayesinde karar süreci hızlı bir şekilde tamamlandı.  
-  Melisa Bayramoğlu, projenin yapım aşamasında gösterdiği ekstra çaba ile projenin sürdürülebilirliğine büyük katkı sağladı.  
-
-  Proje isminin Türkçe mi yoksa İngilizce mi olması gerektiği üzerine bir süre düşünülse de, sonunda daha evrensel bir etki yaratmak amacıyla İngilizce olmasına karar verildi.  
-
-  Bu sprint sürecindeki en büyük zorluk ise projenin temelini oturtmak oldu. Teknik yapıların planlanması ve ekip üyelerinin görevlerine adapte olması beklenenden uzun sürdü. Özellikle ekipteki kişilerin iş ve okul yoğunluğu, proje başlangıcını geciktiren temel etkenlerden biri oldu.  
-  Tüm bu aksaklıklara rağmen ekip uyumu ve kararlılığı sayesinde proje adım adım ilerlemeye devam etti.
+  Sprint sonunda ekip, gerçekleştirilen tüm görevleri gözden geçirdi ve test sistemlerinin çalışır durumda olduğu doğrulandı. Giriş sistemi, test ekranları ve veri kaydetme yapısı başarıyla çalıştı.
+  Gemini API’den alınan veriler üzerinden yapılan dinamik soru-cevap işlemleri düzgün çalıştı. Firebase sisteminde veri kayıtları incelendi ve test sonuçlarının doğru şekilde aktarıldığı görüldü.
 
 - <h3>Sprint Review Participants</h3>
   
@@ -294,16 +300,19 @@
 - <h3>Sprint Retrospective</h3>
 
   **Neler iyi gitti?**
-  - İkinci sprintte uygulamaya yoğunlaşılmasına karar verildi.  
-  - Takım içi iletişim güçlüydü.  
-  - Görevler zamanında tamamlandı.  
-  - Planlama toplantısı verimli geçti.  
-  - Kod gözden geçirme süreci etkiliydi.  
+  - Firebase Authentication başarılı şekilde entegre edildi.
+  - Gemini API ile test sistemi entegre edildi.
+  - Test sonuçlarının otomatik ve kullanıcı bazlı olarak veritabanına kaydedilmesi sağlandı.
+  - Takım içi iletişim güçlüydü ve görev dağılımı dengeliydi.
+  - Belirlenen sürede hedeflenen görevler tamamlandı.
 
   **Neler iyileştirilmeli?**
-  - Bazı görevlerin tanımı yeterince net değildi.  
+  - Bazı görevlerde teknik detaylara daha fazla yer verilmesi gerekiyor.
+  - Test sonrası değerlendirme sonuçlarının daha kullanıcı dostu şekilde sunulması planlanmalı.
 
   **Gelecek Sprint İçin Aksiyonlar**
-  - Görev açıklamaları daha ayrıntılı yazılacak.
+  - Kullanıcı arayüzlerinin sadeleştirilmesi ve kullanıcı deneyiminin iyileştirilmesi.
+  - Çizim testlerinin tamamlanarak sisteme entegre edilmesi.
+  - ADHD testinin prototip hale getirilip test edilmesi.
 
 </details>
