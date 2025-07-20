@@ -38,21 +38,21 @@
 <details>
 <summary><h2>Product Backlog</h2></summary>
   <p align="center">
-    <img src="images/1.png" alt="Product Backlog 1" width="600" />
+    <img src="images/Product Backlog/1.png" alt="Product Backlog 1" width="600" />
     <br/>
-    <img src="images/2.png" alt="Product Backlog 2" width="600" />
+    <img src="images/Product Backlog/2.png" alt="Product Backlog 2" width="600" />
     <br/>
-    <img src="images/3.png" alt="Product Backlog 3" width="600" />
+    <img src="images/Product Backlog/3.png" alt="Product Backlog 3" width="600" />
     <br/>
-    <img src="images/4.png" alt="Product Backlog 4" width="600" />
+    <img src="images/Product Backlog/4.png" alt="Product Backlog 4" width="600" />
     <br/>
-    <img src="images/5.png" alt="Product Backlog 5" width="600" />
+    <img src="images/Product Backlog/5.png" alt="Product Backlog 5" width="600" />
     <br/>
-    <img src="images/6.png" alt="Product Backlog 6" width="600" />
+    <img src="images/Product Backlog/6.png" alt="Product Backlog 6" width="600" />
     <br/>
-    <img src="images/7.png" alt="Product Backlog 7" width="600" />
+    <img src="images/Product Backlog/7.png" alt="Product Backlog 7" width="600" />
     <br/>
-    <img src="images/8.png" alt="Product Backlog 8" width="600" />
+    <img src="images/Product Backlog/8.png" alt="Product Backlog 8" width="600" />
   </p>
 </details>
 
