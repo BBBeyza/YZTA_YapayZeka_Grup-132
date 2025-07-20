@@ -316,6 +316,6 @@
   **Gelecek Sprint İçin Aksiyonlar**
   - Kullanıcı arayüzlerinin sadeleştirilmesi ve kullanıcı deneyiminin iyileştirilmesi.
   - Çizim testlerinin tamamlanarak sisteme entegre edilmesi.
-  - ADHD testinin prototip hale getirilip test edilmesi.
+  - MMSE ve MoCA sorularının uygulamaya eklenip test edilmesi.
 
 </details>
