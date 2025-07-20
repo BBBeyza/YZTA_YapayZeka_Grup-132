@@ -117,16 +117,16 @@
 - <h3>Daily Scrum</h3>
   </br>
   <p align="center">
-    <img src="images/Daily Scrum/dailyscrum_1.jpeg" alt="Daily Scrum 1" width="600"/>
+    <img src="images/Daily Scrum/sprint1_dailyscrum_1.jpeg" alt="Daily Scrum 1" width="600"/>
     </br>
     </br>
-    <img src="images/Daily Scrum/dailyscrum_2.jpeg" alt="Daily Scrum 2" width="600"/>
+    <img src="images/Daily Scrum/sprint1_dailyscrum_2.jpeg" alt="Daily Scrum 2" width="600"/>
     </br>
     </br>
-    <img src="images/Daily Scrum/dailyscrum_3.jpeg" alt="Daily Scrum 3" width="600"/>
+    <img src="images/Daily Scrum/sprint1_dailyscrum_3.jpeg" alt="Daily Scrum 3" width="600"/>
     </br>
     </br>
-    <img src="images/Daily Scrum/dailyscrum_4.jpeg" alt="Daily Scrum 4" width="600"/>
+    <img src="images/Daily Scrum/sprint1_dailyscrum_4.jpeg" alt="Daily Scrum 4" width="600"/>
   </p>
   </br>
   </br>
@@ -248,16 +248,19 @@
 - <h3>Daily Scrum</h3>
   </br>
   <p align="center">
-    <img src="images/Daily Scrum/dailyscrum_1.jpeg" alt="Daily Scrum 1" width="600"/>
+    <img src="images/Daily Scrum/sprint2_dailyscrum_1.jpeg" alt="Daily Scrum 1" width="600"/>
     </br>
     </br>
-    <img src="images/Daily Scrum/dailyscrum_2.jpeg" alt="Daily Scrum 2" width="600"/>
+    <img src="images/Daily Scrum/sprint2_dailyscrum_2.jpeg" alt="Daily Scrum 2" width="600"/>
     </br>
     </br>
-    <img src="images/Daily Scrum/dailyscrum_3.jpeg" alt="Daily Scrum 3" width="600"/>
+    <img src="images/Daily Scrum/sprint2_dailyscrum_3.jpeg" alt="Daily Scrum 3" width="600"/>
     </br>
     </br>
-    <img src="images/Daily Scrum/dailyscrum_4.jpeg" alt="Daily Scrum 4" width="600"/>
+    <img src="images/Daily Scrum/sprint2_dailyscrum_4.jpeg" alt="Daily Scrum 4" width="600"/>
+    </br>
+    </br>
+    <img src="images/Daily Scrum/sprint2_dailyscrum_5.jpeg" alt="Daily Scrum 5" width="600"/>
   </p>
   </br>
   </br>
@@ -281,7 +284,7 @@
 
 - <h3>Product Backlog URL</h3> 
 <p align="center">
-  <img src="images/sprint_board_update_ss_1.jpg" alt="Screenshoot 1" />
+  <img src="images/sprint_board_update_ss_2.jpg" alt="Screenshoot 1" />
   </p>
   
 
