@@ -25,8 +25,8 @@ similarity_ratio = Levenshtein.ratio(soylenen_cumle_1.lower(), cumle_1.lower())
 
 print("Söylenen cümle:", soylenen_cumle_1)
 print("Referans cümle :", cumle_1)
-print("Ses kaydı ile cümle arasındaki benzerlik oranı: {:.2f}".format(similarity_ratio))
+print("Ses kaydı ile cümle arasındaki benzerlik oranı: %{:.2f}".format(similarity_ratio * 100))
 if similarity_ratio > 0.8:
     print("Telaffuzunuz oldukça iyi, testi başarıyla geçtiniz!")
 else:
-    print("Telaffuzunuzda bazı hatalar var, testi geçemediniz.")
+    print("Telaffuzunuzda hatalar var, testi geçemediniz.")
