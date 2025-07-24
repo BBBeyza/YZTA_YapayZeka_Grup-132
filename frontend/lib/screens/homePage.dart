@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart'; // SystemChrome için
-import 'cognitive_test.dart'; // Bilişsel test ekranı
-import 'drawing_test.dart'; // Çizim test ekranı
-import 'audio_test_screen.dart'; // Sesli okuma test ekranı (veya sizin ReadingTestScreen'iniz)
+import 'package:flutter/services.dart';
+import 'cognitive_test.dart';
+import 'drawing_test.dart';
+import 'audio_test_screen.dart';
+import 'user_profile.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -14,44 +15,38 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
-  late Animation<double> _headerAnimation; // Logo ve başlık animasyonu
-  late Animation<double> _cardsAnimation; // Kartların toplu animasyonu
+  late Animation<double> _headerAnimation;
+  late Animation<double> _cardsAnimation;
 
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 1), // Genel animasyon süresi
+      duration: const Duration(milliseconds: 1200),
     );
 
     _headerAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         parent: _controller,
-        curve: const Interval(
-          0.0,
-          0.6,
-          curve: Curves.easeOutCubic,
-        ), // Başlık kısmı daha hızlı görünsün
+        curve: const Interval(0.0, 0.5, curve: Curves.easeOutCubic),
       ),
     );
 
     _cardsAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         parent: _controller,
-        curve: const Interval(
-          0.4,
-          1.0,
-          curve: Curves.easeOutBack,
-        ), // Kartlar biraz gecikmeli ve yaylı görünsün
+        curve: const Interval(0.3, 1.0, curve: Curves.easeOutExpo),
       ),
     );
 
-    _controller.forward(); // Animasyonu bir kez başlat
+    _controller.forward();
 
-    // Bildirim çubuğunu şeffaf yapar ve ikonları açık renkli gösterir
     SystemChrome.setSystemUIOverlayStyle(
-      SystemUiOverlayStyle.light.copyWith(statusBarColor: Colors.transparent),
+      SystemUiOverlayStyle.light.copyWith(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.dark,
+      ),
     );
   }
 
@@ -63,270 +58,410 @@ class _HomeScreenState extends State<HomeScreen>
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
-      extendBodyBehindAppBar:
-          true, // AppBar'ın arkasındaki arka planın görünmesini sağlar
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
-        backgroundColor: Colors.transparent, // Şeffaf AppBar
-        elevation: 0, // Gölge yok
-        toolbarHeight:
-            0, // AppBar'ın kendi yüksekliğini sıfırla, böylece custom header tam kontrol sağlar
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        toolbarHeight: 0,
       ),
-      body: Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: const AssetImage(
-              'assets/images/backgroundN.png',
-            ), // Arka plan görseli
-            fit: BoxFit.cover,
-            // Eğer arka plan görseli üzerinde hafif bir karartma istiyorsanız bunu kullanabilirsiniz.
-            // Aksi takdirde tamamen kaldırın.
-            colorFilter: ColorFilter.mode(
-              Colors.black.withOpacity(0.4), // Arka planı biraz karart
-              BlendMode.darken,
+      body: Stack(
+        children: [
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: Container(
+              height: screenHeight * 0.13, // Slogan sığsın
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Color(0xFFF9FAFB), Color(0xFFE5E7EB)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(40),
+                  bottomRight: Radius.circular(40),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Color(0xFF000000),
+                    blurRadius: 10,
+                    spreadRadius: -5,
+                    offset: Offset(0, 5),
+                  ),
+                ],
+              ),
             ),
           ),
-          // gradient özelliği kaldırıldı, çünkü image ile çakışıyordu.
-          // Eğer hem resim hem de gradient aynı anda görünmesini isterseniz,
-          // Box Decoration yerine Stack kullanarak katmanlar oluşturmanız gerekir.
-        ),
-        child: SafeArea(
-          // Güvenli alan: bildirim çubuğu ve navigasyon çubuğu altını kapsar
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // Logo ve Başlık Bölümü (Sol Üst Köşe)
-              FadeTransition(
-                opacity: _headerAnimation,
-                child: SlideTransition(
-                  position:
-                      Tween<Offset>(
-                        begin: const Offset(-0.5, 0), // Soldan kaydırarak getir
-                        end: Offset.zero,
-                      ).animate(
-                        CurvedAnimation(
-                          parent: _controller,
-                          curve: Curves.easeOutQuad,
+          SafeArea(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: EdgeInsets.fromLTRB(
+                    screenWidth * 0.06,
+                    screenHeight * 0.01,
+                    screenWidth * 0.06,
+                    screenHeight * 0.02, // Aşağı kaydırma için artırıldı
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      FadeTransition(
+                        opacity: _headerAnimation,
+                        child: SlideTransition(
+                          position:
+                              Tween<Offset>(
+                                begin: const Offset(0, -0.4),
+                                end: Offset.zero,
+                              ).animate(
+                                CurvedAnimation(
+                                  parent: _controller,
+                                  curve: Curves.easeOutCubic,
+                                ),
+                              ),
+                          child: Row(
+                            children: [
+                              Image.asset(
+                                'assets/images/logo.png',
+                                height: screenWidth * 0.12,
+                                width: screenWidth * 0.12,
+                              ),
+                              SizedBox(width: screenWidth * 0.04),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'NeuroGraph',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .headlineSmall
+                                        ?.copyWith(
+                                          color: const Color(0xFF72B0D3),
+                                          fontWeight: FontWeight.w800,
+                                          fontSize: screenWidth * 0.06,
+                                          letterSpacing: -0.5,
+                                        ),
+                                  ),
+                                  Text(
+                                    'Beyin sağlığınızı keşfedin',
+                                    style: Theme.of(context).textTheme.bodySmall
+                                        ?.copyWith(
+                                          color: const Color(0xFF6B7280),
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: screenWidth * 0.035,
+                                        ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(
-                      24.0,
-                      20.0,
-                      24.0,
-                      30.0,
-                    ), // Sol, üst, sağ, alt boşluk
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start, // Sola hizala
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        // Logo
-                        Image.asset(
-                          'assets/images/logo.png', // Logo dosya yolu
-                          height: 70, // Logo boyutu
-                          width: 70,
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const UserProfileScreen(),
+                            ),
+                          );
+                        },
+                        child: Hero(
+                          tag: 'profile_picture',
+                          child: CircleAvatar(
+                            radius: screenWidth * 0.06,
+                            backgroundImage: const AssetImage(
+                              'assets/images/profile.png',
+                            ),
+                            backgroundColor: Colors.white,
+                          ),
                         ),
-                        const SizedBox(
-                          width: 15,
-                        ), // Logo ile yazı arasında boşluk
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'NeuroGraph',
-                              style: Theme.of(context).textTheme.headlineMedium
-                                  ?.copyWith(
-                                    color:
-                                        Colors.white, // Metin rengi beyaz olsun
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 28, // Başlık boyutunu ayarla
-                                  ),
-                            ),
-                            const SizedBox(height: 5),
-                            Text(
-                              'Beyin sağlığınızı keşfedin.', // Bilgilendirici yazı
-                              style: Theme.of(context).textTheme.bodyLarge
-                                  ?.copyWith(
-                                    color: Colors
-                                        .white70, // Metin rengi hafif opak beyaz
-                                    fontStyle: FontStyle.italic,
-                                  ),
-                            ),
-                          ],
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: screenWidth * 0.06,
+                    vertical:
+                        screenHeight * 0.01, // Aşağı kaydırma için artırıldı
+                  ),
+                  child: Container(
+                    padding: EdgeInsets.all(screenWidth * 0.045),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFFFFFFFF), Color(0xFFF0F4F8)],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: BorderRadius.circular(15),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 10,
+                          offset: const Offset(0, 5),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        FadeTransition(
+                          opacity: _headerAnimation,
+                          child: Text(
+                            'Hoşgeldin Emin,',
+                            style: Theme.of(context).textTheme.headlineMedium
+                                ?.copyWith(
+                                  color: const Color(0xFF1E3A8A),
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: screenWidth * 0.04,
+                                  letterSpacing: -0.2,
+                                ),
+                          ),
+                        ),
+                        SizedBox(height: screenHeight * 0.01),
+                        Text(
+                          'Test İlerlemen',
+                          style: Theme.of(context).textTheme.titleLarge
+                              ?.copyWith(
+                                fontWeight: FontWeight.w600,
+                                color: const Color(0xFF1E3A8A),
+                                fontSize: screenWidth * 0.04,
+                              ),
+                        ),
+                        SizedBox(height: screenHeight * 0.01),
+                        LinearProgressIndicator(
+                          value: 0.66,
+                          backgroundColor: const Color(0xFFDDE5F0),
+                          color: const Color(0xFF72B0D3),
+                          minHeight: screenHeight * 0.01,
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        SizedBox(height: screenHeight * 0.01),
+                        Text(
+                          'Bu hafta 2/3 testi tamamladın!',
+                          style: Theme.of(context).textTheme.bodyMedium
+                              ?.copyWith(
+                                color: const Color(0xFF6B7280),
+                                fontSize: screenWidth * 0.03,
+                              ),
                         ),
                       ],
                     ),
                   ),
                 ),
-              ),
-              // Ana İçerik (Test Kartları)
-              Expanded(
-                // Kalan alanı kaplaması için Expanded
-                child: Center(
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 24.0,
-                      vertical: 20.0,
+                Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: screenWidth * 0.06,
+                      vertical:
+                          screenHeight * 0.02, // Aşağı kaydırma için artırıldı
                     ),
-                    child: AnimatedBuilder(
-                      animation: _cardsAnimation,
-                      builder: (context, child) {
-                        return Transform.scale(
-                          // Kartların hepsini birden animasyonla getir
-                          scale: _cardsAnimation.value,
-                          child: Opacity(
-                            opacity: _cardsAnimation.value.clamp(0.0, 1.0),
-                            child: GridView.count(
-                              shrinkWrap:
-                                  true, // İçeriğe göre yüksekliği ayarla
-                              physics:
-                                  const NeverScrollableScrollPhysics(), // Kaydırmayı devre dışı bırak
-                              crossAxisCount: 2, // 2 sütun
-                              crossAxisSpacing: 20.0, // Yatay boşluk
-                              mainAxisSpacing: 20.0, // Dikey boşluk
-                              childAspectRatio:
-                                  1.0, // Kare kartlar için 1.0, dikdörtgen için artırılabilir
-                              children: [
-                                TestCard(
-                                  icon: Icons.psychology_outlined,
-                                  title: 'Bilişsel Test',
-                                  description: 'Hafıza ve dikkat becerileri.',
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            const CognitiveTestScreen(),
-                                      ),
-                                    );
-                                  },
+                    child: GridView.count(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      crossAxisCount: 2,
+                      crossAxisSpacing: screenWidth * 0.03,
+                      mainAxisSpacing: screenHeight * 0.015,
+                      childAspectRatio: 0.7,
+                      children: [
+                        ModernTestCard(
+                          icon: Icons.psychology_outlined,
+                          title: 'Bilişsel Test',
+                          description: 'Hafıza ve dikkat becerilerinizi ölçün.',
+                          score: 'Son Skor: 85%',
+                          date: 'Son Çözüm: 23 Temmuz 2025',
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    const CognitiveTestScreen(),
+                              ),
+                            );
+                          },
+                        ),
+                        ModernTestCard(
+                          icon: Icons.edit_outlined,
+                          title: 'Çizim Testleri',
+                          description:
+                              'Görsel-motor yeteneklerinizi test edin.',
+                          score: 'Son Skor: 92%',
+                          date: 'Son Çözüm: 22 Temmuz 2025',
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const DrawingTestScreen(),
+                              ),
+                            );
+                          },
+                        ),
+                        ModernTestCard(
+                          icon: Icons.volume_up_outlined,
+                          title: 'Sesli Okuma',
+                          description: 'Okuma akıcılığı ve anlama becerileri.',
+                          score: 'Son Skor: 78%',
+                          date: 'Son Çözüm: 21 Temmuz 2025',
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const ReadingTestScreen(),
+                              ),
+                            );
+                          },
+                        ),
+                        ModernTestCard(
+                          icon: Icons.history_edu_outlined,
+                          title: 'Geçmiş Raporlar',
+                          description: 'Önceki test sonuçlarınızı inceleyin.',
+                          score: '',
+                          date: 'Son Rapor: 20 Temmuz 2025',
+                          onTap: () {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: const Text(
+                                  'Geçmiş Raporlar (Yakında!)',
                                 ),
-                                TestCard(
-                                  icon: Icons.edit_outlined,
-                                  title: 'Çizim Testleri',
-                                  description: 'Görsel-motor ve el yazısı.',
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            const DrawingTestScreen(),
-                                      ),
-                                    );
-                                  },
+                                backgroundColor: const Color(0xFF72B0D3),
+                                behavior: SnackBarBehavior.floating,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16),
                                 ),
-                                TestCard(
-                                  icon: Icons.volume_up_outlined,
-                                  title: 'Sesli Okuma',
-                                  description: 'Okuma akıcılığı ve anlama.',
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            const ReadingTestScreen(),
-                                      ),
-                                    );
-                                  },
-                                ),
-                                TestCard(
-                                  icon: Icons.history_edu_outlined,
-                                  title: 'Geçmiş Raporlar',
-                                  description: 'Önceki test sonuçlarını gör.',
-                                  onTap: () {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: const Text(
-                                          'Geçmiş Raporlar Görüntülenecek (Yakında!)',
-                                        ),
-                                        backgroundColor: Theme.of(
-                                          context,
-                                        ).colorScheme.secondary,
-                                        duration: const Duration(seconds: 2),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
+                                duration: const Duration(seconds: 2),
+                              ),
+                            );
+                          },
+                        ),
+                      ],
                     ),
                   ),
                 ),
-              ),
-            ],
+                Padding(
+                  padding: EdgeInsets.all(screenWidth * 0.02), // Daraltıldı
+                  child: Text(
+                    'NeuroGraph v1.0 - Beyin sağlığınızı sürekli takip edin.',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: const Color(0xFF6B7280),
+                      fontSize: screenWidth * 0.025,
+                      fontWeight: FontWeight.w500,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
 }
 
-// Test kartı için ayrı bir widget
-class TestCard extends StatelessWidget {
+class ModernTestCard extends StatelessWidget {
   final IconData icon;
   final String title;
   final String description;
+  final String score;
+  final String date;
   final VoidCallback onTap;
 
-  const TestCard({
+  const ModernTestCard({
     required this.icon,
     required this.title,
     required this.description,
+    required this.score,
+    required this.date,
     required this.onTap,
     Key? key,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 10,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(25),
-        child: Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                Theme.of(context).colorScheme.surface,
-                Theme.of(context).colorScheme.surfaceVariant,
-              ],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            colors: [Color(0xFFFFFFFF), Color(0xFFF0F4F8)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
           ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
+          borderRadius: BorderRadius.circular(15),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.12),
+              blurRadius: 15,
+              offset: const Offset(0, 5),
+              // elevation etkisi için shadow artırıldı
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: EdgeInsets.all(screenWidth * 0.04),
+              decoration: const BoxDecoration(
+                color: Color(0xFFDDE5F0),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
                 icon,
-                size: 60,
-                color: Theme.of(context).colorScheme.primary,
+                size: screenWidth * 0.09,
+                color: const Color(0xFF72B0D3),
               ),
-              const SizedBox(height: 10),
-              Text(
-                title,
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.onSurface,
-                    ),
+            ),
+            SizedBox(height: screenWidth * 0.03),
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.w700,
+                color: const Color(0xFF1E3A8A),
+                fontSize: screenWidth * 0.05,
               ),
-              const SizedBox(height: 5),
-              Text(
+            ),
+            SizedBox(height: screenWidth * 0.015),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.02),
+              child: Text(
                 description,
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    ),
+                  color: const Color(0xFF6B7280),
+                  fontSize: screenWidth * 0.03,
+                ),
               ),
-            ],
-          ),
+            ),
+            SizedBox(height: screenWidth * 0.015),
+            Text(
+              score,
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: const Color(0xFF1E3A8A),
+                fontWeight: FontWeight.w600,
+                fontSize: screenWidth * 0.03,
+              ),
+            ),
+            SizedBox(height: screenWidth * 0.01),
+            Text(
+              date,
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: const Color(0xFF6B7280),
+                fontSize: screenWidth * 0.025,
+              ),
+            ),
+          ],
         ),
       ),
     );
