@@ -1,47 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:neurograph/widgets/drawing_canvas.dart';
+import 'package:neurograph/models/stroke.dart'; // DrawingPoint yerine Stroke'tan alıyoruz
 import 'package:neurograph/services/gemini_service.dart';
-
-// DrawingPoint sınıfının DrawingCanvas.dart içinde tanımlı olduğunu varsayıyorum.
-// Eğer tanımlı değilse, onu buraya veya ayrı bir model dosyasına taşımanız gerekir.
-// Örneğin:
-// class DrawingPoint {
-//   Offset point;
-//   Paint paint;
-//   DrawingPoint({required this.point, required this.paint});
-// }
 
 // Talimat bölümü için ayrı bir widget
 class InstructionSection extends StatelessWidget {
   final String title;
   final String instruction;
-  const InstructionSection({
+  const InstructionSection({ // super.key burada kullanılıyor
+    super.key, // 'Key? key' yerine super.key
     required this.title,
     required this.instruction,
-    Key? key,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start, // Sola daya
         children: [
-          Text(
-            title,
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.onSurface,
-                ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 10),
+          // Başlık kaldırıldı, SizedBox da kaldırılabilir
+          // const SizedBox(height: 10),
           Text(
             instruction,
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                ),
-            textAlign: TextAlign.center,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+              fontSize: 16, // Font boyutu ayarlandı
+            ),
+            textAlign: TextAlign.start, // Sola hizala
           ),
         ],
       ),
@@ -52,14 +39,12 @@ class InstructionSection extends StatelessWidget {
 // Buton satırı için ayrı bir widget
 class DrawingTestButtons extends StatelessWidget {
   final VoidCallback onSave;
-  final VoidCallback onNext;
-  final bool isLastTest;
-  const DrawingTestButtons({
+  final VoidCallback onFinish;
+  const DrawingTestButtons({ // super.key burada kullanılıyor
+    super.key, // 'Key? key' yerine super.key
     required this.onSave,
-    required this.onNext,
-    required this.isLastTest,
-    Key? key,
-  }) : super(key: key);
+    required this.onFinish,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -89,7 +74,7 @@ class DrawingTestButtons extends StatelessWidget {
           const SizedBox(width: 15),
           Expanded(
             child: ElevatedButton(
-              onPressed: onNext,
+              onPressed: onFinish,
               style: ElevatedButton.styleFrom(
                 backgroundColor: Theme.of(context).colorScheme.primary,
                 foregroundColor: Colors.white,
@@ -99,9 +84,9 @@ class DrawingTestButtons extends StatelessWidget {
                 ),
                 elevation: 5,
               ),
-              child: Text(
-                isLastTest ? 'Testleri Bitir' : 'Sonraki Test',
-                style: const TextStyle(fontSize: 16),
+              child: const Text(
+                'Testi Bitir',
+                style: TextStyle(fontSize: 16),
               ),
             ),
           ),
@@ -112,7 +97,16 @@ class DrawingTestButtons extends StatelessWidget {
 }
 
 class DrawingTestScreen extends StatefulWidget {
-  const DrawingTestScreen({super.key});
+  final String testKey;
+  final String testTitle;
+  final String testInstruction;
+
+  const DrawingTestScreen({ // super.key burada kullanılıyor
+    super.key, // 'Key? key' yerine super.key
+    required this.testKey,
+    required this.testTitle,
+    required this.testInstruction,
+  });
 
   @override
   State<DrawingTestScreen> createState() => _DrawingTestScreenState();
@@ -122,89 +116,51 @@ class _DrawingTestScreenState extends State<DrawingTestScreen> {
   final GlobalKey<DrawingCanvasState> _canvasKey = GlobalKey();
   final GeminiService _geminiService = GeminiService();
 
-  final Map<String, List<DrawingPoint>> _recordedDrawingData = {};
-
-  int _currentTestIndex = 0;
-
-  final List<Map<String, String>> _testInstructions = [
-    {
-      'key': 'clock',
-      'title': 'Saat Çizimi Testi',
-      'instruction':
-          'Şimdi ekrana saat 10\'u 10 geçeyi gösteren bir saat çizin. (Kılavuz olmayacaktır, kendi becerinize göre çizin)',
-    }, // Talimat güncellendi
-    {
-      'key': 'spiral',
-      'title': 'Spiral Çizimi Testi',
-      'instruction': 'Boş ekrana bir spiral çizin.',
-    }, // Talimat güncellendi
-    {
-      'key': 'meander',
-      'title': 'Meander Çizimi Testi',
-      'instruction': 'Boş ekrana spiral kare çizin.',
-    }, // Talimat güncellendi
-    {
-      'key': 'handwriting',
-      'title': 'El Yazısı Testi',
-      'instruction':
-          'Lütfen "Yarın hava güneşli olacak." cümlesini buraya yazın.',
-    },
-  ];
-
-  String get _currentTestKey => _testInstructions[_currentTestIndex]['key']!;
-  String get _currentTestTitle =>
-      _testInstructions[_currentTestIndex]['title']!;
-  String get _currentTestInstruction =>
-      _testInstructions[_currentTestIndex]['instruction']!;
+  List<DrawingPoint>? _currentDrawingPoints;
 
   bool _isLoading = false;
 
-  void _saveCurrentDrawing() {
-    final List<DrawingPoint>? currentPoints = _canvasKey.currentState
-        ?.getAllDrawingPoints();
+  @override
+  void initState() {
+    super.initState();
+  }
 
-    if (currentPoints != null && currentPoints.isNotEmpty) {
-      _recordedDrawingData[_currentTestKey] = currentPoints;
+  void _saveCurrentDrawing() {
+    final List<DrawingPoint>? points = _canvasKey.currentState?.getAllDrawingPoints();
+
+    if (points != null && points.isNotEmpty) {
+      _currentDrawingPoints = points;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('${_currentTestTitle} verileri kaydedildi.')),
+        SnackBar(content: Text('${widget.testTitle} verileri kaydedildi.')),
       );
     } else {
+      _currentDrawingPoints = null;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Hiç çizim verisi bulunamadı!')),
       );
     }
   }
 
-  Future<void> _nextTest() async {
+  Future<void> _finishTest() async {
     _saveCurrentDrawing();
-    _canvasKey.currentState?.clearCanvas();
 
-    if (_currentTestIndex < _testInstructions.length - 1) {
-      setState(() {
-        _currentTestIndex++;
-      });
-    } else {
-      await _finalizeDrawingTests();
-    }
-  }
-
-  Future<void> _finalizeDrawingTests() async {
     setState(() {
       _isLoading = true;
     });
 
-    String drawingSummary = 'Çizim Testleri Özeti:\n';
-    _recordedDrawingData.forEach((key, value) {
-      drawingSummary +=
-          '${_testInstructions.firstWhere((element) => element['key'] == key)['title']}: ${value.length} nokta kaydedildi.\n';
-    });
-    drawingSummary +=
-        '\nDetaylı analiz için bu ham veriler ML modeline gönderilmelidir.';
+    String drawingSummary = '';
+    if (_currentDrawingPoints != null && _currentDrawingPoints!.isNotEmpty) {
+      drawingSummary = '${widget.testTitle} için ${_currentDrawingPoints!.length} nokta kaydedildi.';
+    } else {
+      drawingSummary = '${widget.testTitle} için hiç çizim verisi kaydedilmedi.';
+    }
 
     final prompt =
-        '''
-Aşağıdaki çizim ve el yazısı testi verileri özetini inceleyerek genel görsel-motor ve motor beceriler hakkında bir değerlendirme yap. 
-Kesin tanı koyma, sadece gözlemlerini belirt. Kullanıcının her test için kaydettiği nokta sayıları: $drawingSummary
+    '''
+Kullanıcının yaptığı "${widget.testTitle}" adlı çizim testinin sonuçlarını değerlendirir misin?
+Test Talimatı: "${widget.testInstruction}"
+Kaydedilen çizim verisi özeti: $drawingSummary
+(Not: Bu ham veri, ML modeline gönderildiğinde daha detaylı analiz edilebilir. Şimdilik sadece bu özete dayanarak genel bir değerlendirme yap.)
 ''';
     final evaluation = await _geminiService.askGemini(prompt);
 
@@ -214,10 +170,11 @@ Kesin tanı koyma, sadece gözlemlerini belirt. Kullanıcının her test için k
 
     if (!mounted) return;
     Navigator.pop(context);
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Çizim Testi Değerlendirmesi'),
+        title: Text('${widget.testTitle} Değerlendirmesi'),
         content: SingleChildScrollView(child: Text(evaluation)),
         actions: [
           TextButton(
@@ -233,49 +190,30 @@ Kesin tanı koyma, sadece gözlemlerini belirt. Kullanıcının her test için k
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(_currentTestTitle),
-        centerTitle: true, // Başlığı ortala
-        backgroundColor: Theme.of(context).colorScheme.primary, // AppBar rengi
-        foregroundColor: Colors.white, // AppBar ikon ve yazı rengi
+        title: Text(widget.testTitle),
+        centerTitle: true,
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        foregroundColor: Colors.white,
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : Column(
-              children: [
-                InstructionSection(
-                  title: _currentTestTitle,
-                  instruction: _currentTestInstruction,
-                ),
-                Expanded(
-                  child: Container(
-                    // DrawingCanvas yerine basit bir Container kullanabiliriz veya DrawingCanvas'ın kendisi boş bir tuval olabilir.
-                    // Buraya DrawingCanvas gelecek
-                    child: DrawingCanvas(
-                      key: _canvasKey,
-                      // Assetsiz olduğu için burada 'child' özelliği kaldırıldı.
-                      // Arka planı boş (sadece beyaz veya saydam) olacaktır.
-                    ),
-                    decoration: BoxDecoration(
-                      // Tuvalin etrafına hafif bir çerçeve veya arka plan rengi eklenebilir
-                      color: Colors.white, // Tuvalin arka planı beyaz olsun
-                      border: Border.all(
-                        color: Colors.grey.shade300,
-                        width: 2,
-                      ), // Hafif bir çerçeve
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    margin: const EdgeInsets.all(
-                      16.0,
-                    ), // Tuvalin etrafında boşluk
-                  ),
-                ),
-                DrawingTestButtons(
-                  onSave: _saveCurrentDrawing,
-                  onNext: _nextTest,
-                  isLastTest: _currentTestIndex >= _testInstructions.length - 1,
-                ),
-              ],
+        children: [
+          InstructionSection(
+            title: widget.testTitle,
+            instruction: widget.testInstruction,
+          ),
+          Expanded(
+            child: DrawingCanvas(
+              key: _canvasKey,
             ),
+          ),
+          DrawingTestButtons(
+            onSave: _saveCurrentDrawing,
+            onFinish: _finishTest,
+          ),
+        ],
+      ),
     );
   }
 }
