@@ -1,157 +1,251 @@
 import 'package:flutter/material.dart';
-
-/// Her bir çizim noktasını temsil eden veri modeli.
-/// `point`: Ekrandaki konumu (Offset).
-/// `timestamp`: Noktanın kaydedildiği zaman.
-/// `pressure`: Basınç bilgisi (şu an için varsayılan 1.0, gelecekteki geliştirmeler için).
-class DrawingPoint {
-  final Offset point;
-  final DateTime timestamp;
-  final double pressure;
-
-  DrawingPoint({
-    required this.point,
-    required this.timestamp,
-    this.pressure = 1.0,
-  });
-
-  // Gerekirse eşitlik kontrolü için
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is DrawingPoint &&
-          runtimeType == other.runtimeType &&
-          point == other.point &&
-          timestamp == other.timestamp &&
-          pressure == other.pressure;
-
-  @override
-  int get hashCode => point.hashCode ^ timestamp.hashCode ^ pressure.hashCode;
-}
+import 'package:neurograph/models/stroke.dart'; // Stroke sınıfını import ediyoruz
 
 /// Uygulamada çizim yapılmasına olanak tanıyan StatefulWidget.
-/// Kullanıcının parmak/kalem hareketlerini algılar ve çizim verilerini kaydeder.
 class DrawingCanvas extends StatefulWidget {
   final Color backgroundColor;
-  final Color strokeColor;
-  final double strokeWidth;
 
-  const DrawingCanvas({
+  const DrawingCanvas({ // super.key burada kullanılıyor
     super.key,
     this.backgroundColor = Colors.white,
-    this.strokeColor = Colors.black,
-    this.strokeWidth = 2.0,
   });
 
   @override
-  // createState metodu, State sınıfını döndürür.
-  State<DrawingCanvas> createState() => DrawingCanvasState(); // Public olan State sınıfı
+  State<DrawingCanvas> createState() => DrawingCanvasState();
 }
 
 /// DrawingCanvas'ın durumunu yöneten State sınıfı.
 /// Çizim noktalarını kaydeder, UI güncellemelerini tetikler.
 class DrawingCanvasState extends State<DrawingCanvas> {
-  // Şu an çizilmekte olan çizginin noktaları.
-  List<DrawingPoint> _currentStroke = [];
-  // Tamamlanmış (kalemin kaldırıldığı) tüm çizgilerin listesi.
-  List<List<DrawingPoint>> _allStrokes = [];
+  List<Stroke> _allStrokes = [];
+  List<Stroke> _undoneStrokes = [];
+  List<DrawingPoint> _currentDrawingPoints = [];
 
-  // Nokta sıkıştırma için son kaydedilen nokta.
-  Offset? _lastPoint;
-  // Nokta kaydedilmeden önceki minimum hareket mesafesi (piksel).
-  static const double _minDistance = 3.0; // Ayarlanabilir değer
+  Color _strokeColor = Colors.black;
+  double _strokeWidth = 3.0;
 
-  /// Kullanıcı ekrana dokunmaya başladığında çağrılır.
+  final List<Color> _colorOptions = const [
+    Colors.black,
+    Colors.red,
+    Colors.blue,
+    Colors.green,
+    Colors.yellow,
+    Colors.purple,
+    Colors.orange,
+    Colors.brown,
+  ];
+
   void _onPanStart(DragStartDetails details) {
-    // setState ile UI'ı güncelleyerek yeni çizime başla.
     setState(() {
-      _currentStroke = [
+      _currentDrawingPoints = [
         DrawingPoint(point: details.localPosition, timestamp: DateTime.now()),
       ];
-      // İlk noktayı son kaydedilen nokta olarak ayarla.
-      _lastPoint = details.localPosition;
+      _undoneStrokes.clear();
     });
   }
 
-  /// Kullanıcı parmağını/kalemini hareket ettirirken çağrılır.
   void _onPanUpdate(DragUpdateDetails details) {
-    // Eğer son kaydedilen nokta yoksa (ilk kez hareket ediliyorsa)
-    // veya belirli bir mesafeden fazla hareket edildiyse, yeni nokta kaydet.
-    if (_lastPoint == null ||
-        (details.localPosition - _lastPoint!).distance > _minDistance) {
-      // setState ile UI'ı güncelleyerek mevcut çizime yeni nokta ekle.
-      setState(() {
-        _currentStroke.add(
-          DrawingPoint(point: details.localPosition, timestamp: DateTime.now()),
-        );
-        // Son kaydedilen noktayı güncelle.
-        _lastPoint = details.localPosition;
-      });
-    }
+    setState(() {
+      _currentDrawingPoints = List.from(_currentDrawingPoints)
+        ..add(DrawingPoint(point: details.localPosition, timestamp: DateTime.now()));
+    });
   }
 
-  /// Kullanıcı parmağını/kalemini ekrandan kaldırdığında çağrılır.
   void _onPanEnd(DragEndDetails details) {
-    // Çizim bitince son noktayı (eğer farklıysa) ekle.
-    if (_currentStroke.isNotEmpty &&
-        _currentStroke.last.point != details.localPosition) {
-      _currentStroke.add(
+    // Son noktayı ekle (eğer farklıysa ve bu son nokta zaten eklendiyse tekrar eklemeyi önle)
+    if (_currentDrawingPoints.isNotEmpty &&
+        (_currentDrawingPoints.last.point != details.localPosition ||
+            _currentDrawingPoints.length == 1)) { // Tek nokta varsa da ekle
+      _currentDrawingPoints.add(
+        DrawingPoint(point: details.localPosition, timestamp: DateTime.now()),
+      );
+    } else if (_currentDrawingPoints.isEmpty) { // Hiç nokta eklenmemişse (sadece dokunup çekme)
+      _currentDrawingPoints.add(
         DrawingPoint(point: details.localPosition, timestamp: DateTime.now()),
       );
     }
 
-    // Tamamlanmış _currentStroke'u _allStrokes listesine ekle (bir kopyasını).
-    // Ardından _currentStroke'u bir sonraki çizim için temizle.
     setState(() {
-      if (_currentStroke.isNotEmpty) {
-        _allStrokes.add(List.from(_currentStroke)); // Kopyasını eklemek önemli!
+      if (_currentDrawingPoints.isNotEmpty) {
+        _allStrokes.add(Stroke(
+          points: List.from(_currentDrawingPoints),
+          color: _strokeColor,
+          width: _strokeWidth,
+        ));
       }
-      _currentStroke = [];
-      _lastPoint = null;
+      _currentDrawingPoints = [];
     });
-    // Burada artık onDrawingFinished çağrılmıyor, dışarıdaki buton tetikleyecek.
   }
 
-  /// Tuvali ve tüm çizim verilerini temizler.
   void clearCanvas() {
     setState(() {
       _allStrokes = [];
-      _currentStroke = [];
-      _lastPoint = null;
+      _currentDrawingPoints = [];
+      _undoneStrokes = [];
     });
   }
 
-  /// Kaydedilecek çizim verilerini dışarıya sunan yeni metod.
-  /// Bu metod, GlobalKey aracılığıyla dışarıdan çağrılacak.
+  void undo() {
+    setState(() {
+      if (_allStrokes.isNotEmpty) {
+        final lastStroke = _allStrokes.removeLast();
+        _undoneStrokes.add(lastStroke);
+      }
+    });
+  }
+
+  void redo() {
+    setState(() {
+      if (_undoneStrokes.isNotEmpty) {
+        final lastUndoneStroke = _undoneStrokes.removeLast();
+        _allStrokes.add(lastUndoneStroke);
+      }
+    });
+  }
+
   List<DrawingPoint> getAllDrawingPoints() {
-    // Mevcut (henüz kaydedilmemiş) çizgiyi de dahil ederek tüm noktaları döndür.
-    // Eğer mouse hala basılıysa _currentStroke'da noktalar olabilir.
-    List<List<DrawingPoint>> currentAllStrokes = List.from(_allStrokes);
-    if (_currentStroke.isNotEmpty) {
-      currentAllStrokes.add(List.from(_currentStroke));
+    List<DrawingPoint> allPoints = [];
+    for (var stroke in _allStrokes) {
+      allPoints.addAll(stroke.points);
     }
-    return currentAllStrokes.expand((element) => element).toList();
+    allPoints.addAll(_currentDrawingPoints);
+    return allPoints;
   }
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onPanStart: _onPanStart,
-      onPanUpdate: _onPanUpdate,
-      onPanEnd: _onPanEnd,
-      child: Container(
-        color: widget.backgroundColor,
-        child: CustomPaint(
-          // _DrawingPainter'a hem tamamlanmış hem de anlık çizilen çizgiyi gönder.
-          painter: _DrawingPainter(
-            allStrokes: _allStrokes,
-            currentStroke: _currentStroke, // Canlı çizim için
-            strokeColor: widget.strokeColor,
-            strokeWidth: widget.strokeWidth,
+    return Column(
+      children: [
+        _buildControlPanel(),
+        Expanded(
+          child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            decoration: BoxDecoration(
+              color: widget.backgroundColor,
+              border: Border.all(
+                color: Colors.grey.shade300,
+                width: 2,
+              ),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: GestureDetector(
+                onPanStart: _onPanStart,
+                onPanUpdate: _onPanUpdate,
+                onPanEnd: _onPanEnd,
+                child: CustomPaint(
+                  painter: _DrawingPainter(
+                    allStrokes: _allStrokes,
+                    currentDrawingPoints: _currentDrawingPoints,
+                    currentStrokeColor: _strokeColor,
+                    currentStrokeWidth: _strokeWidth,
+                  ),
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints.expand(),
+                  ),
+                ),
+              ),
+            ),
           ),
-          child: ConstrainedBox(
-            constraints:
-                BoxConstraints.expand(), // Tuvalin tüm alanı kaplamasını sağlar.
+        ),
+      ],
+    );
+  }
+
+  Widget _buildControlPanel() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+      child: Card(
+        elevation: 4,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                children: [
+                  const Icon(Icons.line_weight, color: Colors.grey, size: 20),
+                  Expanded(
+                    child: Slider(
+                      value: _strokeWidth,
+                      min: 1.0,
+                      max: 10.0,
+                      divisions: 9,
+                      label: _strokeWidth.round().toString(),
+                      onChanged: (double value) {
+                        setState(() {
+                          _strokeWidth = value;
+                        });
+                      },
+                      activeColor: Theme.of(context).colorScheme.primary,
+                      inactiveColor: Colors.grey.shade300,
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: 40,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: _colorOptions.length,
+                  itemBuilder: (context, index) {
+                    final color = _colorOptions[index];
+                    return GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          _strokeColor = color;
+                        });
+                      },
+                      child: Container(
+                        width: 30,
+                        height: 30,
+                        margin: const EdgeInsets.symmetric(horizontal: 4.0),
+                        decoration: BoxDecoration(
+                          color: color,
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: _strokeColor == color ? Theme.of(context).colorScheme.primary : Colors.transparent,
+                            width: _strokeColor == color ? 3.0 : 1.0,
+                          ),
+                          boxShadow: [
+                            if (_strokeColor == color)
+                              BoxShadow(
+                                color: color.withOpacity(0.5),
+                                blurRadius: 4,
+                              ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.undo, size: 24),
+                    onPressed: _allStrokes.isNotEmpty ? undo : null,
+                    tooltip: 'Geri Al',
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.redo, size: 24),
+                    onPressed: _undoneStrokes.isNotEmpty ? redo : null,
+                    tooltip: 'İleri Al',
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.clear_all, size: 24),
+                    onPressed: _allStrokes.isNotEmpty || _currentDrawingPoints.isNotEmpty ? clearCanvas : null,
+                    tooltip: 'Tuvali Temizle',
+                    color: Theme.of(context).colorScheme.error,
+                  ),
+                ],
+              ),
+            ],
           ),
         ),
       ),
@@ -159,59 +253,57 @@ class DrawingCanvasState extends State<DrawingCanvas> {
   }
 }
 
-/// Çizim işlemlerini gerçekten gerçekleştiren CustomPainter sınıfı.
-/// UI güncellendiğinde yeniden çizim yapar.
 class _DrawingPainter extends CustomPainter {
-  // Tamamlanmış tüm çizgiler (kalem kaldırıldıktan sonra).
-  final List<List<DrawingPoint>> allStrokes;
-  // Anlık olarak çizilmekte olan çizgi.
-  final List<DrawingPoint> currentStroke;
-  final Color strokeColor;
-  final double strokeWidth;
+  final List<Stroke> allStrokes;
+  final List<DrawingPoint> currentDrawingPoints;
+  final Color currentStrokeColor;
+  final double currentStrokeWidth;
 
   _DrawingPainter({
     required this.allStrokes,
-    required this.currentStroke, // Yeni eklendi
-    required this.strokeColor,
-    required this.strokeWidth,
+    required this.currentDrawingPoints,
+    required this.currentStrokeColor,
+    required this.currentStrokeWidth,
   });
 
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color =
-          strokeColor // Çizgi rengi
-      ..strokeCap = StrokeCap
-          .round // Çizgi uçlarının yuvarlak olması
-      ..strokeWidth = strokeWidth; // Çizgi kalınlığı
-
-    // Tamamlanmış tüm çizgileri çiz.
     for (var stroke in allStrokes) {
-      if (stroke.isEmpty) continue; // Boş çizgileri atla
-      for (int i = 0; i < stroke.length - 1; i++) {
-        // İki nokta arasında çizgi çek.
-        canvas.drawLine(stroke[i].point, stroke[i + 1].point, paint);
+      if (stroke.points.isEmpty) continue;
+
+      final paint = Paint()
+        ..color = stroke.color
+        ..strokeCap = StrokeCap.round
+        ..strokeWidth = stroke.width;
+
+      for (int i = 0; i < stroke.points.length - 1; i++) {
+        canvas.drawLine(stroke.points[i].point, stroke.points[i + 1].point, paint);
       }
     }
 
-    // O an çizilmekte olan çizgiyi çiz.
-    // Bu kısım, gecikmeyi ortadan kaldırarak anlık çizimi sağlar.
-    if (currentStroke.isNotEmpty) {
-      for (int i = 0; i < currentStroke.length - 1; i++) {
+    if (currentDrawingPoints.isNotEmpty) {
+      final currentPaint = Paint()
+        ..color = currentStrokeColor
+        ..strokeCap = StrokeCap.round
+        ..strokeWidth = currentStrokeWidth;
+
+      for (int i = 0; i < currentDrawingPoints.length - 1; i++) {
         canvas.drawLine(
-          currentStroke[i].point,
-          currentStroke[i + 1].point,
-          paint,
+          currentDrawingPoints[i].point,
+          currentDrawingPoints[i + 1].point,
+          currentPaint,
         );
       }
     }
   }
 
   @override
-  // Yeniden çizim yapılıp yapılmayacağını kontrol eden metod.
-  // Yalnızca çizim verileri değiştiğinde (performans için kritik) true döndürmeli.
   bool shouldRepaint(covariant _DrawingPainter oldDelegate) {
+    // Listelerin referans eşitliğini kontrol etmek yeterlidir, çünkü
+    // listelerimizin içeriği değiştiğinde yeni referanslar oluşturuyoruz.
     return oldDelegate.allStrokes != allStrokes ||
-        oldDelegate.currentStroke != currentStroke;
+        oldDelegate.currentDrawingPoints != currentDrawingPoints ||
+        oldDelegate.currentStrokeColor != currentStrokeColor ||
+        oldDelegate.currentStrokeWidth != currentStrokeWidth;
   }
 }

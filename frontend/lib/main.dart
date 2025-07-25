@@ -2,12 +2,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:neurograph/screens/loginScreen.dart';
-import 'package:neurograph/screens/homePage.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await dotenv.load();
+
+  await dotenv.load(); // .env dosyasını yükle
+
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
   ]).then((_) {
@@ -30,6 +31,7 @@ class MyApp extends StatelessWidget {
 }
 
 ThemeData _buildThemeData(BuildContext context) {
+  // ... (Bu kısım aynı kalır) ...
   return ThemeData(
     useMaterial3: true,
     colorScheme: ColorScheme.fromSeed(
