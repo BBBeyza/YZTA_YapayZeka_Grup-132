@@ -24,13 +24,13 @@ class _ReadingTestScreenState extends State<ReadingTestScreen> {
     {
       'title': 'Test 1: Kısa Metin Anlatımı',
       'text':
-          'Küçük bir sincap, ormanda bir fındık sakladı. Kış geldiğinde onu bulmayı umuyordu.',
+      'Küçük bir sincap, ormanda bir fındık sakladı. Kış geldiğinde onu bulmayı umuyordu.',
       'audioPrompt': 'assets/audios/squirrel_prompt.mp3',
     },
     {
       'title': 'Test 2: Detaylı Paragraf Okuma',
       'text':
-          'Güneşin ilk ışıkları, çiy damlalarıyla parlayan orman zeminine vurduğunda, kuşlar melodik şarkılarıyla günü karşıladı. Her yer yeni bir umutla doluydu.',
+      'Güneşin ilk ışıkları, çiy damlalarıyla parlayan orman zeminine vurduğunda, kuşlar melodik şarkılarıyla günü karşıladı. Her yer yeni bir umutla doluydu.',
       'audioPrompt': 'assets/audios/sunrise_prompt.mp3',
     },
   ];
@@ -92,7 +92,7 @@ class _ReadingTestScreenState extends State<ReadingTestScreen> {
           );
           request.files.add(file);
           request.fields['reference_text'] =
-              _readingTexts[_currentReadingIndex]['text']!;
+          _readingTexts[_currentReadingIndex]['text']!;
 
           final response = await request.send();
           final responseData = await http.Response.fromStream(response);
@@ -236,11 +236,11 @@ class _ReadingTestScreenState extends State<ReadingTestScreen> {
                             currentTest['text']!,
                             style: Theme.of(context).textTheme.bodyLarge
                                 ?.copyWith(
-                                  fontSize: screenWidth * 0.05,
-                                  color: _isRecording
-                                      ? Colors.blue
-                                      : Colors.black,
-                                ),
+                              fontSize: screenWidth * 0.05,
+                              color: _isRecording
+                                  ? Colors.blue
+                                  : Colors.black,
+                            ),
                             textAlign: TextAlign.justify,
                           ),
                         ),
@@ -328,9 +328,9 @@ class _ReadingTestScreenState extends State<ReadingTestScreen> {
                                         .textTheme
                                         .titleMedium
                                         ?.copyWith(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: screenWidth * 0.045,
-                                        ),
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: screenWidth * 0.045,
+                                    ),
                                   ),
                                   if (_analysisResult != null) ...[
                                     SizedBox(height: screenHeight * 0.01),
@@ -346,8 +346,8 @@ class _ReadingTestScreenState extends State<ReadingTestScreen> {
                                       style: TextStyle(
                                         fontSize: screenWidth * 0.045,
                                         color:
-                                            _analysisResult!['basari'] ==
-                                                'Başarılı'
+                                        _analysisResult!['basari'] ==
+                                            'Başarılı'
                                             ? Colors.green
                                             : Colors.red,
                                       ),

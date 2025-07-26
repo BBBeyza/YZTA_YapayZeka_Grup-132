@@ -1,16 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-// Test Ekranı Importları
+import 'package:neurograph/widgets/bottom_navigation_bar.dart';
 import 'cognitive_test.dart'; // Bilişsel Test Ekranı
 import 'drawing_test_selection_screen.dart'; // Çizim Testleri Ekranı
-import 'audio_test_screen.dart'; // Audio Test Ekranı (Eğer düzeltildiyse ve kullanılacaksa)
+import 'audio_test_screen.dart'; // Audio Test Ekranı (Mevcut)
 import 'user_profile.dart'; // Profil Ekranı (Eğer bağlanacaksa)
-// import 'loginScreen.dart'; // Eğer buraya bir yönlendirme yapılacaksa
-// import 'onboarding_screen.dart'; // Eğer buraya bir yönlendirme yapılacaksa
 
+class GeminiChatScreen extends StatelessWidget {
+  const GeminiChatScreen({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Gemini Chat')),
+      body: const Center(child: Text('Gemini Chat Ekranı')),
+    );
+  }
+}
+
+class ReportsScreen extends StatelessWidget {
+  const ReportsScreen({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Raporlar')),
+      body: const Center(child: Text('Raporlar Ekranı')),
+    );
+  }
+}
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final int initialTabIndex;
+
+  const HomeScreen({super.key, this.initialTabIndex = 0});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -19,17 +40,17 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0; // BottomNavigationBar için seçili index
 
-  // bottom navigation bar'daki ikonlara tıklanınca açılacak sayfalar listesi
   static const List<Widget> _widgetOptions = <Widget>[
-    HomeContent(), // Anasayfa içeriği
-    Text('Gemini Chat Screen (Placeholder)'), // Gemini Chat ekranı
-    Text('Reports Screen (Placeholder)'), // Raporlar ekranı
-    UserProfileScreen(), // Profil ekranı
+    HomeContent(),
+    GeminiChatScreen(),
+    ReportsScreen(),
+    UserProfileScreen(),
   ];
 
   @override
   void initState() {
     super.initState();
+    _selectedIndex = widget.initialTabIndex;
     SystemChrome.setSystemUIOverlayStyle(
       SystemUiOverlayStyle.light.copyWith(
         statusBarColor: Colors.transparent,
@@ -43,7 +64,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFF4F7FA),
       body: _widgetOptions.elementAt(_selectedIndex), // Seçili indexe göre sayfayı göster
-      bottomNavigationBar: BottomNavigationBar(
+      bottomNavigationBar: AppBottomNavigationBar( // BURADA YENİ WİDGET'I KULLANIYORUZ
         currentIndex: _selectedIndex,
         onTap: (index) {
           setState(() {
@@ -52,25 +73,6 @@ class _HomeScreenState extends State<HomeScreen> {
         },
         selectedItemColor: const Color(0xFF1E3A8A),
         unselectedItemColor: Colors.grey,
-        type: BottomNavigationBarType.fixed,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
-            label: 'Anasayfa',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.chat_bubble_outline),
-            label: 'Gemini Chat',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.folder_open),
-            label: 'Raporlar',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline),
-            label: 'Profil',
-          ),
-        ],
       ),
     );
   }
@@ -81,7 +83,6 @@ class HomeContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final screenWidth = MediaQuery.of(context).size.width; // Artık doğrudan kullanılmıyor ama kalsın
     return SafeArea(
       child: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -168,9 +169,7 @@ class HomeContent extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8),
                   ),
                   const SizedBox(height: 8),
-                  const Text(
-                      'Bu hafta 2/3 testi tamamladın!'
-                  ),
+                  const Text('Bu hafta 2/3 testi tamamladın!'),
                 ],
               ),
             ),
@@ -194,7 +193,7 @@ class HomeContent extends StatelessWidget {
                   title: 'Bilişsel Test',
                   score: 'Son Skor: 85%',
                   description: 'Hafıza & dikkat becerilerini ölç',
-                  onTap: () { // BİLİŞSEL TESTİ BAĞLADIK
+                  onTap: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -209,7 +208,7 @@ class HomeContent extends StatelessWidget {
                   title: 'Çizim Testleri',
                   score: 'Son Skor: 92%',
                   description: 'Görsel-motor yeteneklerini test et',
-                  onTap: () { // ÇİZİM TESTİNİ BAĞLADIK
+                  onTap: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -225,25 +224,12 @@ class HomeContent extends StatelessWidget {
                   score: 'Son Skor: 78%',
                   description: 'Okuma akıcılığı ve anlama becerileri',
                   onTap: () {
-                    // AudioTestScreen'ınız hala hatalıysa, bu kısmı yorum satırı yapın
-                    // veya önceki gibi bir SnackBar gösterin.
-                    // Eğer düzelttiyseniz, aşağıdaki kodu kullanın:
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const ReadingTestScreen(), // AUDIO TESTİ BAĞLADIK
+                        builder: (context) => const ReadingTestScreen(),
                       ),
                     );
-                    // Geçici SnackBar, eğer AudioTestScreen'ı henüz düzeltmediyseniz
-                    // ScaffoldMessenger.of(context).showSnackBar(
-                    //   SnackBar(
-                    //     content: const Text(
-                    //       'Sesli Okuma Testi Yakında!',
-                    //     ),
-                    //     backgroundColor: Theme.of(context).colorScheme.primary,
-                    //     duration: const Duration(seconds: 2),
-                    //   ),
-                    // );
                   },
                 ),
                 _buildTestCard(
@@ -253,7 +239,6 @@ class HomeContent extends StatelessWidget {
                   score: 'Son Rapor: 20 Temmuz 2025',
                   description: 'Tüm test geçmişin burada',
                   onTap: () {
-                    // Şu an için sadece bir SnackBar gösteriyoruz, raporlar ekranı yoksa
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: const Text(
@@ -265,13 +250,6 @@ class HomeContent extends StatelessWidget {
                         duration: const Duration(seconds: 2),
                       ),
                     );
-                    // Eğer ReportsScreen adında bir ekranınız varsa, şöyle bağlayabilirsiniz:
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(
-                    //     builder: (context) => const ReportsScreen(),
-                    //   ),
-                    // );
                   },
                 ),
               ],
@@ -282,21 +260,17 @@ class HomeContent extends StatelessWidget {
     );
   }
 
-  // _buildTestCard metoduna onTap parametresi eklendi
   Widget _buildTestCard(BuildContext context,
       {required IconData icon,
         required String title,
         required String score,
         required String description,
-        required VoidCallback onTap // <-- BURASI EKLENDİ
-      }) {
-    // Kartın genişliği ekran genişliğinin yarısı - boşluklar olarak ayarlanmış
+        required VoidCallback onTap}) {
     final cardWidth = MediaQuery.of(context).size.width / 2 - 24;
-    // Sabit bir yükseklik belirledik. Bu değeri, tüm kart içeriğini rahatça sığdıracak şekilde ayarlamanız gerekebilir.
-    const double cardHeight = 180.0; // Deneyerek optimize edin (ör: 180, 200, 220)
+    const double cardHeight = 180.0;
 
-    return GestureDetector( // <-- Kartı tıklanabilir yapmak için GestureDetector eklendi
-      onTap: onTap, // <-- onTap callback'i kullanıldı
+    return GestureDetector(
+      onTap: onTap,
       child: Container(
         width: cardWidth,
         height: cardHeight,
