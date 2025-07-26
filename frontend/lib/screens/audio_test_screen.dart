@@ -1,11 +1,13 @@
+import 'dart:io';
 import 'dart:convert';
-import 'dart:typed_data';
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
+import 'package:record/record.dart';
 
 class ReadingTestScreen extends StatefulWidget {
   const ReadingTestScreen({super.key});
@@ -16,6 +18,7 @@ class ReadingTestScreen extends StatefulWidget {
 
 class _ReadingTestScreenState extends State<ReadingTestScreen> {
   final AudioPlayer _audioPlayer = AudioPlayer();
+  final AudioRecorder _audioRecorder = AudioRecorder();
   String? _recordedFilePath;
   Map<String, dynamic>? _analysisResult;
 
@@ -24,18 +27,17 @@ class _ReadingTestScreenState extends State<ReadingTestScreen> {
     {
       'title': 'Test 1: Kısa Metin Anlatımı',
       'text':
-      'Küçük bir sincap, ormanda bir fındık sakladı. Kış geldiğinde onu bulmayı umuyordu.',
+          'Küçük bir sincap, ormanda bir fındık sakladı. Kış geldiğinde onu bulmayı umuyordu.',
       'audioPrompt': 'assets/audios/squirrel_prompt.mp3',
     },
     {
       'title': 'Test 2: Detaylı Paragraf Okuma',
       'text':
-      'Güneşin ilk ışıkları, çiy damlalarıyla parlayan orman zeminine vurduğunda, kuşlar melodik şarkılarıyla günü karşıladı. Her yer yeni bir umutla doluydu.',
+          'Güneşin ilk ışıkları, çiy damlalarıyla parlayan orman zeminine vurduğunda, kuşlar melodik şarkılarıyla günü karşıladı. Her yer yeni bir umutla doluydu.',
       'audioPrompt': 'assets/audios/sunrise_prompt.mp3',
     },
   ];
 
-  bool _isReadingPhase = true;
   bool _isRecording = false;
   bool _isPlaybackPlaying = false;
 
@@ -51,116 +53,142 @@ class _ReadingTestScreenState extends State<ReadingTestScreen> {
   }
 
   Future<void> _checkPermissions() async {
-    final status = await Permission.microphone.request();
-    if (status != PermissionStatus.granted) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Mikrofon izni gerekli.')));
+    final micStatus = await Permission.microphone.request();
+    final storageStatus = await Permission.storage.request();
+
+    if (micStatus != PermissionStatus.granted ||
+        storageStatus != PermissionStatus.granted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Mikrofon ve depolama izinleri gerekli.')),
+      );
     }
   }
 
   Future<void> _startRecording() async {
-    setState(() {
-      _isRecording = true;
-      _isReadingPhase = false;
-    });
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Kayıt başladı, lütfen sesinizi kaydedin.')),
-    );
+    try {
+      if (await _audioRecorder.hasPermission()) {
+        final directory = await getTemporaryDirectory();
+        final filePath =
+            '${directory.path}/recording_${DateTime.now().millisecondsSinceEpoch}.m4a';
+
+        await _audioRecorder.start(
+          RecordConfig(
+            encoder: AudioEncoder.wav,
+            sampleRate: 16000,
+            numChannels: 1,
+            bitRate: 16000,
+          ),
+          path: filePath,
+        );
+
+        setState(() {
+          _isRecording = true;
+          _recordedFilePath = filePath;
+          _analysisResult = null;
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Kayıt başladı, lütfen konuşun...')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Kayıt başlatılamadı: $e')));
+    }
   }
 
   Future<void> _stopRecording() async {
-    if (_isRecording) {
-      setState(() {
-        _isRecording = false;
-      });
+    try {
+      final path = await _audioRecorder.stop();
 
-      await Future.delayed(const Duration(milliseconds: 500));
+      if (path != null && path.isNotEmpty) {
+        setState(() {
+          _isRecording = false;
+          _recordedFilePath = path;
+        });
 
-      final directory = await getTemporaryDirectory();
-      _recordedFilePath = '${directory.path}/recorded_audio.mp3';
-      if (_recordedFilePath != null) {
-        try {
-          final file = await http.MultipartFile.fromPath(
-            'audio',
-            _recordedFilePath!,
-            contentType: MediaType('audio', 'mp3'),
-          );
-          final request = http.MultipartRequest(
-            'POST',
-            Uri.parse('http://127.0.0.1:8000/record_and_analyze'),
-          );
-          request.files.add(file);
-          request.fields['reference_text'] =
+        await _analyzeRecording();
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Kayıt durdurulamadı: $e')));
+    }
+  }
+
+  Future<void> _analyzeRecording() async {
+    if (_recordedFilePath == null) return;
+
+    try {
+      final file = File(_recordedFilePath!);
+      print(
+        'Recording file size: ${file.lengthSync()} bytes',
+      ); // Dosya boyutunu kontrol et
+
+      final request = http.MultipartRequest(
+        'POST',
+        Uri.parse('http://10.0.2.2:8000/record_and_analyze'),
+      );
+
+      request.files.add(
+        await http.MultipartFile.fromPath(
+          'audio',
+          _recordedFilePath!,
+          contentType: MediaType('audio', 'm4a'),
+        ),
+      );
+
+      request.fields['reference_text'] =
           _readingTexts[_currentReadingIndex]['text']!;
 
-          final response = await request.send();
-          final responseData = await http.Response.fromStream(response);
+      print('Sending request to backend...');
+      final response = await request.send();
+      final responseData = await http.Response.fromStream(response);
 
-          if (response.statusCode == 200) {
-            final result = jsonDecode(responseData.body);
-            if (result.containsKey('error')) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Backend hatası: ${result['error']}')),
-              );
-            } else {
-              setState(() {
-                _analysisResult = result;
-              });
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    'Ses kaydedildi ve analiz edildi: ${result['basari']}',
-                  ),
-                ),
-              );
-            }
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(
-                  'Analiz hatası: HTTP ${response.statusCode} - ${responseData.body}',
-                ),
-              ),
-            );
-          }
-        } catch (e) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Backend bağlantısı başarısız: $e')),
-          );
-        }
-      } else {
+      print('Backend response: ${responseData.statusCode}');
+      print('Response body: ${responseData.body}'); // Ham yanıtı yazdır
+
+      if (response.statusCode == 200) {
+        final result = json.decode(responseData.body);
+        print('Parsed result: $result'); // Parse edilmiş sonucu yazdır
+
+        setState(() {
+          _analysisResult = result;
+        });
+
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Hata: Ses kaydı alınamadı')),
+          SnackBar(content: Text('Analiz tamamlandı: ${result['basari']}')),
         );
+      } else {
+        throw Exception('HTTP ${response.statusCode}: ${responseData.body}');
       }
+    } catch (e) {
+      print('Analysis error: $e'); // Hata detayını yazdır
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Analiz hatası: $e')));
     }
   }
 
   Future<void> _playRecordedAudio() async {
-    if (_recordedFilePath != null && !_isPlaybackPlaying) {
+    if (_recordedFilePath == null) return;
+
+    if (_isPlaybackPlaying) {
+      await _stopPlayback();
+    } else {
       await _audioPlayer.play(DeviceFileSource(_recordedFilePath!));
       setState(() {
         _isPlaybackPlaying = true;
       });
-      _audioPlayer.onPlayerComplete.listen((_) {
-        setState(() {
-          _isPlaybackPlaying = false;
-        });
-      });
-    } else if (!_isPlaybackPlaying) {
-      await _audioPlayer.play(
-        AssetSource(_readingTexts[_currentReadingIndex]['audioPrompt']!),
-      );
-      setState(() {
-        _isPlaybackPlaying = true;
-      });
-      _audioPlayer.onPlayerComplete.listen((_) {
-        setState(() {
-          _isPlaybackPlaying = false;
-        });
-      });
     }
+  }
+
+  Future<void> _stopPlayback() async {
+    await _audioPlayer.stop();
+    setState(() {
+      _isPlaybackPlaying = false;
+    });
   }
 
   void _nextTest() {
@@ -172,7 +200,7 @@ class _ReadingTestScreenState extends State<ReadingTestScreen> {
     setState(() {
       if (_currentReadingIndex < _readingTexts.length - 1) {
         _currentReadingIndex++;
-        _isReadingPhase = true;
+        _recordedFilePath = null;
         _analysisResult = null;
         _isRecording = false;
         _isPlaybackPlaying = false;
@@ -185,16 +213,10 @@ class _ReadingTestScreenState extends State<ReadingTestScreen> {
     });
   }
 
-  Future<void> _stopPlayback() async {
-    await _audioPlayer.stop();
-    setState(() {
-      _isPlaybackPlaying = false;
-    });
-  }
-
   @override
   void dispose() {
     _audioPlayer.dispose();
+    _audioRecorder.dispose();
     super.dispose();
   }
 
@@ -236,11 +258,11 @@ class _ReadingTestScreenState extends State<ReadingTestScreen> {
                             currentTest['text']!,
                             style: Theme.of(context).textTheme.bodyLarge
                                 ?.copyWith(
-                              fontSize: screenWidth * 0.05,
-                              color: _isRecording
-                                  ? Colors.blue
-                                  : Colors.black,
-                            ),
+                                  fontSize: screenWidth * 0.05,
+                                  color: _isRecording
+                                      ? Colors.blue
+                                      : Colors.black,
+                                ),
                             textAlign: TextAlign.justify,
                           ),
                         ),
@@ -328,9 +350,9 @@ class _ReadingTestScreenState extends State<ReadingTestScreen> {
                                         .textTheme
                                         .titleMedium
                                         ?.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: screenWidth * 0.045,
-                                    ),
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: screenWidth * 0.045,
+                                        ),
                                   ),
                                   if (_analysisResult != null) ...[
                                     SizedBox(height: screenHeight * 0.01),
@@ -346,8 +368,8 @@ class _ReadingTestScreenState extends State<ReadingTestScreen> {
                                       style: TextStyle(
                                         fontSize: screenWidth * 0.045,
                                         color:
-                                        _analysisResult!['basari'] ==
-                                            'Başarılı'
+                                            _analysisResult!['basari'] ==
+                                                'Başarılı'
                                             ? Colors.green
                                             : Colors.red,
                                       ),
