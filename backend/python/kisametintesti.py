@@ -8,7 +8,6 @@ from Levenshtein import distance as levenshtein_distance
 import tempfile
 import logging
 
-# Log ayarları
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -22,70 +21,88 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Whisper modelini yükle (CPU için FP32)
-model = whisper.load_model("small")  # small, base, medium seçeneklerinden birini kullanın
-logger.info("Whisper modeli yüklendi")
+model = whisper.load_model("small")
+logger.info("Whisper modeli yüklendi: small")
 
 def convert_audio(input_path: str) -> str:
-    """Ses dosyasını Whisper uyumlu formata dönüştür"""
+    """Ses dosyasını uygun formata dönüştür"""
     output_path = os.path.join(tempfile.gettempdir(), os.path.basename(input_path) + "_converted.wav")
     
     try:
-        subprocess.run([
+        logger.info(f"FFmpeg ile dönüşüm başlıyor: {input_path} -> {output_path}")
+        result = subprocess.run([
             "ffmpeg",
             "-y",
             "-i", input_path,
-            "-ac", "1",          # Mono kanal
-            "-ar", "16000",      # 16kHz örnekleme oranı
+            "-ac", "1",
+            "-ar", "16000",
             "-acodec", "pcm_s16le",
-            "-af", "highpass=f=300,lowpass=f=3000,loudnorm=I=-16:LRA=11:TP=-1.5",
+            "-af", "highpass=f=200,lowpass=f=3000,loudnorm=I=-16:LRA=11:TP=-1.5",
             output_path
         ], check=True, capture_output=True, timeout=30)
+        logger.info(f"FFmpeg dönüşüm tamamlandı: {output_path}, çıkış kodu: {result.returncode}")
         return output_path
-    except subprocess.TimeoutExpired:
-        logger.error("Ses dönüşümü zaman aşımına uğradı")
-        raise HTTPException(400, "Ses işleme zaman aşımı")
+    except subprocess.CalledProcessError as e:
+        logger.error(f"FFmpeg hata verdi: {e.stderr.decode()}")
+        raise HTTPException(400, f"Ses işleme hatası: {e.stderr.decode()}")
     except Exception as e:
         logger.error(f"Ses dönüşüm hatası: {str(e)}")
-        raise HTTPException(400, f"Ses dönüşüm hatası: {str(e)}")
+        raise HTTPException(400, f"Ses işleme hatası: {str(e)}")
 
 def transcribe_audio(audio_path: str) -> str:
-    """Whisper ile ses transkripsiyonu"""
+    """Kısa ses transkripsiyonu için optimize edilmiş fonksiyon"""
     try:
+        file_size = os.path.getsize(audio_path)
+        logger.info(f"Ses dosyası boyutu: {file_size} bytes")
+        if file_size < 512:  # 512 byte'dan küçükse (çok kısa)
+            raise ValueError("Ses dosyası çok küçük")
+            
+        logger.info("Transkripsiyon başlıyor...")
         result = model.transcribe(
             audio_path,
-            language="tr",       # Türkçe için özel dil belirtimi
-            fp16=False,          # CPU kullanıyorsanız
-            temperature=0.2,     # Daha tutarlı sonuçlar için
-            initial_prompt="Türkçe konuşma transkripsiyonu"  # Türkçe için ipucu
+            language="tr",
+            fp16=False,
+            temperature=0.0,
+            best_of=5,
+            beam_size=5,
+            word_timestamps=True,
+            initial_prompt="Bu bir Türkçe konuşmadır.",
+            suppress_tokens=[],
+            without_timestamps=True
         )
-        return result["text"].strip()
+        
+        text = result["text"].strip()
+        logger.info(f"İlk transkripsiyon sonucu: '{text}'")
+        
+        if not text:
+            logger.info("Fallback transkripsiyon deneniyor...")
+            result = model.transcribe(
+                audio_path,
+                language="tr",
+                fp16=False,
+                temperature=0.0,
+                best_of=5,
+                beam_size=5,
+                word_timestamps=True,
+                initial_prompt="Bu bir Türkçe konuşmadır.",
+                suppress_tokens=[],
+                without_timestamps=True
+            )
+            text = result["text"].strip()
+            logger.info(f"Fallback transkripsiyon sonucu: '{text}'")
+        
+        return text
+        
     except Exception as e:
         logger.error(f"Transkripsiyon hatası: {str(e)}")
-        raise HTTPException(500, f"Transkripsiyon hatası: {str(e)}")
+        raise HTTPException(500, f"Transkripsiyon başarısız: {str(e)}")
 
-def analyze_similarity(transcribed: str, reference: str) -> dict:
-    """Metin benzerliğini analiz et"""
-    ref = reference.strip()
-    trans = transcribed.strip()
-    
-    if not trans:
-        return {
-            "benzerlik_orani": 0.0,
-            "basari": "Başarısız",
-            "transcribed_text": "",
-            "reference_text": ref
-        }
-    
-    max_len = max(len(trans), len(ref))
-    similarity = 1 - (levenshtein_distance(trans, ref) / max_len) if max_len > 0 else 0
-    
-    return {
-        "benzerlik_orani": round(similarity * 100, 2),
-        "basari": "Başarılı" if similarity > 0.7 else "Başarısız",
-        "transcribed_text": trans,
-        "reference_text": ref
-    }
+def calculate_similarity(text1: str, text2: str) -> float:
+    """Metinler arasındaki benzerlik oranını hesapla"""
+    from difflib import SequenceMatcher
+    similarity = round(SequenceMatcher(None, text1.lower(), text2.lower()).ratio() * 100, 2)
+    logger.info(f"Benzerlik oranı: {similarity}% (transcribed: '{text1}', reference: '{text2}')")
+    return similarity
 
 @app.post("/record_and_analyze")
 async def analyze_audio(
@@ -93,49 +110,46 @@ async def analyze_audio(
     reference_text: str = Form(...)
 ):
     temp_files = []
-    
     try:
-        # 1. Geçici dosyaya kaydet
-        with tempfile.NamedTemporaryFile(suffix=".audio", delete=False) as tmp:
+        with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as tmp:
             content = await audio.read()
             tmp.write(content)
             original_path = tmp.name
             temp_files.append(original_path)
-            logger.info(f"Ses dosyası kaydedildi: {original_path} ({len(content)} bytes)")
+            logger.info(f"Orijinal dosya: {original_path} ({len(content)} bytes)")
         
-        # 2. Ses dönüşümü
         wav_path = convert_audio(original_path)
         temp_files.append(wav_path)
-        logger.info(f"Dönüştürülen ses dosyası: {wav_path}")
+        logger.info(f"Dönüştürülen dosya: {wav_path}")
         
-        # 3. Transkripsiyon
         transcribed_text = transcribe_audio(wav_path)
-        logger.info(f"Transkripsiyon sonucu: {transcribed_text}")
+        logger.info(f"Transkripsiyon: '{transcribed_text}'")
         
         if not transcribed_text:
-            raise HTTPException(400, "Ses transkripsiyonu boş sonuç verdi")
+            raise HTTPException(400, "Transkripsiyon boş sonuç verdi")
         
-        # 4. Analiz
-        result = analyze_similarity(transcribed_text, reference_text)
-        logger.info(f"Analiz sonucu: {result}")
+        similarity = calculate_similarity(transcribed_text, reference_text)
+        basari = "Başarılı" if similarity >= 80 else "Başarısız"
         
-        return result
-
+        return {
+            "benzerlik_orani": similarity,
+            "transcribed_text": transcribed_text,
+            "reference_text": reference_text,
+            "basari": basari
+        }
     except HTTPException as he:
         raise he
     except Exception as e:
-        logger.error(f"Beklenmeyen hata: {str(e)}", exc_info=True)
-        raise HTTPException(500, f"İşlem sırasında hata: {str(e)}")
-
+        logger.error(f"Hata: {str(e)}")
+        raise HTTPException(500, f"Sunucu hatası: {str(e)}")
     finally:
-        # Geçici dosyaları temizle
         for path in temp_files:
             try:
-                if path and os.path.exists(path):
+                if os.path.exists(path):
                     os.unlink(path)
                     logger.info(f"Geçici dosya silindi: {path}")
             except Exception as e:
-                logger.warning(f"Dosya silinemedi {path}: {str(e)}")
+                logger.error(f"Geçici dosya silme hatası: {str(e)}")
 
 if __name__ == "__main__":
     import uvicorn

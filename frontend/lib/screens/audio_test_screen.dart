@@ -21,6 +21,7 @@ class _ReadingTestScreenState extends State<ReadingTestScreen> {
   final AudioRecorder _audioRecorder = AudioRecorder();
   String? _recordedFilePath;
   Map<String, dynamic>? _analysisResult;
+  DateTime? _recordingStartTime;
 
   int _currentReadingIndex = 0;
   final List<Map<String, String>> _readingTexts = [
@@ -69,14 +70,14 @@ class _ReadingTestScreenState extends State<ReadingTestScreen> {
       if (await _audioRecorder.hasPermission()) {
         final directory = await getTemporaryDirectory();
         final filePath =
-            '${directory.path}/recording_${DateTime.now().millisecondsSinceEpoch}.m4a';
+            '${directory.path}/recording_${DateTime.now().millisecondsSinceEpoch}.wav';
 
         await _audioRecorder.start(
           RecordConfig(
             encoder: AudioEncoder.wav,
             sampleRate: 16000,
             numChannels: 1,
-            bitRate: 16000,
+            bitRate: 64000,
           ),
           path: filePath,
         );
@@ -85,6 +86,7 @@ class _ReadingTestScreenState extends State<ReadingTestScreen> {
           _isRecording = true;
           _recordedFilePath = filePath;
           _analysisResult = null;
+          _recordingStartTime = DateTime.now();
         });
 
         ScaffoldMessenger.of(context).showSnackBar(
@@ -92,6 +94,7 @@ class _ReadingTestScreenState extends State<ReadingTestScreen> {
         );
       }
     } catch (e) {
+      print('Kayıt başlatma hatası: $e');
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text('Kayıt başlatılamadı: $e')));
@@ -100,33 +103,58 @@ class _ReadingTestScreenState extends State<ReadingTestScreen> {
 
   Future<void> _stopRecording() async {
     try {
-      final path = await _audioRecorder.stop();
+      if (_isRecording) {
+        final path = await _audioRecorder.stop();
+        final recordingDuration = _recordingStartTime != null
+            ? DateTime.now().difference(_recordingStartTime!).inSeconds
+            : 0;
 
-      if (path != null && path.isNotEmpty) {
+        if (recordingDuration < 3) {
+          print('Kayıt çok kısa: $recordingDuration saniye');
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Kayıt en az 3 saniye olmalı!')),
+          );
+          setState(() {
+            _isRecording = false;
+            _recordedFilePath = null;
+          });
+          return;
+        }
+
         setState(() {
           _isRecording = false;
           _recordedFilePath = path;
         });
 
-        await _analyzeRecording();
+        if (_recordedFilePath != null && _recordedFilePath!.isNotEmpty) {
+          final file = File(_recordedFilePath!);
+          final fileSize = await file.length();
+          print('Kaydedilen dosya: $_recordedFilePath, Boyut: $fileSize bytes');
+          await _sendAudioToBackend();
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Ses kaydı analiz için gönderildi')),
+          );
+        } else {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(const SnackBar(content: Text('Ses kaydı alınamadı')));
+        }
       }
     } catch (e) {
+      print('Kayıt durdurma hatası: $e');
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text('Kayıt durdurulamadı: $e')));
     }
   }
 
-  Future<void> _analyzeRecording() async {
-    if (_recordedFilePath == null) return;
-
+  Future<void> _sendAudioToBackend() async {
     try {
       final file = File(_recordedFilePath!);
-      print(
-        'Recording file size: ${file.lengthSync()} bytes',
-      ); // Dosya boyutunu kontrol et
+      final fileSize = await file.length();
+      print('Dosya yolu: $_recordedFilePath, Boyut: $fileSize bytes');
 
-      final request = http.MultipartRequest(
+      var request = http.MultipartRequest(
         'POST',
         Uri.parse('http://10.0.2.2:8000/record_and_analyze'),
       );
@@ -135,60 +163,74 @@ class _ReadingTestScreenState extends State<ReadingTestScreen> {
         await http.MultipartFile.fromPath(
           'audio',
           _recordedFilePath!,
-          contentType: MediaType('audio', 'm4a'),
+          contentType: MediaType('audio', 'wav'),
+          filename: 'recording.wav',
         ),
       );
 
       request.fields['reference_text'] =
           _readingTexts[_currentReadingIndex]['text']!;
+      print('İstek gönderiliyor: ${request.fields}');
 
-      print('Sending request to backend...');
-      final response = await request.send();
-      final responseData = await http.Response.fromStream(response);
-
-      print('Backend response: ${responseData.statusCode}');
-      print('Response body: ${responseData.body}'); // Ham yanıtı yazdır
+      final response = await request.send().timeout(
+        const Duration(seconds: 30),
+      );
+      print('Yanıt kodu: ${response.statusCode}');
+      final responseData = await response.stream.bytesToString();
+      print('Yanıt içeriği: $responseData');
 
       if (response.statusCode == 200) {
-        final result = json.decode(responseData.body);
-        print('Parsed result: $result'); // Parse edilmiş sonucu yazdır
-
+        final result = jsonDecode(responseData);
+        print('Analiz sonucu: $result');
         setState(() {
           _analysisResult = result;
         });
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Analiz tamamlandı: ${result['basari']}')),
-        );
       } else {
-        throw Exception('HTTP ${response.statusCode}: ${responseData.body}');
+        throw Exception(
+          'Sunucu hatası: ${response.statusCode} - $responseData',
+        );
       }
     } catch (e) {
-      print('Analysis error: $e'); // Hata detayını yazdır
+      print('Hata: $e');
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text('Analiz hatası: $e')));
+      ).showSnackBar(SnackBar(content: Text('Hata: $e')));
     }
   }
 
   Future<void> _playRecordedAudio() async {
     if (_recordedFilePath == null) return;
 
-    if (_isPlaybackPlaying) {
-      await _stopPlayback();
-    } else {
-      await _audioPlayer.play(DeviceFileSource(_recordedFilePath!));
-      setState(() {
-        _isPlaybackPlaying = true;
-      });
+    try {
+      if (_isPlaybackPlaying) {
+        await _stopPlayback();
+      } else {
+        print('Oynatılıyor: $_recordedFilePath');
+        await _audioPlayer.play(DeviceFileSource(_recordedFilePath!));
+        setState(() {
+          _isPlaybackPlaying = true;
+        });
+      }
+    } catch (e) {
+      print('Oynatma hatası: $e');
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Oynatma hatası: $e')));
     }
   }
 
   Future<void> _stopPlayback() async {
-    await _audioPlayer.stop();
-    setState(() {
-      _isPlaybackPlaying = false;
-    });
+    try {
+      await _audioPlayer.stop();
+      setState(() {
+        _isPlaybackPlaying = false;
+      });
+    } catch (e) {
+      print('Oynatma durdurma hatası: $e');
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Oynatma durdurulamadı: $e')));
+    }
   }
 
   void _nextTest() {
