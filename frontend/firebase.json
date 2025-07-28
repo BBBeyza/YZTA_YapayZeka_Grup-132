@@ -1,5 +1,1 @@
-<<<<<<< HEAD
 {"flutter":{"platforms":{"android":{"default":{"projectId":"neurograph-720d2","appId":"1:1091423531487:android:fbc4f581024324182ed46a","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"neurograph-720d2","configurations":{"android":"1:1091423531487:android:fbc4f581024324182ed46a","web":"1:1091423531487:web:69103b714b79d2742ed46a","windows":"1:1091423531487:web:bab1447a44b9704e2ed46a"}}}}}}
-=======
-{"flutter":{"platforms":{"android":{"default":{"projectId":"neurograph-6c156","appId":"1:612591553796:android:4aa8983d1edf9ba7781451","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"neurograph-6c156","configurations":{"android":"1:612591553796:android:4aa8983d1edf9ba7781451","ios":"1:612591553796:ios:6fd2c2b8981c3776781451","macos":"1:612591553796:ios:6fd2c2b8981c3776781451","web":"1:612591553796:web:3e53d239e6b6a63b781451","windows":"1:612591553796:web:01feb0ec7aaec7b7781451"}}}}}}
->>>>>>> 51be78c5e5bb5556b916e262582c846bfdb7edd3

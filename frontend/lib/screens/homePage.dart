@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:neurograph/widgets/bottom_navigation_bar.dart';
-import 'cognitive_test.dart';
-import 'drawing_test_selection_screen.dart';
-import 'audio_test_screen.dart';
-import 'user_profile.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'cognitive_test.dart'; // Bilişsel Test Ekranı
+import 'drawing_test_selection_screen.dart'; // Çizim Testleri Ekranı
+import 'audio_test_screen.dart'; // Audio Test Ekranı (Mevcut)
+import 'user_profile.dart'; // Profil Ekranı (Eğer bağlanacaksa)
 
 class GeminiChatScreen extends StatelessWidget {
   const GeminiChatScreen({super.key});
@@ -39,7 +38,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int _selectedIndex = 0;
+  int _selectedIndex = 0; // BottomNavigationBar için seçili index
 
   static const List<Widget> _widgetOptions = <Widget>[
     HomeContent(),
@@ -64,8 +63,8 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF4F7FA),
-      body: _widgetOptions.elementAt(_selectedIndex),
-      bottomNavigationBar: AppBottomNavigationBar(
+      body: _widgetOptions.elementAt(_selectedIndex), // Seçili indexe göre sayfayı göster
+      bottomNavigationBar: AppBottomNavigationBar( // BURADA YENİ WİDGET'I KULLANIYORUZ
         currentIndex: _selectedIndex,
         onTap: (index) {
           setState(() {
@@ -79,41 +78,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-class HomeContent extends StatefulWidget {
+class HomeContent extends StatelessWidget {
   const HomeContent({super.key});
-
-  @override
-  State<HomeContent> createState() => _HomeContentState();
-}
-
-class _HomeContentState extends State<HomeContent> {
-  String userName = "Kullanıcı";
-  double progressValue = 0.0;
-  String progressText = '0/0 test tamamlandı';
-
-  @override
-  void initState() {
-    super.initState();
-    _loadUserData();
-    _calculateProgress();
-  }
-
-  Future<void> _loadUserData() async {
-    final user = FirebaseAuth.instance.currentUser;
-    if (user != null && mounted) {
-      setState(() {
-        userName =
-            user.displayName ?? user.email?.split('@').first ?? "Kullanıcı";
-      });
-    }
-  }
-
-  void _calculateProgress() {
-    setState(() {
-      progressValue = 0.66;
-      progressText = 'Bu hafta 2/3 testi tamamladın!';
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -128,22 +94,27 @@ class _HomeContentState extends State<HomeContent> {
               children: [
                 Row(
                   children: [
-                    Image.asset('assets/images/logo.png', height: 40),
+                    Image.asset(
+                      'assets/images/logo.png',
+                      height: 40,
+                    ),
                     const SizedBox(width: 12),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           'NeuroGraph',
-                          style: Theme.of(context).textTheme.titleLarge
-                              ?.copyWith(
-                                color: const Color(0xFF1E3A8A),
-                                fontWeight: FontWeight.bold,
-                              ),
+                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                            color: const Color(0xFF1E3A8A),
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                         const Text(
                           'Beyin sağlığınızı keşfedin',
-                          style: TextStyle(fontSize: 12, color: Colors.grey),
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey,
+                          ),
                         ),
                       ],
                     ),
@@ -151,6 +122,7 @@ class _HomeContentState extends State<HomeContent> {
                 ),
                 const CircleAvatar(
                   radius: 20,
+                  // profile.png asset'ini projenize eklediğinizden emin olun
                   backgroundImage: AssetImage('assets/images/profile.png'),
                 ),
               ],
@@ -166,15 +138,15 @@ class _HomeContentState extends State<HomeContent> {
                     color: Colors.grey.withOpacity(0.2),
                     blurRadius: 8,
                     offset: const Offset(0, 4),
-                  ),
+                  )
                 ],
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Hoşgeldin, $userName',
-                    style: const TextStyle(
+                  const Text(
+                    'Hoşgeldin, Emin',
+                    style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
                       color: Color(0xFF1E3A8A),
@@ -183,18 +155,21 @@ class _HomeContentState extends State<HomeContent> {
                   const SizedBox(height: 12),
                   const Text(
                     'Test İlerlemen',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                   const SizedBox(height: 8),
                   LinearProgressIndicator(
-                    value: progressValue,
+                    value: 0.66,
                     backgroundColor: Colors.grey[200],
                     color: const Color(0xFF72B0D3),
                     minHeight: 8,
                     borderRadius: BorderRadius.circular(8),
                   ),
                   const SizedBox(height: 8),
-                  Text(progressText),
+                  const Text('Bu hafta 2/3 testi tamamladın!'),
                 ],
               ),
             ),
@@ -237,8 +212,7 @@ class _HomeContentState extends State<HomeContent> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) =>
-                            const DrawingTestSelectionScreen(),
+                        builder: (context) => const DrawingTestSelectionScreen(),
                       ),
                     );
                   },
@@ -267,10 +241,13 @@ class _HomeContentState extends State<HomeContent> {
                   onTap: () {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: const Text('Geçmiş Raporlar Görüntülenecek'),
+                        content: const Text(
+                          'Geçmiş Raporlar Görüntülenecek (Yakında!)',
+                        ),
                         backgroundColor: Theme.of(
                           context,
                         ).colorScheme.secondary,
+                        duration: const Duration(seconds: 2),
                       ),
                     );
                   },
@@ -283,14 +260,12 @@ class _HomeContentState extends State<HomeContent> {
     );
   }
 
-  Widget _buildTestCard(
-    BuildContext context, {
-    required IconData icon,
-    required String title,
-    required String score,
-    required String description,
-    required VoidCallback onTap,
-  }) {
+  Widget _buildTestCard(BuildContext context,
+      {required IconData icon,
+        required String title,
+        required String score,
+        required String description,
+        required VoidCallback onTap}) {
     final cardWidth = MediaQuery.of(context).size.width / 2 - 24;
     const double cardHeight = 180.0;
 
@@ -308,7 +283,7 @@ class _HomeContentState extends State<HomeContent> {
               color: Colors.grey.withOpacity(0.1),
               blurRadius: 6,
               offset: const Offset(0, 4),
-            ),
+            )
           ],
         ),
         child: Column(
