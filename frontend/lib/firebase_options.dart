@@ -23,6 +23,7 @@ class DefaultFirebaseOptions {
       case TargetPlatform.android:
         return android;
       case TargetPlatform.iOS:
+<<<<<<< HEAD
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for ios - '
           'you can reconfigure this by running the FlutterFire CLI again.',
@@ -32,6 +33,11 @@ class DefaultFirebaseOptions {
           'DefaultFirebaseOptions have not been configured for macos - '
           'you can reconfigure this by running the FlutterFire CLI again.',
         );
+=======
+        return ios;
+      case TargetPlatform.macOS:
+        return macos;
+>>>>>>> 51be78c5e5bb5556b916e262582c846bfdb7edd3
       case TargetPlatform.windows:
         return windows;
       case TargetPlatform.linux:
@@ -47,6 +53,7 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
+<<<<<<< HEAD
     apiKey: 'AIzaSyAgiUiSB8ugew6Q4DCLyUgZAWsnT1fPsiw',
     appId: '1:1091423531487:web:69103b714b79d2742ed46a',
     messagingSenderId: '1091423531487',
@@ -72,5 +79,52 @@ class DefaultFirebaseOptions {
     authDomain: 'neurograph-720d2.firebaseapp.com',
     storageBucket: 'neurograph-720d2.firebasestorage.app',
     measurementId: 'G-D4EW8NC4V2',
+=======
+    apiKey: 'AIzaSyBMeeueW8eUCWC3SRH0gyK40CMw27npbjg',
+    appId: '1:612591553796:web:3e53d239e6b6a63b781451',
+    messagingSenderId: '612591553796',
+    projectId: 'neurograph-6c156',
+    authDomain: 'neurograph-6c156.firebaseapp.com',
+    storageBucket: 'neurograph-6c156.firebasestorage.app',
+    measurementId: 'G-0TCZBWGFTY',
+  );
+
+  static const FirebaseOptions android = FirebaseOptions(
+    apiKey: 'AIzaSyDacVQi97nB-74TiFIa0psZldIp423awx0',
+    appId: '1:612591553796:android:4aa8983d1edf9ba7781451',
+    messagingSenderId: '612591553796',
+    projectId: 'neurograph-6c156',
+    storageBucket: 'neurograph-6c156.firebasestorage.app',
+  );
+
+  static const FirebaseOptions ios = FirebaseOptions(
+    apiKey: 'AIzaSyAWqsFji07GM2HPuqZcgFRV2GmMDSoaBEo',
+    appId: '1:612591553796:ios:6fd2c2b8981c3776781451',
+    messagingSenderId: '612591553796',
+    projectId: 'neurograph-6c156',
+    storageBucket: 'neurograph-6c156.firebasestorage.app',
+    iosClientId: '612591553796-8hlm4o5rlmrei8sqgv45hg2h0snc67il.apps.googleusercontent.com',
+    iosBundleId: 'com.example.neurograph',
+  );
+
+  static const FirebaseOptions macos = FirebaseOptions(
+    apiKey: 'AIzaSyAWqsFji07GM2HPuqZcgFRV2GmMDSoaBEo',
+    appId: '1:612591553796:ios:6fd2c2b8981c3776781451',
+    messagingSenderId: '612591553796',
+    projectId: 'neurograph-6c156',
+    storageBucket: 'neurograph-6c156.firebasestorage.app',
+    iosClientId: '612591553796-8hlm4o5rlmrei8sqgv45hg2h0snc67il.apps.googleusercontent.com',
+    iosBundleId: 'com.example.neurograph',
+  );
+
+  static const FirebaseOptions windows = FirebaseOptions(
+    apiKey: 'AIzaSyBMeeueW8eUCWC3SRH0gyK40CMw27npbjg',
+    appId: '1:612591553796:web:01feb0ec7aaec7b7781451',
+    messagingSenderId: '612591553796',
+    projectId: 'neurograph-6c156',
+    authDomain: 'neurograph-6c156.firebaseapp.com',
+    storageBucket: 'neurograph-6c156.firebasestorage.app',
+    measurementId: 'G-YE896DCFW5',
+>>>>>>> 51be78c5e5bb5556b916e262582c846bfdb7edd3
   );
 }

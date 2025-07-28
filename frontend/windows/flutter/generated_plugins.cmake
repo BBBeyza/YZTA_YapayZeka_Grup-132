@@ -4,6 +4,11 @@
 
 list(APPEND FLUTTER_PLUGIN_LIST
   audioplayers_windows
+<<<<<<< HEAD
+=======
+  file_selector_windows
+  firebase_auth
+>>>>>>> 51be78c5e5bb5556b916e262582c846bfdb7edd3
   firebase_core
   permission_handler_windows
   record_windows
