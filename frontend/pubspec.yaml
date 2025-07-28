@@ -24,6 +24,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  firebase_core: ^2.20.1
+  firebase_ml_model_downloader: ^0.2.0+20
   flutter_dotenv: ^5.1.0
   http: ^1.4.0
   uuid: ^4.4.0
@@ -37,6 +39,8 @@ dependencies:
   flutter_svg: ^2.0.10
   record: ^6.0.0
   http_parser: ^4.0.2
+  tflite_flutter: ^0.11.0
+  image: ^3.2.2
 
 dev_dependencies:
   flutter_test:
@@ -59,4 +63,5 @@ flutter:
     - assets/images/profile.png
     - assets/images/spiralCircle.svg
     - assets/images/spiralSquare.svg
+    - assets/modelsML/denseNet121.tflite
     - .env

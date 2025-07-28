@@ -308,7 +308,7 @@ class _CognitiveTestScreenState extends State<CognitiveTestScreen> {
       backgroundColor: const Color(0xFFF4F7FA), // Ana sayfa arka plan rengi
       appBar: AppBar(
         title: const Text('Bilişsel Test',
-            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600)),
         backgroundColor: const Color(0xFF72B0D3), // Çizim testlerindeki açık mavi
         centerTitle: true,
         elevation: 0, // Gölge yok

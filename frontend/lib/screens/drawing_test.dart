@@ -1,14 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:neurograph/widgets/drawing_canvas.dart';
-import 'package:neurograph/models/stroke.dart'; // DrawingPoint yerine Stroke'tan alıyoruz
+import 'package:neurograph/models/stroke.dart';
 import 'package:neurograph/services/gemini_service.dart';
+import 'dart:typed_data';
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:http_parser/http_parser.dart'; // MediaType için
 
-// Talimat bölümü için ayrı bir widget
+// --- InstructionSection Widget ---
 class InstructionSection extends StatelessWidget {
   final String title;
   final String instruction;
-  const InstructionSection({ // super.key burada kullanılıyor
-    super.key, // 'Key? key' yerine super.key
+  const InstructionSection({
+    super.key,
     required this.title,
     required this.instruction,
   });
@@ -18,17 +24,15 @@ class InstructionSection extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start, // Sola daya
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Başlık kaldırıldı, SizedBox da kaldırılabilir
-          // const SizedBox(height: 10),
           Text(
             instruction,
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
               color: Theme.of(context).colorScheme.onSurfaceVariant,
-              fontSize: 16, // Font boyutu ayarlandı
+              fontSize: 16,
             ),
-            textAlign: TextAlign.start, // Sola hizala
+            textAlign: TextAlign.start,
           ),
         ],
       ),
@@ -36,12 +40,12 @@ class InstructionSection extends StatelessWidget {
   }
 }
 
-// Buton satırı için ayrı bir widget
+// --- DrawingTestButtons Widget ---
 class DrawingTestButtons extends StatelessWidget {
   final VoidCallback onSave;
   final VoidCallback onFinish;
-  const DrawingTestButtons({ // super.key burada kullanılıyor
-    super.key, // 'Key? key' yerine super.key
+  const DrawingTestButtons({
+    super.key,
     required this.onSave,
     required this.onFinish,
   });
@@ -96,13 +100,14 @@ class DrawingTestButtons extends StatelessWidget {
   }
 }
 
+// --- DrawingTestScreen Class ---
 class DrawingTestScreen extends StatefulWidget {
   final String testKey;
   final String testTitle;
   final String testInstruction;
 
-  const DrawingTestScreen({ // super.key burada kullanılıyor
-    super.key, // 'Key? key' yerine super.key
+  const DrawingTestScreen({
+    super.key,
     required this.testKey,
     required this.testTitle,
     required this.testInstruction,
@@ -116,57 +121,120 @@ class _DrawingTestScreenState extends State<DrawingTestScreen> {
   final GlobalKey<DrawingCanvasState> _canvasKey = GlobalKey();
   final GeminiService _geminiService = GeminiService();
 
-  List<DrawingPoint>? _currentDrawingPoints;
-
   bool _isLoading = false;
+
+  final String _backendUrl = 'http://192.168.1.5:8000/predict_tremor';
 
   @override
   void initState() {
     super.initState();
   }
 
-  void _saveCurrentDrawing() {
-    final List<DrawingPoint>? points = _canvasKey.currentState?.getAllDrawingPoints();
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
-    if (points != null && points.isNotEmpty) {
-      _currentDrawingPoints = points;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('${widget.testTitle} verileri kaydedildi.')),
-      );
-    } else {
-      _currentDrawingPoints = null;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Hiç çizim verisi bulunamadı!')),
-      );
-    }
+  void _saveCurrentDrawing() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('${widget.testTitle} çizimi kaydedildi.')),
+    );
   }
 
   Future<void> _finishTest() async {
-    _saveCurrentDrawing();
-
     setState(() {
       _isLoading = true;
     });
 
-    String drawingSummary = '';
-    if (_currentDrawingPoints != null && _currentDrawingPoints!.isNotEmpty) {
-      drawingSummary = '${widget.testTitle} için ${_currentDrawingPoints!.length} nokta kaydedildi.';
-    } else {
-      drawingSummary = '${widget.testTitle} için hiç çizim verisi kaydedilmedi.';
+    Uint8List? drawingImageBytes;
+    try {
+      drawingImageBytes = await _canvasKey.currentState?.exportDrawingAsPngBytes();
+      if (drawingImageBytes == null || drawingImageBytes.isEmpty) {
+        setState(() {
+          _isLoading = false;
+        });
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Hiç çizim verisi bulunamadı veya resim oluşturulamadı!')),
+        );
+        return;
+      }
+
+      // Hata Ayıklama: Orijinal çizim baytlarını dosyaya kaydet (isteğe bağlı)
+      final directory = await getApplicationDocumentsDirectory();
+      final originalFilePath = '${directory.path}/original_drawing_${DateTime.now().millisecondsSinceEpoch}.png';
+      final originalFile = File(originalFilePath);
+      await originalFile.writeAsBytes(drawingImageBytes);
+      print('Orijinal çizim kaydedildi: $originalFilePath');
+
+    } catch (e) {
+      print('Çizim resmi dışa aktarılırken hata: $e');
+      drawingImageBytes = null;
+      setState(() {
+        _isLoading = false;
+      });
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Çizim resmi dışa aktarılırken hata oluştu: $e')),
+      );
+      return;
     }
 
+    String tremorClassificationResult = "Tremor analizi yapılamadı.";
+    try {
+      // Çizim PNG baytlarını backend sunucusuna gönder
+      var request = http.MultipartRequest('POST', Uri.parse(_backendUrl));
+      request.files.add(http.MultipartFile.fromBytes(
+        'image', // Backend'de beklenen alan adı (FastAPI'de File(...) veya Form(...))
+        drawingImageBytes,
+        filename: 'drawing.png',
+        contentType: MediaType('image', 'png'), // http_parser'dan MediaType
+      ));
+
+      var response = await request.send();
+
+      if (response.statusCode == 200) {
+        String responseBody = await response.stream.bytesToString();
+        print('Backend yanıtı: $responseBody');
+
+        try {
+          final Map<String, dynamic> jsonResponse = json.decode(responseBody);
+          // Backend'den gelen tahminin JSON formatına göre key isimlerini ayarlayın
+          final double controlProbability = jsonResponse['control_probability'];
+          final double patientsProbability = jsonResponse['patients_probability'];
+
+          if (patientsProbability > controlProbability) {
+            tremorClassificationResult = "🟡 Titreme Algılandı — Güven: ${patientsProbability.toStringAsFixed(2)}";
+          } else {
+            tremorClassificationResult = "✅ Temiz Yazım — Güven: ${controlProbability.toStringAsFixed(2)}";
+          }
+        } catch (e) {
+          tremorClassificationResult = "Backend yanıtı işlenirken hata: $e. Yanıt: $responseBody";
+        }
+
+      } else {
+        tremorClassificationResult = "Backend hatası: ${response.statusCode} - ${await response.stream.bytesToString()}";
+      }
+
+    } catch (e) {
+      print('Backend ile iletişim hatası: $e');
+      tremorClassificationResult = "Backend ile iletişim hatası: $e";
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+
+    // Gemini'ye nihai raporlama prompt'unu gönder (ML sonucuyla birlikte)
     final prompt =
     '''
-Kullanıcının yaptığı "${widget.testTitle}" adlı çizim testinin sonuçlarını değerlendirir misin?
+Kullanıcının yaptığı "${widget.testTitle}" adlı spiral çizim testinin sonuçlarını değerlendirir misin?
 Test Talimatı: "${widget.testInstruction}"
-Kaydedilen çizim verisi özeti: $drawingSummary
-(Not: Bu ham veri, ML modeline gönderildiğinde daha detaylı analiz edilebilir. Şimdilik sadece bu özete dayanarak genel bir değerlendirme yap.)
+Cihaz üzerindeki ML modelinden gelen tremor sınıflandırma sonucu (backend'den): "$tremorClassificationResult"
+
+Bu bilgilere dayanarak, çizimin genel tremor durumunu ve varsa potansiyel anomalileri kullanıcıya anlaşılır bir dille raporla. Bilimsel terimlerden kaçın, nazik ve destekleyici ol. Sadece verilen bilgilere odaklan, çizim hakkında doğrudan görsel yorum yapma.
 ''';
     final evaluation = await _geminiService.askGemini(prompt);
-
-    setState(() {
-      _isLoading = false;
-    });
 
     if (!mounted) return;
     Navigator.pop(context);
@@ -174,8 +242,19 @@ Kaydedilen çizim verisi özeti: $drawingSummary
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('${widget.testTitle} Değerlendirmesi'),
-        content: SingleChildScrollView(child: Text(evaluation)),
+        title: Text('${widget.testTitle} Değerlendirme Raporu'),
+        content: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text('ML Model Analizi: $tremorClassificationResult', style: const TextStyle(fontWeight: FontWeight.bold)),
+              const SizedBox(height: 20),
+              const Text('Genel Değerlendirme (Gemini):', style: TextStyle(fontWeight: FontWeight.bold)),
+              Text(evaluation),
+            ],
+          ),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),

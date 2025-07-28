@@ -69,19 +69,19 @@ class _DrawingTestSelectionScreenState extends State<DrawingTestSelectionScreen>
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight + 1.0),
         child: AppBar(
-          backgroundColor: Colors.white,
+          backgroundColor: Color.fromARGB(255, 114, 176, 211),
           foregroundColor: Theme.of(context).colorScheme.primary,
           elevation: 0,
           title: Text(
             // Title can change based on the internal tab selected
             _getAppBarTitle(_internalSelectedIndex),
-            style: const TextStyle(color: Color.fromARGB(255, 125, 141, 213)),
+            style: const TextStyle(color: Color.fromARGB(255, 255, 255, 255), fontWeight: FontWeight.w600),
           ),
           centerTitle: true,
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(1.0),
             child: Container(
-              color: Theme.of(context).colorScheme.primary,
+              color: Color.fromARGB(255, 255, 255, 255),
               height: 1.0,
             ),
           ),
@@ -176,7 +176,7 @@ class _DrawingTestSelectionScreenContent extends StatelessWidget {
             Text(
               'Lütfen yapmak istediğiniz çizim testini seçin:',
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.w600,
                 color: Theme.of(context).colorScheme.onSurface,
               ),
             ),

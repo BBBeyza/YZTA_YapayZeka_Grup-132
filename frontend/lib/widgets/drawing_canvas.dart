@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:neurograph/models/stroke.dart'; // Stroke sınıfını import ediyoruz
+import 'package:flutter/rendering.dart';
+import 'package:neurograph/models/stroke.dart';
+import 'dart:ui' as ui; // UI görüntü işlemleri için
+import 'dart:typed_data'; // Uint8List için
 
-/// Uygulamada çizim yapılmasına olanak tanıyan StatefulWidget.
 class DrawingCanvas extends StatefulWidget {
   final Color backgroundColor;
 
-  const DrawingCanvas({ // super.key burada kullanılıyor
+  const DrawingCanvas({
     super.key,
     this.backgroundColor = Colors.white,
   });
@@ -23,6 +25,9 @@ class DrawingCanvasState extends State<DrawingCanvas> {
 
   Color _strokeColor = Colors.black;
   double _strokeWidth = 3.0;
+
+  // Çizim alanını resme dönüştürmek için kullanılacak GlobalKey
+  final GlobalKey _repaintBoundaryKey = GlobalKey();
 
   final List<Color> _colorOptions = const [
     Colors.black,
@@ -112,6 +117,27 @@ class DrawingCanvasState extends State<DrawingCanvas> {
     return allPoints;
   }
 
+  /// Çizimi PNG formatında Uint8List olarak dışa aktarır.
+  Future<Uint8List?> exportDrawingAsPngBytes() async {
+    try {
+      // RepaintBoundary'nin RenderObject'ini al
+      final RenderRepaintBoundary boundary =
+      _repaintBoundaryKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
+
+      // Çizimi yüksek kaliteli bir ui.Image nesnesine dönüştür
+      final ui.Image image = await boundary.toImage(pixelRatio: 3.0); // Preprocessing backend'de yapılacak
+
+      // ui.Image'ı PNG ByteData'ya dönüştür
+      final ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+
+      return byteData?.buffer.asUint8List();
+    } catch (e) {
+      print('Çizimi resme dönüştürme hatası: $e');
+      return null;
+    }
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -130,19 +156,23 @@ class DrawingCanvasState extends State<DrawingCanvas> {
             ),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(10),
-              child: GestureDetector(
-                onPanStart: _onPanStart,
-                onPanUpdate: _onPanUpdate,
-                onPanEnd: _onPanEnd,
-                child: CustomPaint(
-                  painter: _DrawingPainter(
-                    allStrokes: _allStrokes,
-                    currentDrawingPoints: _currentDrawingPoints,
-                    currentStrokeColor: _strokeColor,
-                    currentStrokeWidth: _strokeWidth,
-                  ),
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints.expand(),
+              // Burayı RepaintBoundary ile sarıyoruz
+              child: RepaintBoundary(
+                key: _repaintBoundaryKey,
+                child: GestureDetector(
+                  onPanStart: _onPanStart,
+                  onPanUpdate: _onPanUpdate,
+                  onPanEnd: _onPanEnd,
+                  child: CustomPaint(
+                    painter: _DrawingPainter(
+                      allStrokes: _allStrokes,
+                      currentDrawingPoints: _currentDrawingPoints,
+                      currentStrokeColor: _strokeColor,
+                      currentStrokeWidth: _strokeWidth,
+                    ),
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints.expand(),
+                    ),
                   ),
                 ),
               ),
@@ -299,8 +329,6 @@ class _DrawingPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant _DrawingPainter oldDelegate) {
-    // Listelerin referans eşitliğini kontrol etmek yeterlidir, çünkü
-    // listelerimizin içeriği değiştiğinde yeni referanslar oluşturuyoruz.
     return oldDelegate.allStrokes != allStrokes ||
         oldDelegate.currentDrawingPoints != currentDrawingPoints ||
         oldDelegate.currentStrokeColor != currentStrokeColor ||

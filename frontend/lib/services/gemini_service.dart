@@ -2,35 +2,35 @@
 
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart'; // .env dosyasından API anahtarı okumak için
 
 class GeminiService {
   // API anahtarı ve model adı constructor ile alınabilir, varsayılan değerler atanır.
   final String apiKey;
   final String modelName;
-  static const String _apiBase =
-      'https://generativelanguage.googleapis.com/v1beta/models/';
+
+  // KRİTİK DÜZELTME: _apiBase URL'si. 'modelsML' yerine 'models' kullanılmalı ve sondaki '/' önemli
+  // URL şöyle oluşacak: https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=YOUR_KEY
+  static const String _apiBaseUrl = 'https://generativelanguage.googleapis.com/v1beta/models/';
 
   GeminiService({
     String? apiKey,
     String? modelName,
   })  : apiKey = apiKey ?? (dotenv.env['GEMINI_API_KEY'] ?? ''),
-        modelName = modelName ?? 'gemini-1.5-pro';
+        modelName = modelName ?? 'gemini-1.5-pro'; // Varsayılan modeli kontrol edin (gemini-pro veya gemini-1.5-pro-latest gibi)
 
   Future<String> askGemini(String prompt) async {
     // API anahtarı kontrolü - eğer .env dosyası yoksa veya API anahtarı ayarlanmamışsa
-    if (apiKey.isEmpty || apiKey == 'YOUR_GEMINI_API_KEY_HERE' || apiKey == 'YOUR_GEMINI_API_KEY') {
-      return 'Hata: Gemini API anahtarı ayarlanmadı.\n\n'
-          'Çözüm için:\n'
-          '1. frontend/.env dosyası oluşturun\n'
-          '2. İçine şunu yazın: GEMINI_API_KEY=your_actual_api_key_here\n'
-          '3. Uygulamayı yeniden başlatın\n\n'
-          'API anahtarınızı https://makersuite.google.com/app/apikey adresinden alabilirsiniz.';
+    if (apiKey.isEmpty) {
+      print('[Gemini API Hatası] API Anahtarı Ayarlanmadı.');
+      return 'Hata: Gemini API anahtarı ayarlanmadı.';
     }
 
-    final url = Uri.parse('$_apiBase$modelName:generateContent?key=$apiKey');
+    // URL'yi doğru şekilde oluştur
+    // Örnek: https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=YOUR_KEY
+    final url = Uri.parse('$_apiBaseUrl$modelName:generateContent?key=$apiKey');
     final headers = const {'Content-Type': 'application/json'};
-    
+
     // Her istek bağımsız olmalı, conversation history tutulmamalı
     final body = json.encode({
       'contents': [
@@ -60,10 +60,10 @@ class GeminiService {
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        
+
         // Debug: API yanıtının tam yapısını yazdır
         print('[Gemini API Debug] Tam yanıt: ${json.encode(data)}');
-        
+
         if (data['candidates'] != null &&
             data['candidates'].isNotEmpty &&
             data['candidates'][0]['content'] != null &&
@@ -71,7 +71,7 @@ class GeminiService {
             data['candidates'][0]['content']['parts'].isNotEmpty) {
           return data['candidates'][0]['content']['parts'][0]['text'];
         }
-        
+
         // Debug: Hangi koşulun başarısız olduğunu belirt
         print('[Gemini API Debug] Yanıt yapısı kontrolü başarısız:');
         print('  - candidates null: ${data['candidates'] == null}');
@@ -81,7 +81,7 @@ class GeminiService {
           print('  - parts null: ${data['candidates'][0]['content']?['parts'] == null}');
           print('  - parts empty: ${data['candidates'][0]['content']?['parts']?.isEmpty ?? true}');
         }
-        
+
         return 'Yanıt alınamadı veya boş geldi.';
       } else {
         print('[Gemini API Hatası] ${response.statusCode} - ${response.body}');
@@ -102,12 +102,17 @@ class GeminiService {
 
   // Debug için modelleri listeleyen geçici metod
   Future<void> listModels() async {
-    if (apiKey.isEmpty || apiKey == 'YOUR_GEMINI_API_KEY_HERE' || apiKey == 'YOUR_GEMINI_API_KEY') {
+    if (apiKey.isEmpty) {
       print('Hata: Gemini API anahtarı ayarlanmadı.');
       return;
     }
 
-    final url = Uri.parse('$_apiBase?key=$apiKey');
+    // KRİTİK DÜZELTME: Modelleri listelerken de doğru API uç noktasını kullanmalıyız.
+    // Örnek: https://generativelanguage.googleapis.com/v1beta/models?key=YOUR_KEY
+    final url = Uri.parse('${_apiBaseUrl.replaceAll('/models/', '/models')}?key=$apiKey'); // 'models/' yerine 'models' koyduk
+    // Alternatif ve daha temiz:
+    // final url = Uri.parse('https://generativelanguage.googleapis.com/v1beta/models?key=$apiKey');
+
     try {
       final response = await http.get(url);
       if (response.statusCode == 200) {
