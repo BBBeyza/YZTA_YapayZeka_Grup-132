@@ -31,7 +31,9 @@ class OnboardingScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text(
           'NeuroGraph Bilgilendirme',
-          style: Theme.of(context).textTheme.headlineSmall?.copyWith(color: Colors.white),
+          style: Theme.of(
+            context,
+          ).textTheme.headlineSmall?.copyWith(color: Colors.white),
         ),
         backgroundColor: const Color.fromARGB(255, 90, 20, 175),
         elevation: 0,
@@ -61,19 +63,25 @@ class OnboardingScreen extends StatelessWidget {
                   onboardingText,
                   textAlign: TextAlign.justify,
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    color: Theme.of(context).colorScheme.onBackground.withOpacity(0.9),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onBackground.withOpacity(0.9),
                     height: 1.5,
                   ),
                 ),
               ),
               const SizedBox(height: 40),
-              _ContinueButton(onContinue: () {
-                _setOnboardingAsSeen(context);
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => const LoginPage()),
-                );
-              }),
+              _ContinueButton(
+                onContinue: () {
+                  _setOnboardingAsSeen(context);
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const LoginScreen(),
+                    ),
+                  );
+                },
+              ),
             ],
           ),
         ),
@@ -113,9 +121,7 @@ class _ContinueButton extends StatelessWidget {
         backgroundColor: Theme.of(context).colorScheme.primary,
         foregroundColor: Colors.white,
         padding: const EdgeInsets.symmetric(vertical: 18),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(30),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
         elevation: 5,
       ),
       child: const Text(
