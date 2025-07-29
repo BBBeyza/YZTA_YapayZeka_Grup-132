@@ -80,7 +80,7 @@ class _CognitiveTestScreenState extends State<CognitiveTestScreen> {
     try {
       // Backend'den soruları al
       final response = await http.post(
-        Uri.parse('http://your-backend-url/run_cognitive_test'),
+        Uri.parse('http://localhost:8000/cognitive/run_cognitive_test'),
         headers: {'Content-Type': 'application/json'},
       );
 
@@ -155,7 +155,7 @@ class _CognitiveTestScreenState extends State<CognitiveTestScreen> {
           .toList();
 
       final response = await http.post(
-        Uri.parse('http://your-backend-url/run_cognitive_test'),
+        Uri.parse('http://localhost:8000/cognitive/run_cognitive_test'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'qa_list': qaList}),
       );
