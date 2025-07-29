@@ -1,6 +1,5 @@
-from fastapi import FastAPI, UploadFile, File, Form, HTTPException
+from fastapi import APIRouter, UploadFile, File, Form, HTTPException
 from fastapi.responses import JSONResponse
-from fastapi.middleware.cors import CORSMiddleware
 import whisper
 import os
 import subprocess
@@ -8,19 +7,13 @@ from Levenshtein import distance as levenshtein_distance
 import tempfile
 import logging
 
+router = APIRouter()
+
+# Log ayarları
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-app = FastAPI()
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
+# Whisper modeli
 model = whisper.load_model("small")
 logger.info("Whisper modeli yüklendi: small")
 
@@ -54,7 +47,7 @@ def transcribe_audio(audio_path: str) -> str:
     try:
         file_size = os.path.getsize(audio_path)
         logger.info(f"Ses dosyası boyutu: {file_size} bytes")
-        if file_size < 512:  # 512 byte'dan küçükse (çok kısa)
+        if file_size < 512:
             raise ValueError("Ses dosyası çok küçük")
             
         logger.info("Transkripsiyon başlıyor...")
@@ -104,7 +97,7 @@ def calculate_similarity(text1: str, text2: str) -> float:
     logger.info(f"Benzerlik oranı: {similarity}% (transcribed: '{text1}', reference: '{text2}')")
     return similarity
 
-@app.post("/record_and_analyze")
+@router.post("/record_and_analyze")
 async def analyze_audio(
     audio: UploadFile = File(...),
     reference_text: str = Form(...)
@@ -150,7 +143,3 @@ async def analyze_audio(
                     logger.info(f"Geçici dosya silindi: {path}")
             except Exception as e:
                 logger.error(f"Geçici dosya silme hatası: {str(e)}")
-
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)

@@ -8,3 +8,5 @@ tensorflow
 numpy
 pillow
 flask
+pandas
+google-generativeai

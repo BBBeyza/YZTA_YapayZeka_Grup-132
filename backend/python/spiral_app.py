@@ -1,15 +1,15 @@
 import os
-os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'  # oneDNN uyarılarını kapatır
+os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
 
-from contextlib import asynccontextmanager
-from fastapi import FastAPI, UploadFile, File, HTTPException
+from fastapi import APIRouter, UploadFile, File, HTTPException
 from fastapi.responses import JSONResponse
-from fastapi.middleware.cors import CORSMiddleware
 import numpy as np
 from PIL import Image
 import tensorflow as tf
 import io
 import logging
+
+router = APIRouter()
 
 # Log ayarları
 logging.basicConfig(level=logging.INFO)
@@ -24,8 +24,8 @@ input_details = None
 output_details = None
 MODEL_INPUT_HEIGHT, MODEL_INPUT_WIDTH, MODEL_INPUT_CHANNELS, MODEL_INPUT_DTYPE = None, None, None, None
 
-async def startup_event():
-    """Uygulama başlarken modeli yükler"""
+def load_model():
+    """Modeli yükler"""
     global interpreter, input_details, output_details, \
            MODEL_INPUT_HEIGHT, MODEL_INPUT_WIDTH, MODEL_INPUT_CHANNELS, MODEL_INPUT_DTYPE
     
@@ -53,23 +53,8 @@ async def startup_event():
         logger.error(f"TFLite modeli yüklenirken hata oluştu: {e}")
         interpreter = None
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    """FastAPI lifespan yönetimi"""
-    await startup_event()
-    yield
-    # Gerekirse cleanup kodları buraya
-
-app = FastAPI(lifespan=lifespan)
-
-# CORS Middleware
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+# Uygulama başlarken modeli yükle
+load_model()
 
 def preprocess_image_for_model(image_bytes: bytes) -> np.ndarray:
     """Görüntüyü model için hazırlar"""
@@ -102,7 +87,7 @@ def preprocess_image_for_model(image_bytes: bytes) -> np.ndarray:
         logger.error(f"Görüntü işleme hatası: {str(e)}")
         raise HTTPException(400, f"Görüntü işleme hatası: {str(e)}")
 
-@app.post("/predict_tremor")
+@router.post("/predict_tremor")
 async def predict_tremor(image: UploadFile = File(...)):
     """Titreme analizi endpoint'i"""
     if interpreter is None:
@@ -143,7 +128,3 @@ async def predict_tremor(image: UploadFile = File(...)):
     except Exception as e:
         logger.error(f"Tahmin sırasında hata: {str(e)}")
         raise HTTPException(500, detail=f"Sunucu hatası: {str(e)}")
-
-if __name__ == '__main__':
-    import uvicorn
-    uvicorn.run("spiral_app:app", host="0.0.0.0", port=8001)

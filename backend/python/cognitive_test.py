@@ -3,35 +3,42 @@ import random
 from datetime import datetime
 import google.generativeai as genai
 import sys
+from fastapi import Body, APIRouter, HTTPException
+import logging
+from typing import Optional, List, Dict
+
+router = APIRouter()
+
+# Log ayarları
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 GOOGLE_API_KEY = 'AIzaSyBJdssov3Ds1YdP2yb5mkzf4P6j1Bqq0V4'
 
 model = None
 if not GOOGLE_API_KEY or GOOGLE_API_KEY == 'YOUR_GOOGLE_API_KEY':
-    print("HATA: GOOGLE_API_KEY bulunamadı!")
-    print("Lütfen kodun 11. satırına kendi Google API anahtarınızı girin.")
+    logger.error("HATA: GOOGLE_API_KEY bulunamadı!")
 else:
     try:
         genai.configure(api_key=GOOGLE_API_KEY)
         model = genai.GenerativeModel('gemini-2.0-flash')
-        print("Gemini API başarıyla yapılandırıldı ve model yüklendi.")
+        logger.info("Gemini API başarıyla yapılandırıldı ve model yüklendi.")
     except Exception as e:
-        print(f"HATA: Gemini API yapılandırması başarısız oldu. API anahtarınızın geçerliliğini kontrol edin. Detay: {e}")
+        logger.error(f"HATA: Gemini API yapılandırması başarısız oldu. API anahtarınızın geçerliliğini kontrol edin. Detay: {e}")
 
 def get_gemini_feedback(qa_list):
     """
     Soru-cevap listesini alıp Gemini'ye gönderir ve analiz raporu alır.
     """
     if not model:
-        return "HATA: Gemini modeli başlatılamadığı için analiz yapılamadı. Lütfen API anahtarınızı ve internet bağlantınızı kontrol edin."
+        raise HTTPException(status_code=500, detail="Gemini modeli başlatılamadığı için analiz yapılamadı. Lütfen API anahtarınızı ve internet bağlantınızı kontrol edin.")
 
-    print("\nCevaplarınız analiz için Gemini'ye gönderiliyor... Lütfen bekleyin.")
+    logger.info("Cevaplarınız analiz için Gemini'ye gönderiliyor...")
 
     qa_block = ""
     for item in qa_list:
         qa_block += f"- Soru: {item['Soru']}\n  - Cevap: {item['Cevap']}\n\n"
 
-    #Promptlar
     prompt = f"""
     **Görev:**
     Bir kullanıcıya yöneltilen 10 soruluk bir bilişsel değerlendirme testinin sonuçlarını analiz et. Kullanıcının verdiği cevapları, bilişsel sağlık göstergeleri (oryantasyon, hafıza, dikkat, hesaplama) açısından değerlendirerek hasta hakkında ayrıntılı bir geri bildirim raporu oluştur.
@@ -57,112 +64,64 @@ def get_gemini_feedback(qa_list):
 
     try:
         response = model.generate_content(prompt)
-        print("Analiz raporu başarıyla oluşturuldu.")
+        logger.info("Analiz raporu başarıyla oluşturuldu.")
         return response.text
     except Exception as e:
-        print(f"HATA: Gemini'den analiz alınırken bir sorun oluştu: {e}")
-        return f"Gemini'den yanıt alınamadı. Hata: {e}"
+        logger.error(f"HATA: Gemini'den analiz alınırken bir sorun oluştu: {e}")
+        raise HTTPException(status_code=500, detail=f"Gemini'den yanıt alınamadı. Hata: {e}")
 
-def run_test():
+def load_questions():
     """
-    Ana test fonksiyonu. Soruları yükler, sorar, sonuçları ve analizi kaydeder.
+    Soruları Excel dosyasından yükler
     """
-    if not model:
-        print("\nAPI anahtarı hatası nedeniyle test başlatılamıyor. Lütfen programı düzeltip yeniden başlatın.")
-        return
-
     try:
         df_sorular = pd.read_excel('Sorular.xlsx')
         if 'Soru' not in df_sorular.columns or 'Index' not in df_sorular.columns:
-            print("HATA: 'Sorular.xlsx' dosyasında 'Index' ve 'Soru' kolonları bulunmalıdır.")
-            return
+            raise HTTPException(status_code=400, detail="'Sorular.xlsx' dosyasında 'Index' ve 'Soru' kolonları bulunmalıdır.")
         if len(df_sorular) < 10:
-            print("HATA: Testin başlayabilmesi için 'Sorular.xlsx' dosyasında en az 10 soru olmalıdır.")
-            return
+            raise HTTPException(status_code=400, detail="Testin başlayabilmesi için 'Sorular.xlsx' dosyasında en az 10 soru olmalıdır.")
+        return df_sorular
     except FileNotFoundError:
-        print("HATA: 'Sorular.xlsx' dosyası bulunamadı. Lütfen dosyayı kodla aynı klasöre koyun.")
-        return
+        raise HTTPException(status_code=404, detail="'Sorular.xlsx' dosyası bulunamadı. Lütfen dosyayı kodla aynı klasöre koyun.")
     except Exception as e:
-        print(f"HATA: Excel dosyası okunurken bir sorun oluştu: {e}")
-        return
+        raise HTTPException(status_code=500, detail=f"Excel dosyası okunurken bir sorun oluştu: {e}")
 
-    soru_indices = random.sample(range(len(df_sorular)), 10)
-    secilen_sorular = df_sorular.iloc[soru_indices].copy()
-
-    print("\n--- YENİ TEST BAŞLIYOR ---")
-    cevaplar = []
-    for index, row in secilen_sorular.iterrows():
-        soru_metni = row['Soru']
-        cevap = input(f"\nSoru {row['Index']}: {soru_metni}\nCevabınız: ")
-        cevaplar.append(cevap)
-
-    secilen_sorular['Cevap'] = cevaplar
-
-    qa_list_for_gemini = secilen_sorular[['Soru', 'Cevap']].to_dict('records')
-    feedback_report = get_gemini_feedback(qa_list_for_gemini)
-
-    dosya_adi = datetime.now().strftime('%d_%m_%Y_%H_%M_%S') + '.xlsx'
-    sonuc_df = secilen_sorular[['Index', 'Soru', 'Cevap']].sort_values(by='Index').reset_index(drop=True)
+@router.post("/run_cognitive_test")
+async def run_test(qa_list: Optional[List[Dict[str, str]]] = Body(None)):
+    """
+    Bilişsel testi çalıştırır ve sonuçları döndürür
+    """
+    if not model:
+        raise HTTPException(status_code=500, detail="API anahtarı hatası nedeniyle test başlatılamıyor.")
 
     try:
-        with pd.ExcelWriter(dosya_adi, engine='xlsxwriter') as writer:
-            sonuc_df.to_excel(writer, sheet_name='Sonuclar', index=False)
+        df_sorular = load_questions()
+        soru_indices = random.sample(range(len(df_sorular)), 10)
+        secilen_sorular = df_sorular.iloc[soru_indices].copy()
 
-            workbook  = writer.book
-            worksheet = writer.sheets['Sonuclar']
+        if qa_list:
+            # Frontend'den gelen cevapları kullan
+            cevaplar = [item['Cevap'] for item in qa_list]
+            if len(cevaplar) != len(secilen_sorular):
+                raise HTTPException(status_code=400, detail="Gönderilen cevap sayısı sorularla eşleşmiyor.")
+            secilen_sorular['Cevap'] = cevaplar
+        else:
+            # İlk çağrıda sadece soruları dön, cevaplar boş
+            secilen_sorular['Cevap'] = [''] * len(secilen_sorular)
 
-            worksheet.set_column('A:A', 5)
-            worksheet.set_column('B:B', 70)
-            worksheet.set_column('C:C', 50)
-            worksheet.set_column('E:E', 100)
+        qa_list_for_gemini = secilen_sorular[['Soru', 'Cevap']].to_dict('records')
+        feedback_report = get_gemini_feedback(qa_list_for_gemini) if qa_list else ''
 
-            bold_format = workbook.add_format({'bold': True, 'valign': 'top'})
-            wrap_format = workbook.add_format({'text_wrap': True, 'valign': 'top'})
+        sonuc_df = secilen_sorular[['Index', 'Soru', 'Cevap']].sort_values(by='Index').reset_index(drop=True)
+        
+        return {
+            "test_results": sonuc_df.to_dict(orient='records'),
+            "analysis_report": feedback_report,
+            "timestamp": datetime.now().strftime('%d_%m_%Y_%H_%M_%S')
+        }
 
-            worksheet.write('E1', 'GEMINI ANALİZ RAPORU', bold_format)
-
-            current_row = 2
-            report_lines = feedback_report.strip().split('\n')
-
-            for line in report_lines:
-                line = line.strip()
-                if not line:
-                    continue
-
-                # Markdown karakterlerini temizle
-                clean_line = line.replace('**', '').replace('* ', '').strip()
-
-                # Satırın başlık olup olmadığını kontrol et ve uygun formatı uygula
-                if line.startswith('**') or line.startswith('* **'):
-                    worksheet.write(current_row, 4, clean_line, bold_format)
-                else:
-                    worksheet.write(current_row, 4, clean_line, wrap_format)
-
-                current_row += 1
-            # --- Rapor Yazdırma Sonu ---
-
-        print(f"\n--- TEST TAMAMLANDI ---\nSonuçlarınız ve analiz raporunuz '{dosya_adi}' dosyasına başarıyla kaydedildi.")
-        print("Analiz raporu Excel dosyasının sağ tarafındaki hücrelere yazılmıştır.")
-
+    except HTTPException as he:
+        raise he
     except Exception as e:
-        print(f"HATA: Excel dosyası yazılırken bir sorun oluştu: {e}")
-
-
-if __name__ == "__main__":
-    if not model:
-        print("\nProgram sonlandırılıyor. Lütfen API anahtarınızı koda ekleyip tekrar deneyin.")
-        sys.exit()
-
-    while True:
-        run_test()
-
-        while True:
-            tekrar = input("\nYeni bir test yapmak ister misiniz? (E: Evet / H: Hayır): ").upper()
-            if tekrar in ['E', 'H']:
-                break
-            else:
-                print("Lütfen sadece 'E' veya 'H' giriniz.")
-
-        if tekrar == 'H':
-            print("Program sonlandırıldı. Hoşça kalın!")
-            break
+        logger.error(f"Test çalıştırılırken hata oluştu: {e}")
+        raise HTTPException(status_code=500, detail=f"Test çalıştırılırken hata oluştu: {e}")

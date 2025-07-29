@@ -4,7 +4,7 @@
   "description": "Start Flutter frontend and Python backend simultaneously",
   "scripts": {
     "build": "concurrently \"flutter build web\" \"cd backend && pip install -r requirements.txt\"",
-    "start": "concurrently -k \"cd frontend && flutter run\" \"cd backend/python && start python spiral_app.py\" \"cd backend/python && start python kisametintesti.py\""  },
+    "start": "concurrently -k \"cd frontend && flutter run\" \"cd backend/python && uvicorn api:app --host 0.0.0.0 --port 8000\""  },
   "devDependencies": {
     "concurrently": "^8.2.2"
   }
