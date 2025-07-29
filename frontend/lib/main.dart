@@ -1,23 +1,25 @@
 // lib/main.dart
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:neurograph/screens/loginScreen.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'firebase_options.dart';
+import 'screens/loginScreen.dart';
+import 'screens/homePage.dart';
+import 'services/auth_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await dotenv.load(); // .env dosyasını yükle
+  // .env dosyasını yükle
+  await dotenv.load();
 
-  SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-  ]);
+  // Firebase'i initialize et (firebase_options ile)
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-  await Firebase.initializeApp(
-     options: DefaultFirebaseOptions.currentPlatform,
-  );
+  // Ekran yönünü dikey olarak kilitle
+  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
   runApp(const MyApp());
 }
@@ -31,13 +33,27 @@ class MyApp extends StatelessWidget {
       title: 'NeuroGraph',
       debugShowCheckedModeBanner: false,
       theme: _buildThemeData(context),
-      home: const LoginPage(),
+      home: StreamBuilder<User?>(
+        stream: AuthService().user,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            );
+          }
+
+          if (snapshot.hasData) {
+            return const HomeScreen();
+          }
+
+          return const LoginScreen();
+        },
+      ),
     );
   }
 }
 
 ThemeData _buildThemeData(BuildContext context) {
-  // ... (Bu kısım aynı kalır) ...
   return ThemeData(
     useMaterial3: true,
     colorScheme: ColorScheme.fromSeed(
@@ -66,8 +82,18 @@ ThemeData _buildThemeData(BuildContext context) {
       bodyMedium: TextStyle(fontFamily: 'Roboto', fontSize: 14),
     ),
     inputDecorationTheme: InputDecorationTheme(
+      filled: true,
+      fillColor: Colors.grey.shade100,
       floatingLabelStyle: TextStyle(
         color: Theme.of(context).colorScheme.secondary,
+      ),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(15),
+        borderSide: const BorderSide(color: Colors.black26),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(15),
+        borderSide: const BorderSide(color: Colors.black26),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(15),
@@ -83,6 +109,13 @@ ThemeData _buildThemeData(BuildContext context) {
       focusedErrorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(15),
         borderSide: BorderSide(color: Colors.red.shade700, width: 2),
+      ),
+    ),
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ElevatedButton.styleFrom(
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+        textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
       ),
     ),
   );
