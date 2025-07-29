@@ -9,11 +9,9 @@ import logging
 
 router = APIRouter()
 
-# Log ayarları
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Whisper modeli
 model = whisper.load_model("tiny")
 logger.info("Whisper modeli yüklendi: tiny")
 

@@ -45,7 +45,7 @@ class CognitiveTestScreen extends StatefulWidget {
 
 class _CognitiveTestScreenState extends State<CognitiveTestScreen> {
   final TextEditingController _answerController = TextEditingController();
-  static const int _maxQuestions = 10; // Backend 10 soru döndürüyor
+  static const int _maxQuestions = 10;
   static const List<String> _questionTypes = [
     'oryantasyon',
     'hafıza',
@@ -57,13 +57,13 @@ class _CognitiveTestScreenState extends State<CognitiveTestScreen> {
     'dikkat',
     'dil',
     'yürütücü işlev',
-  ]; // 10 soru için türler
+  ];
 
   int _currentQuestionIndex = 0;
   bool _isLoading = false, _testStarted = false, _testFinished = false;
   String? _currentQuestion, _statusMessage, _evaluationResult;
   List<QuestionAnswer> _history = [];
-  List<Map<String, dynamic>> _questions = []; // Backend'den gelen sorular
+  List<Map<String, dynamic>> _questions = [];
 
   @override
   void dispose() {
@@ -78,7 +78,6 @@ class _CognitiveTestScreenState extends State<CognitiveTestScreen> {
     });
 
     try {
-      // Backend'den soruları al
       final response = await http.post(
         Uri.parse('http://10.0.2.2:8000/cognitive/run_cognitive_test'),
         headers: {'Content-Type': 'application/json'},
@@ -142,7 +141,6 @@ class _CognitiveTestScreenState extends State<CognitiveTestScreen> {
     });
 
     try {
-      // Cevapları backend'e gönder
       final qaList = _history
           .asMap()
           .entries
@@ -165,6 +163,10 @@ class _CognitiveTestScreenState extends State<CognitiveTestScreen> {
         final testResults = List<Map<String, dynamic>>.from(
           data['test_results'],
         );
+        final analysisReport = data['analysis_report'] as String;
+
+        final reportSections = _parseReport(analysisReport);
+
         setState(() {
           _history = testResults.asMap().entries.map((entry) {
             final idx = entry.key;
@@ -173,13 +175,12 @@ class _CognitiveTestScreenState extends State<CognitiveTestScreen> {
               question: result['Soru'],
               answer: result['Cevap'],
               type: _questionTypes[idx],
-              score:
-                  null, // Backend puanlama döndürmüyor, gerekirse eklenebilir
+              score: null,
               scoreComment: null,
               correctAnswer: null,
             );
           }).toList();
-          _evaluationResult = data['analysis_report'];
+          _evaluationResult = reportSections;
           _testFinished = true;
           _isLoading = false;
           _statusMessage = null;
@@ -196,6 +197,32 @@ class _CognitiveTestScreenState extends State<CognitiveTestScreen> {
       });
       _showSnackBar('Değerlendirme alınamadı: $e');
     }
+  }
+
+  String _parseReport(String report) {
+    final lines = report.split('\n');
+    final sections = <String, String>{};
+    String currentSection = 'Genel Değerlendirme';
+    StringBuffer currentText = StringBuffer();
+
+    for (final line in lines) {
+      if (line.trim().startsWith('* ')) {
+        if (currentText.isNotEmpty) {
+          sections[currentSection] = currentText.toString().trim();
+          currentText.clear();
+        }
+        currentSection = line.trim().substring(2);
+      } else if (line.trim().isNotEmpty) {
+        currentText.write('$line\n');
+      }
+    }
+    if (currentText.isNotEmpty) {
+      sections[currentSection] = currentText.toString().trim();
+    }
+
+    return sections.entries.map((entry) {
+      return '• **${entry.key}:**\n${entry.value}\n\n';
+    }).join();
   }
 
   void _showSnackBar(String message) {
