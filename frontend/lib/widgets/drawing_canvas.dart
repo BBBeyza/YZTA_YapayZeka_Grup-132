@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:neurograph/models/stroke.dart'; // Stroke sınıfını import ediyoruz
+import 'package:flutter/rendering.dart';
+import 'package:neurograph/models/stroke.dart';
+import 'dart:ui' as ui;
+import 'dart:typed_data';
 
-/// Uygulamada çizim yapılmasına olanak tanıyan StatefulWidget.
 class DrawingCanvas extends StatefulWidget {
   final Color backgroundColor;
 
-  const DrawingCanvas({ // super.key burada kullanılıyor
+  const DrawingCanvas({
     super.key,
     this.backgroundColor = Colors.white,
   });
@@ -14,8 +16,6 @@ class DrawingCanvas extends StatefulWidget {
   State<DrawingCanvas> createState() => DrawingCanvasState();
 }
 
-/// DrawingCanvas'ın durumunu yöneten State sınıfı.
-/// Çizim noktalarını kaydeder, UI güncellemelerini tetikler.
 class DrawingCanvasState extends State<DrawingCanvas> {
   List<Stroke> _allStrokes = [];
   List<Stroke> _undoneStrokes = [];
@@ -24,15 +24,17 @@ class DrawingCanvasState extends State<DrawingCanvas> {
   Color _strokeColor = Colors.black;
   double _strokeWidth = 3.0;
 
+  final GlobalKey _repaintBoundaryKey = GlobalKey();
+
   final List<Color> _colorOptions = const [
     Colors.black,
     Colors.red,
     Colors.blue,
     Colors.green,
     Colors.yellow,
-    Colors.purple,
+    Colors.pink,
     Colors.orange,
-    Colors.brown,
+    Colors.purple,
   ];
 
   void _onPanStart(DragStartDetails details) {
@@ -52,14 +54,13 @@ class DrawingCanvasState extends State<DrawingCanvas> {
   }
 
   void _onPanEnd(DragEndDetails details) {
-    // Son noktayı ekle (eğer farklıysa ve bu son nokta zaten eklendiyse tekrar eklemeyi önle)
     if (_currentDrawingPoints.isNotEmpty &&
         (_currentDrawingPoints.last.point != details.localPosition ||
-            _currentDrawingPoints.length == 1)) { // Tek nokta varsa da ekle
+            _currentDrawingPoints.length == 1)) {
       _currentDrawingPoints.add(
         DrawingPoint(point: details.localPosition, timestamp: DateTime.now()),
       );
-    } else if (_currentDrawingPoints.isEmpty) { // Hiç nokta eklenmemişse (sadece dokunup çekme)
+    } else if (_currentDrawingPoints.isEmpty) {
       _currentDrawingPoints.add(
         DrawingPoint(point: details.localPosition, timestamp: DateTime.now()),
       );
@@ -112,6 +113,23 @@ class DrawingCanvasState extends State<DrawingCanvas> {
     return allPoints;
   }
 
+  Future<Uint8List?> exportDrawingAsPngBytes() async {
+    try {
+      final RenderRepaintBoundary boundary =
+      _repaintBoundaryKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
+
+      final ui.Image image = await boundary.toImage(pixelRatio: 3.0);
+
+      final ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+
+      return byteData?.buffer.asUint8List();
+    } catch (e) {
+      print('Çizimi resime dönüştürme hatası: $e');
+      return null;
+    }
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -130,19 +148,23 @@ class DrawingCanvasState extends State<DrawingCanvas> {
             ),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(10),
-              child: GestureDetector(
-                onPanStart: _onPanStart,
-                onPanUpdate: _onPanUpdate,
-                onPanEnd: _onPanEnd,
-                child: CustomPaint(
-                  painter: _DrawingPainter(
-                    allStrokes: _allStrokes,
-                    currentDrawingPoints: _currentDrawingPoints,
-                    currentStrokeColor: _strokeColor,
-                    currentStrokeWidth: _strokeWidth,
-                  ),
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints.expand(),
+              // Buray─▒ RepaintBoundary ile sar─▒yoruz
+              child: RepaintBoundary(
+                key: _repaintBoundaryKey,
+                child: GestureDetector(
+                  onPanStart: _onPanStart,
+                  onPanUpdate: _onPanUpdate,
+                  onPanEnd: _onPanEnd,
+                  child: CustomPaint(
+                    painter: _DrawingPainter(
+                      allStrokes: _allStrokes,
+                      currentDrawingPoints: _currentDrawingPoints,
+                      currentStrokeColor: _strokeColor,
+                      currentStrokeWidth: _strokeWidth,
+                    ),
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints.expand(),
+                    ),
                   ),
                 ),
               ),
@@ -234,7 +256,7 @@ class DrawingCanvasState extends State<DrawingCanvas> {
                   IconButton(
                     icon: const Icon(Icons.redo, size: 24),
                     onPressed: _undoneStrokes.isNotEmpty ? redo : null,
-                    tooltip: 'İleri Al',
+                    tooltip: '─░leri Al',
                     color: Theme.of(context).colorScheme.primary,
                   ),
                   IconButton(
@@ -299,8 +321,6 @@ class _DrawingPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant _DrawingPainter oldDelegate) {
-    // Listelerin referans eşitliğini kontrol etmek yeterlidir, çünkü
-    // listelerimizin içeriği değiştiğinde yeni referanslar oluşturuyoruz.
     return oldDelegate.allStrokes != allStrokes ||
         oldDelegate.currentDrawingPoints != currentDrawingPoints ||
         oldDelegate.currentStrokeColor != currentStrokeColor ||

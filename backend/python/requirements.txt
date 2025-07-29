@@ -4,3 +4,7 @@ python-multipart
 openai-whisper 
 Levenshtein 
 ffmpeg-python
+tensorflow
+numpy
+pillow
+flask
