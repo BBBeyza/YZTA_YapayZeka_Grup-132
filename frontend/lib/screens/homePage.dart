@@ -6,6 +6,7 @@ import 'drawing_test_selection_screen.dart';
 import 'audio_test_screen.dart';
 import 'user_profile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'user_profile.dart';
 
 class GeminiChatScreen extends StatelessWidget {
   const GeminiChatScreen({super.key});
@@ -148,10 +149,6 @@ class _HomeContentState extends State<HomeContent> {
                       ],
                     ),
                   ],
-                ),
-                const CircleAvatar(
-                  radius: 20,
-                  backgroundImage: AssetImage('assets/images/profile.png'),
                 ),
               ],
             ),
