@@ -88,10 +88,7 @@ class DrawingTestButtons extends StatelessWidget {
                 ),
                 elevation: 5,
               ),
-              child: const Text(
-                'Testi Bitir',
-                style: TextStyle(fontSize: 16),
-              ),
+              child: const Text('Testi Bitir', style: TextStyle(fontSize: 16)),
             ),
           ),
         ],
@@ -148,25 +145,30 @@ class _DrawingTestScreenState extends State<DrawingTestScreen> {
 
     Uint8List? drawingImageBytes;
     try {
-      drawingImageBytes = await _canvasKey.currentState?.exportDrawingAsPngBytes();
+      drawingImageBytes = await _canvasKey.currentState
+          ?.exportDrawingAsPngBytes();
       if (drawingImageBytes == null || drawingImageBytes.isEmpty) {
         setState(() {
           _isLoading = false;
         });
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Hiç çizim verisi bulunamadı veya resim oluşturulamadı!')),
+          const SnackBar(
+            content: Text(
+              'Hiç çizim verisi bulunamadı veya resim oluşturulamadı!',
+            ),
+          ),
         );
         return;
       }
 
       // Hata Ayıklama: Orijinal çizim baytlarını dosyaya kaydet (isteğe bağlı)
       final directory = await getApplicationDocumentsDirectory();
-      final originalFilePath = '${directory.path}/original_drawing_${DateTime.now().millisecondsSinceEpoch}.png';
+      final originalFilePath =
+          '${directory.path}/original_drawing_${DateTime.now().millisecondsSinceEpoch}.png';
       final originalFile = File(originalFilePath);
       await originalFile.writeAsBytes(drawingImageBytes);
       print('Orijinal çizim kaydedildi: $originalFilePath');
-
     } catch (e) {
       print('Çizim resmi dışa aktarılırken hata: $e');
       drawingImageBytes = null;
@@ -175,7 +177,9 @@ class _DrawingTestScreenState extends State<DrawingTestScreen> {
       });
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Çizim resmi dışa aktarılırken hata oluştu: $e')),
+        SnackBar(
+          content: Text('Çizim resmi dışa aktarılırken hata oluştu: $e'),
+        ),
       );
       return;
     }
@@ -184,12 +188,14 @@ class _DrawingTestScreenState extends State<DrawingTestScreen> {
     try {
       // Çizim PNG baytlarını backend sunucusuna gönder
       var request = http.MultipartRequest('POST', Uri.parse(_backendUrl));
-      request.files.add(http.MultipartFile.fromBytes(
-        'image', // Backend'de beklenen alan adı (FastAPI'de File(...) veya Form(...))
-        drawingImageBytes,
-        filename: 'drawing.png',
-        contentType: MediaType('image', 'png'), // http_parser'dan MediaType
-      ));
+      request.files.add(
+        http.MultipartFile.fromBytes(
+          'image', // Backend'de beklenen alan adı (FastAPI'de File(...) veya Form(...))
+          drawingImageBytes,
+          filename: 'drawing.png',
+          contentType: MediaType('image', 'png'), // http_parser'dan MediaType
+        ),
+      );
 
       var response = await request.send();
 
@@ -201,21 +207,24 @@ class _DrawingTestScreenState extends State<DrawingTestScreen> {
           final Map<String, dynamic> jsonResponse = json.decode(responseBody);
           // Backend'den gelen tahminin JSON formatına göre key isimlerini ayarlayın
           final double controlProbability = jsonResponse['control_probability'];
-          final double patientsProbability = jsonResponse['patients_probability'];
+          final double patientsProbability =
+              jsonResponse['patients_probability'];
 
           if (patientsProbability > controlProbability) {
-            tremorClassificationResult = "🟡 Titreme Algılandı — Güven: ${patientsProbability.toStringAsFixed(2)}";
+            tremorClassificationResult =
+                "🟡 Titreme Algılandı — Güven: ${patientsProbability.toStringAsFixed(2)}";
           } else {
-            tremorClassificationResult = "✅ Temiz Yazım — Güven: ${controlProbability.toStringAsFixed(2)}";
+            tremorClassificationResult =
+                "✅ Temiz Yazım — Güven: ${controlProbability.toStringAsFixed(2)}";
           }
         } catch (e) {
-          tremorClassificationResult = "Backend yanıtı işlenirken hata: $e. Yanıt: $responseBody";
+          tremorClassificationResult =
+              "Backend yanıtı işlenirken hata: $e. Yanıt: $responseBody";
         }
-
       } else {
-        tremorClassificationResult = "Backend hatası: ${response.statusCode} - ${await response.stream.bytesToString()}";
+        tremorClassificationResult =
+            "Backend hatası: ${response.statusCode} - ${await response.stream.bytesToString()}";
       }
-
     } catch (e) {
       print('Backend ile iletişim hatası: $e');
       tremorClassificationResult = "Backend ile iletişim hatası: $e";
@@ -227,7 +236,7 @@ class _DrawingTestScreenState extends State<DrawingTestScreen> {
 
     // Gemini'ye nihai raporlama prompt'unu gönder (ML sonucuyla birlikte)
     final prompt =
-    '''
+        '''
 Kullanıcının yaptığı "${widget.testTitle}" adlı spiral çizim testinin sonuçlarını değerlendirir misin?
 Test Talimatı: "${widget.testInstruction}"
 Cihaz üzerindeki ML modelinden gelen tremor sınıflandırma sonucu (backend'den): "$tremorClassificationResult"
@@ -248,9 +257,15 @@ Bu bilgilere dayanarak, çizimin genel tremor durumunu ve varsa potansiyel anoma
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text('ML Model Analizi: $tremorClassificationResult', style: const TextStyle(fontWeight: FontWeight.bold)),
+              Text(
+                'ML Model Analizi: $tremorClassificationResult',
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
               const SizedBox(height: 20),
-              const Text('Genel Değerlendirme (Gemini):', style: TextStyle(fontWeight: FontWeight.bold)),
+              const Text(
+                'Genel Değerlendirme (Gemini):',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
               Text(evaluation),
             ],
           ),
@@ -277,22 +292,18 @@ Bu bilgilere dayanarak, çizimin genel tremor durumunu ve varsa potansiyel anoma
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : Column(
-        children: [
-          InstructionSection(
-            title: widget.testTitle,
-            instruction: widget.testInstruction,
-          ),
-          Expanded(
-            child: DrawingCanvas(
-              key: _canvasKey,
+              children: [
+                InstructionSection(
+                  title: widget.testTitle,
+                  instruction: widget.testInstruction,
+                ),
+                Expanded(child: DrawingCanvas(key: _canvasKey)),
+                DrawingTestButtons(
+                  onSave: _saveCurrentDrawing,
+                  onFinish: _finishTest,
+                ),
+              ],
             ),
-          ),
-          DrawingTestButtons(
-            onSave: _saveCurrentDrawing,
-            onFinish: _finishTest,
-          ),
-        ],
-      ),
     );
   }
 }
