@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:neurograph/screens/drawing_test.dart';
-import 'package:neurograph/screens/tutorial_screen.dart';
+import 'tutorial_screen.dart';
 import 'package:neurograph/widgets/bottom_navigation_bar.dart';
 
 // Assuming these are separate screens within the DrawingTest flow,
