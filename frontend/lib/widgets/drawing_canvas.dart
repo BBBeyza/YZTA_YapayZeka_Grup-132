@@ -7,17 +7,12 @@ import 'dart:typed_data'; // Uint8List için
 class DrawingCanvas extends StatefulWidget {
   final Color backgroundColor;
 
-  const DrawingCanvas({
-    super.key,
-    this.backgroundColor = Colors.white,
-  });
+  const DrawingCanvas({super.key, this.backgroundColor = Colors.white});
 
   @override
   State<DrawingCanvas> createState() => DrawingCanvasState();
 }
 
-/// DrawingCanvas'ın durumunu yöneten State sınıfı.
-/// Çizim noktalarını kaydeder, UI güncellemelerini tetikler.
 class DrawingCanvasState extends State<DrawingCanvas> {
   List<Stroke> _allStrokes = [];
   List<Stroke> _undoneStrokes = [];
@@ -35,9 +30,9 @@ class DrawingCanvasState extends State<DrawingCanvas> {
     Colors.blue,
     Colors.green,
     Colors.yellow,
-    Colors.purple,
+    Colors.pink,
     Colors.orange,
-    Colors.brown,
+    Colors.purple,
   ];
 
   void _onPanStart(DragStartDetails details) {
@@ -52,19 +47,20 @@ class DrawingCanvasState extends State<DrawingCanvas> {
   void _onPanUpdate(DragUpdateDetails details) {
     setState(() {
       _currentDrawingPoints = List.from(_currentDrawingPoints)
-        ..add(DrawingPoint(point: details.localPosition, timestamp: DateTime.now()));
+        ..add(
+          DrawingPoint(point: details.localPosition, timestamp: DateTime.now()),
+        );
     });
   }
 
   void _onPanEnd(DragEndDetails details) {
-    // Son noktayı ekle (eğer farklıysa ve bu son nokta zaten eklendiyse tekrar eklemeyi önle)
     if (_currentDrawingPoints.isNotEmpty &&
         (_currentDrawingPoints.last.point != details.localPosition ||
-            _currentDrawingPoints.length == 1)) { // Tek nokta varsa da ekle
+            _currentDrawingPoints.length == 1)) {
       _currentDrawingPoints.add(
         DrawingPoint(point: details.localPosition, timestamp: DateTime.now()),
       );
-    } else if (_currentDrawingPoints.isEmpty) { // Hiç nokta eklenmemişse (sadece dokunup çekme)
+    } else if (_currentDrawingPoints.isEmpty) {
       _currentDrawingPoints.add(
         DrawingPoint(point: details.localPosition, timestamp: DateTime.now()),
       );
@@ -72,11 +68,13 @@ class DrawingCanvasState extends State<DrawingCanvas> {
 
     setState(() {
       if (_currentDrawingPoints.isNotEmpty) {
-        _allStrokes.add(Stroke(
-          points: List.from(_currentDrawingPoints),
-          color: _strokeColor,
-          width: _strokeWidth,
-        ));
+        _allStrokes.add(
+          Stroke(
+            points: List.from(_currentDrawingPoints),
+            color: _strokeColor,
+            width: _strokeWidth,
+          ),
+        );
       }
       _currentDrawingPoints = [];
     });
@@ -122,13 +120,18 @@ class DrawingCanvasState extends State<DrawingCanvas> {
     try {
       // RepaintBoundary'nin RenderObject'ini al
       final RenderRepaintBoundary boundary =
-      _repaintBoundaryKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
+          _repaintBoundaryKey.currentContext!.findRenderObject()
+              as RenderRepaintBoundary;
 
       // Çizimi yüksek kaliteli bir ui.Image nesnesine dönüştür
-      final ui.Image image = await boundary.toImage(pixelRatio: 3.0); // Preprocessing backend'de yapılacak
+      final ui.Image image = await boundary.toImage(
+        pixelRatio: 3.0,
+      ); // Preprocessing backend'de yapılacak
 
       // ui.Image'ı PNG ByteData'ya dönüştür
-      final ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+      final ByteData? byteData = await image.toByteData(
+        format: ui.ImageByteFormat.png,
+      );
 
       return byteData?.buffer.asUint8List();
     } catch (e) {
@@ -136,7 +139,6 @@ class DrawingCanvasState extends State<DrawingCanvas> {
       return null;
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -148,10 +150,7 @@ class DrawingCanvasState extends State<DrawingCanvas> {
             margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
             decoration: BoxDecoration(
               color: widget.backgroundColor,
-              border: Border.all(
-                color: Colors.grey.shade300,
-                width: 2,
-              ),
+              border: Border.all(color: Colors.grey.shade300, width: 2),
               borderRadius: BorderRadius.circular(10),
             ),
             child: ClipRRect(
@@ -236,7 +235,9 @@ class DrawingCanvasState extends State<DrawingCanvas> {
                           color: color,
                           shape: BoxShape.circle,
                           border: Border.all(
-                            color: _strokeColor == color ? Theme.of(context).colorScheme.primary : Colors.transparent,
+                            color: _strokeColor == color
+                                ? Theme.of(context).colorScheme.primary
+                                : Colors.transparent,
                             width: _strokeColor == color ? 3.0 : 1.0,
                           ),
                           boxShadow: [
@@ -264,12 +265,16 @@ class DrawingCanvasState extends State<DrawingCanvas> {
                   IconButton(
                     icon: const Icon(Icons.redo, size: 24),
                     onPressed: _undoneStrokes.isNotEmpty ? redo : null,
-                    tooltip: 'İleri Al',
+                    tooltip: '─░leri Al',
                     color: Theme.of(context).colorScheme.primary,
                   ),
                   IconButton(
                     icon: const Icon(Icons.clear_all, size: 24),
-                    onPressed: _allStrokes.isNotEmpty || _currentDrawingPoints.isNotEmpty ? clearCanvas : null,
+                    onPressed:
+                        _allStrokes.isNotEmpty ||
+                            _currentDrawingPoints.isNotEmpty
+                        ? clearCanvas
+                        : null,
                     tooltip: 'Tuvali Temizle',
                     color: Theme.of(context).colorScheme.error,
                   ),
@@ -307,7 +312,11 @@ class _DrawingPainter extends CustomPainter {
         ..strokeWidth = stroke.width;
 
       for (int i = 0; i < stroke.points.length - 1; i++) {
-        canvas.drawLine(stroke.points[i].point, stroke.points[i + 1].point, paint);
+        canvas.drawLine(
+          stroke.points[i].point,
+          stroke.points[i + 1].point,
+          paint,
+        );
       }
     }
 

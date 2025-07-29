@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart'; // Added for SystemChrome
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:neurograph/screens/drawing_test.dart'; // Assuming this exists
-import 'package:neurograph/screens/tutorial_screen.dart'; // Assuming this exists
-import 'package:neurograph/widgets/bottom_navigation_bar.dart'; // Make sure this path is correct
+import 'package:neurograph/screens/drawing_test.dart';
+import 'package:neurograph/screens/tutorial_screen.dart';
+import 'package:neurograph/widgets/bottom_navigation_bar.dart';
 
 // Assuming these are separate screens within the DrawingTest flow,
 // or placeholder for other content when this tab is selected.
@@ -26,7 +26,7 @@ class CompletedDrawingsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(automaticallyImplyLeading: false),
-      body: const Center(child: Text('Tamamlanmış Çizimler Ekranı')),
+      body: const Center(child: Text('Tamamlanm─▒┼ş ├çizimler Ekran─▒')),
     );
   }
 }
@@ -97,11 +97,11 @@ class _DrawingTestSelectionScreenState extends State<DrawingTestSelectionScreen>
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.palette_outlined),
-            label: 'Test Seç', // Label for the main drawing test selection
+            label: 'Test Se├ğ', // Label for the main drawing test selection
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.history_outlined),
-            label: 'Geçmiş', // Label for completed drawings
+            label: 'Ge├ğmi┼ş', // Label for completed drawings
           ),
         ],
       ),
@@ -111,11 +111,11 @@ class _DrawingTestSelectionScreenState extends State<DrawingTestSelectionScreen>
   String _getAppBarTitle(int index) {
     switch (index) {
       case 0:
-        return 'Çizim Testleri';
+        return '├çizim Testleri';
       case 1:
-        return 'Tamamlanmış Çizimler';
+        return 'Tamamlanm─▒┼ş ├çizimler';
       default:
-        return 'Çizim Testleri';
+        return '├çizim Testleri';
     }
   }
 }
@@ -131,37 +131,37 @@ class _DrawingTestSelectionScreenContent extends StatelessWidget {
   final List<Map<String, dynamic>> _testOptions = [
     const {
       'key': 'clock',
-      'title': 'Saat Çizimi Testi',
+      'title': 'Saat ├çizimi Testi',
       'iconWidget': Icon(Icons.access_time, size: 40, color: Color(0xFF72B0D3)),
-      'description': 'Zamanı çizerken görsel-mekansal becerilerinizi test edin.'
+      'description': 'Zaman─▒ ├ğizerken g├Ârsel-mekansal becerilerinizi test edin.'
     },
     {
       'key': 'spiral',
-      'title': 'Spiral Çizimi Testi',
+      'title': 'Spiral ├çizimi Testi',
       'iconWidget': SvgPicture.asset(
           'assets/images/spiralCircle.svg',
           width: 40,
           height: 40,
           colorFilter: const ColorFilter.mode(Color.fromARGB(255, 114, 176, 211), BlendMode.srcIn)
       ),
-      'description': 'Akıcılık ve koordinasyonunuzu spiral ile ölçün.'
+      'description': 'Ak─▒c─▒l─▒k ve koordinasyonunuzu spiral ile ├Âl├ğ├╝n.'
     },
     {
       'key': 'meander',
-      'title': 'Meander Çizimi Testi',
+      'title': 'Meander ├çizimi Testi',
       'iconWidget': SvgPicture.asset(
           'assets/images/spiralSquare.svg',
           width: 40,
           height: 40,
           colorFilter: const ColorFilter.mode(Color.fromARGB(255, 114, 176, 211), BlendMode.srcIn)
       ),
-      'description': 'Karmaşık çizgilerle el-göz koordinasyonunuzu geliştirin.'
+      'description': 'Karma┼ş─▒k ├ğizgilerle el-g├Âz koordinasyonunuzu geli┼ştirin.'
     },
     const {
       'key': 'handwriting',
-      'title': 'El Yazısı Testi',
+      'title': 'El Yaz─▒s─▒ Testi',
       'iconWidget': Icon(Icons.edit, size: 40, color: Color(0xFF72B0D3)),
-      'description': 'Doğal el yazınızın akıcılığını ve okunabilirliğini değerlendirin.'
+      'description': 'Do─şal el yaz─▒n─▒z─▒n ak─▒c─▒l─▒─ş─▒n─▒ ve okunabilirli─şini de─şerlendirin.'
     },
   ];
 
@@ -174,7 +174,7 @@ class _DrawingTestSelectionScreenContent extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Lütfen yapmak istediğiniz çizim testini seçin:',
+              'L├╝tfen yapmak istedi─şiniz ├ğizim testini se├ğin:',
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.w600,
                 color: Theme.of(context).colorScheme.onSurface,
@@ -251,15 +251,15 @@ class _DrawingTestSelectionScreenContent extends StatelessWidget {
   String _getInstructionForKey(String key) {
     switch (key) {
       case 'clock':
-        return 'Ekrana saat 11\'i 10 geçeyi gösteren bir saat çizin. Saatin tüm öğelerini (sayılar, akrep, yelkovan) eklemeyi unutmayın.';
+        return 'Ekrana saat 11\'i 10 ge├ğeyi g├Âsteren bir saat ├ğizin. Saatin t├╝m ├Â─şelerini (say─▒lar, akrep, yelkovan) eklemeyi unutmay─▒n.';
       case 'spiral':
-        return 'Ekranın ortasına, mümkün olduğunca düzgün ve tutarlı bir içe doğru (veya dışa doğru) spiral çizin. Çizgilerinizin birbirine değmemesine ve merkeze doğru düzenli bir şekilde daralmasına dikkat edin.';
+        return 'Ekran─▒n ortas─▒na, m├╝mk├╝n oldu─şunca d├╝zg├╝n ve tutarl─▒ bir i├ğe do─şru (veya d─▒┼şa do─şru) spiral ├ğizin. ├çizgilerinizin birbirine de─şmemesine ve merkeze do─şru d├╝zenli bir ┼şekilde daralmas─▒na dikkat edin.';
       case 'meander':
-        return 'Ekranın ortasına, birbirine paralel çizgilerden oluşan, köşeli ve düzenli bir "meander" (spiral kare) deseni çizin. Köşelerin keskin ve çizgilerin birbirine yakın ama değmeyen şekilde olmasına özen gösterin.';
+        return 'Ekran─▒n ortas─▒na, birbirine paralel ├ğizgilerden olu┼şan, k├Â┼şeli ve d├╝zenli bir "meander" (spiral kare) deseni ├ğizin. K├Â┼şelerin keskin ve ├ğizgilerin birbirine yak─▒n ama de─şmeyen ┼şekilde olmas─▒na ├Âzen g├Âsterin.';
       case 'handwriting':
-        return 'Lütfen aşağıdaki cümleyi ekrana okunaklı ve doğal el yazınızla yazın: "Yarın hava güneşli olacak." Yazınızın boyutu ve eğimi doğal olsun.';
+        return 'L├╝tfen a┼şa─ş─▒daki c├╝mleyi ekrana okunakl─▒ ve do─şal el yaz─▒n─▒zla yaz─▒n: "Yar─▒n hava g├╝ne┼şli olacak." Yaz─▒n─▒z─▒n boyutu ve e─şimi do─şal olsun.';
       default:
-        return 'Bu test için talimat bulunamadı.';
+        return 'Bu test i├ğin talimat bulunamad─▒.';
     }
   }
 }

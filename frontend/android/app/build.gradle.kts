@@ -43,7 +43,7 @@ android {
         applicationId = "com.example.neurograph"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = 23 // minSdkVersion'ı 23'e yükselttik
+        minSdk = 23 // minSdkVersion'─▒ 23'e y├╝kselttik
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName

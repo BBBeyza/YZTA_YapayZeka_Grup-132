@@ -1,4 +1,3 @@
-// lib/main.dart
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -11,15 +10,21 @@ import 'services/auth_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  // .env dosyasını yükle
   await dotenv.load();
 
-  // Firebase'i initialize et (firebase_options ile)
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-
-  // Ekran yönünü dikey olarak kilitle
-  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  try {
+    // Firebase.apps.isEmpty kontrolü bazen yetersiz kalabiliyor
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    ).catchError((error) {
+      if (error.toString().contains('duplicate-app')) {
+        return Firebase.app();
+      }
+      throw error;
+    });
+  } catch (e) {
+    print('Firebase initialization error: $e');
+  }
 
   runApp(const MyApp());
 }
