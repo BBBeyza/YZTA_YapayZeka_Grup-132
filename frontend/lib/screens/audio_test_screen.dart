@@ -156,7 +156,7 @@ class _ReadingTestScreenState extends State<ReadingTestScreen> {
 
       var request = http.MultipartRequest(
         'POST',
-        Uri.parse('http://192.168.1.160:8000/record_and_analyze'),
+        Uri.parse('http://10.0.2.2:8000/text/record_and_analyze'),
       );
 
       request.files.add(
@@ -173,7 +173,7 @@ class _ReadingTestScreenState extends State<ReadingTestScreen> {
       print('İstek gönderiliyor: ${request.fields}');
 
       final response = await request.send().timeout(
-        const Duration(seconds: 30),
+        const Duration(seconds: 90),
       );
       print('Yanıt kodu: ${response.statusCode}');
       final responseData = await response.stream.bytesToString();

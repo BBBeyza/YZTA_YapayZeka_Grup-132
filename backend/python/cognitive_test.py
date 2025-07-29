@@ -6,17 +6,20 @@ import sys
 from fastapi import Body, APIRouter, HTTPException
 import logging
 from typing import Optional, List, Dict
+from dotenv import load_dotenv
+import os
 
+load_dotenv()
 router = APIRouter()
+
+GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY')
 
 # Log ayarları
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-GOOGLE_API_KEY = 'AIzaSyBJdssov3Ds1YdP2yb5mkzf4P6j1Bqq0V4'
-
 model = None
-if not GOOGLE_API_KEY or GOOGLE_API_KEY == 'YOUR_GOOGLE_API_KEY':
+if not GOOGLE_API_KEY:
     logger.error("HATA: GOOGLE_API_KEY bulunamadı!")
 else:
     try:
@@ -88,40 +91,36 @@ def load_questions():
 
 @router.post("/run_cognitive_test")
 async def run_test(qa_list: Optional[List[Dict[str, str]]] = Body(None)):
-    """
-    Bilişsel testi çalıştırır ve sonuçları döndürür
-    """
+    logger.info("run_test fonksiyonu çağrıldı, qa_list: %s", qa_list)
     if not model:
+        logger.error("Model başlatılamadı, API anahtarı hatası.")
         raise HTTPException(status_code=500, detail="API anahtarı hatası nedeniyle test başlatılamıyor.")
-
     try:
+        logger.info("Sorular yükleniyor...")
         df_sorular = load_questions()
+        logger.info("Sorular yüklendi, toplam sayı: %d", len(df_sorular))
         soru_indices = random.sample(range(len(df_sorular)), 10)
         secilen_sorular = df_sorular.iloc[soru_indices].copy()
-
         if qa_list:
-            # Frontend'den gelen cevapları kullan
             cevaplar = [item['Cevap'] for item in qa_list]
             if len(cevaplar) != len(secilen_sorular):
                 raise HTTPException(status_code=400, detail="Gönderilen cevap sayısı sorularla eşleşmiyor.")
             secilen_sorular['Cevap'] = cevaplar
         else:
-            # İlk çağrıda sadece soruları dön, cevaplar boş
             secilen_sorular['Cevap'] = [''] * len(secilen_sorular)
-
         qa_list_for_gemini = secilen_sorular[['Soru', 'Cevap']].to_dict('records')
+        logger.info("Gemini feedback alınıyor...")
         feedback_report = get_gemini_feedback(qa_list_for_gemini) if qa_list else ''
-
+        logger.info("Feedback alındı, rapor uzunluğu: %d", len(feedback_report) if feedback_report else 0)
         sonuc_df = secilen_sorular[['Index', 'Soru', 'Cevap']].sort_values(by='Index').reset_index(drop=True)
-        
         return {
             "test_results": sonuc_df.to_dict(orient='records'),
             "analysis_report": feedback_report,
             "timestamp": datetime.now().strftime('%d_%m_%Y_%H_%M_%S')
         }
-
     except HTTPException as he:
+        logger.error("HTTP hatası: %s", str(he))
         raise he
     except Exception as e:
-        logger.error(f"Test çalıştırılırken hata oluştu: {e}")
-        raise HTTPException(status_code=500, detail=f"Test çalıştırılırken hata oluştu: {e}")
+        logger.error("Beklenmedik hata oluştu: %s", str(e))
+        raise HTTPException(status_code=500, detail=f"Beklenmedik hata: {e}")

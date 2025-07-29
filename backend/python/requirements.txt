@@ -10,3 +10,4 @@ pillow
 flask
 pandas
 google-generativeai
+openpyxl
