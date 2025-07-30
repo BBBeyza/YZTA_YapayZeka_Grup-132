@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:neurograph/widgets/drawing_canvas.dart';
-import 'package:neurograph/models/stroke.dart';
-import 'package:neurograph/services/gemini_service.dart';
+import 'package:neurograph/models/stroke.dart'; // Bu modelin var olduğunu varsayıyorum
+import 'package:neurograph/services/gemini_service.dart'; // Bu servisin var olduğunu varsayıyorum
 import 'dart:typed_data';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
@@ -99,7 +99,7 @@ class DrawingTestButtons extends StatelessWidget {
 
 // --- DrawingTestScreen Class ---
 class DrawingTestScreen extends StatefulWidget {
-  final String testKey;
+  final String testKey; // 'spiral' veya 'meander'
   final String testTitle;
   final String testInstruction;
 
@@ -120,7 +120,20 @@ class _DrawingTestScreenState extends State<DrawingTestScreen> {
 
   bool _isLoading = false;
 
-  final String _backendUrl = 'http://192.168.1.160:8000/spiral/predict_tremor';
+  // Backend URL'sini testKey'e göre dinamik olarak belirle
+  String get _backendUrl {
+    const String baseUrl = 'http://192.168.1.160:8000'; // Backend'inizin ana URL'si
+    if (widget.testKey == 'spiral') {
+      // Spiral testi için backend endpoint'i
+      return '$baseUrl/spiral/predict_tremor'; 
+    } else if (widget.testKey == 'meander') {
+      // Meander testi için backend endpoint'i
+      return '$baseUrl/meander/predict_meander_tremor';
+    }
+    // Bilinmeyen bir testKey gelirse varsayılan veya hata durumu
+    print('Hata: Bilinmeyen testKey: ${widget.testKey}');
+    return '$baseUrl/spiral/predict_tremor'; // Varsayılan olarak spiral endpoint'ini kullan
+  }
   
   @override
   void initState() {
@@ -165,7 +178,7 @@ class _DrawingTestScreenState extends State<DrawingTestScreen> {
       // Hata Ayıklama: Orijinal çizim baytlarını dosyaya kaydet (isteğe bağlı)
       final directory = await getApplicationDocumentsDirectory();
       final originalFilePath =
-          '${directory.path}/original_drawing_${DateTime.now().millisecondsSinceEpoch}.png';
+          '${directory.path}/original_drawing_${widget.testKey}_${DateTime.now().millisecondsSinceEpoch}.png';
       final originalFile = File(originalFilePath);
       await originalFile.writeAsBytes(drawingImageBytes);
       print('Orijinal çizim kaydedildi: $originalFilePath');
@@ -237,7 +250,7 @@ class _DrawingTestScreenState extends State<DrawingTestScreen> {
     // Gemini'ye nihai raporlama prompt'unu gönder (ML sonucuyla birlikte)
     final prompt =
         '''
-Kullanıcının yaptığı "${widget.testTitle}" adlı spiral çizim testinin sonuçlarını değerlendirir misin?
+Kullanıcının yaptığı "${widget.testTitle}" adlı ${widget.testKey} çizim testinin sonuçlarını değerlendirir misin?
 Test Talimatı: "${widget.testInstruction}"
 Cihaz üzerindeki ML modelinden gelen tremor sınıflandırma sonucu (backend'den): "$tremorClassificationResult"
 

@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import spiral_app
 import kisametintesti
 import cognitive_test
+import meander_app
 
 app = FastAPI()
 
@@ -17,6 +18,12 @@ app.include_router(
     spiral_app.router,
     prefix="/spiral",
     tags=["spiral"]
+)
+
+app.include_router(
+    meander_app.router,
+    prefix="/meander",
+    tags=["meander"]
 )
 
 app.include_router(

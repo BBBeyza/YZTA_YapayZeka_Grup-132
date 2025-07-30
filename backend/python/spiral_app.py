@@ -16,18 +16,11 @@ router = APIRouter()
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Model yolu - relative path kullan
-# Backend klasörünüzün yapısına göre ayarlayin
 MODEL_PATH = os.path.join(
-    os.path.dirname(__file__),  # Current file's directory
-    "models",  # models folder
+    os.path.dirname(__file__),
+    "models",
     "spiral_test_model_densenet121.tflite"
 )
-
-# Alternative paths to try:
-# MODEL_PATH = "models/spiral_test_model_densenet121.tflite"
-# MODEL_PATH = "./models/spiral_test_model_densenet121.tflite"
-# MODEL_PATH = os.path.abspath("models/spiral_test_model_densenet121.tflite")
 
 print(f"Looking for model at: {MODEL_PATH}")
 print(f"Model exists: {os.path.exists(MODEL_PATH)}")
@@ -40,7 +33,6 @@ MODEL_INPUT_HEIGHT, MODEL_INPUT_WIDTH, MODEL_INPUT_CHANNELS, MODEL_INPUT_DTYPE =
 
 
 def load_model():
-    """TFLite modelini yükle"""
     global interpreter, input_details, output_details, \
            MODEL_INPUT_HEIGHT, MODEL_INPUT_WIDTH, MODEL_INPUT_CHANNELS, MODEL_INPUT_DTYPE
 
@@ -74,13 +66,9 @@ def load_model():
         logger.error(f"TFLite modeli yüklenirken hata oluştu: {e}")
         interpreter = None
 
-
-# Uygulama başlarken modeli yükle
 load_model()
 
-
 def preprocess_image_for_model(image_bytes: bytes) -> np.ndarray:
-    """Görüntüyü model girişine uygun hale getirir"""
     if interpreter is None:
         raise ValueError("ML modeli yüklenmediği için ön işleme yapılamıyor.")
     if None in (MODEL_INPUT_HEIGHT, MODEL_INPUT_WIDTH, MODEL_INPUT_CHANNELS, MODEL_INPUT_DTYPE):
