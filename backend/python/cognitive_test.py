@@ -12,7 +12,7 @@ import os
 load_dotenv()
 router = APIRouter()
 
-GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY')
+GOOGLE_API_KEY = os.getenv('GEMINI_API_KEY')
 
 # Log ayarları
 logging.basicConfig(level=logging.INFO)

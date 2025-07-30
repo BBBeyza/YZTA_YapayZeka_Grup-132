@@ -7,6 +7,7 @@ import 'dart:typed_data'; // Uint8List için
 class DrawingCanvas extends StatefulWidget {
   final Color backgroundColor;
 
+  // Arka plan rengini varsayılan olarak beyaz yapıyoruz
   const DrawingCanvas({super.key, this.backgroundColor = Colors.white});
 
   @override
@@ -15,15 +16,18 @@ class DrawingCanvas extends StatefulWidget {
 
 class DrawingCanvasState extends State<DrawingCanvas> {
   List<Stroke> _allStrokes = [];
-  List<Stroke> _undoneStrokes = [];
+  // Geri alma/ileri alma fonksiyonları kaldırıldığı için _undoneStrokes artık gerekli değil
+  // List<Stroke> _undoneStrokes = [];
   List<DrawingPoint> _currentDrawingPoints = [];
 
+  // Fırça rengi ve kalınlığı sabitlendi
   Color _strokeColor = Colors.black;
-  double _strokeWidth = 3.0;
+  double _strokeWidth = 3.0; // Sabit fırça kalınlığı
 
   // Çizim alanını resme dönüştürmek için kullanılacak GlobalKey
   final GlobalKey _repaintBoundaryKey = GlobalKey();
 
+  // Renk seçenekleri geri getirildi
   final List<Color> _colorOptions = const [
     Colors.black,
     Colors.red,
@@ -40,7 +44,7 @@ class DrawingCanvasState extends State<DrawingCanvas> {
       _currentDrawingPoints = [
         DrawingPoint(point: details.localPosition, timestamp: DateTime.now()),
       ];
-      _undoneStrokes.clear();
+      // _undoneStrokes.clear(); // Geri alma kaldırıldığı için bu satır da kaldırıldı
     });
   }
 
@@ -80,31 +84,32 @@ class DrawingCanvasState extends State<DrawingCanvas> {
     });
   }
 
-  void clearCanvas() {
-    setState(() {
-      _allStrokes = [];
-      _currentDrawingPoints = [];
-      _undoneStrokes = [];
-    });
-  }
+  // clearCanvas, undo, redo fonksiyonları kaldırıldı
+  // void clearCanvas() {
+  //   setState(() {
+  //     _allStrokes = [];
+  //     _currentDrawingPoints = [];
+  //     _undoneStrokes = [];
+  //   });
+  // }
 
-  void undo() {
-    setState(() {
-      if (_allStrokes.isNotEmpty) {
-        final lastStroke = _allStrokes.removeLast();
-        _undoneStrokes.add(lastStroke);
-      }
-    });
-  }
+  // void undo() {
+  //   setState(() {
+  //     if (_allStrokes.isNotEmpty) {
+  //       final lastStroke = _allStrokes.removeLast();
+  //       _undoneStrokes.add(lastStroke);
+  //     }
+  //   });
+  // }
 
-  void redo() {
-    setState(() {
-      if (_undoneStrokes.isNotEmpty) {
-        final lastUndoneStroke = _undoneStrokes.removeLast();
-        _allStrokes.add(lastUndoneStroke);
-      }
-    });
-  }
+  // void redo() {
+  //   setState(() {
+  //     if (_undoneStrokes.isNotEmpty) {
+  //       final lastUndoneStroke = _undoneStrokes.removeLast();
+  //       _allStrokes.add(lastUndoneStroke);
+  //     }
+  //   });
+  // }
 
   List<DrawingPoint> getAllDrawingPoints() {
     List<DrawingPoint> allPoints = [];
@@ -116,17 +121,49 @@ class DrawingCanvasState extends State<DrawingCanvas> {
   }
 
   /// Çizimi PNG formatında Uint8List olarak dışa aktarır.
+  /// Görüntüye beyaz arka plan ekler.
   Future<Uint8List?> exportDrawingAsPngBytes() async {
     try {
-      // RepaintBoundary'nin RenderObject'ini al
       final RenderRepaintBoundary boundary =
-          _repaintBoundaryKey.currentContext!.findRenderObject()
-              as RenderRepaintBoundary;
+      _repaintBoundaryKey.currentContext!.findRenderObject()
+      as RenderRepaintBoundary;
 
-      // Çizimi yüksek kaliteli bir ui.Image nesnesine dönüştür
-      final ui.Image image = await boundary.toImage(
-        pixelRatio: 3.0,
-      ); // Preprocessing backend'de yapılacak
+      // RenderRepaintBoundary'nin boyutunu al
+      final ui.Size imageSize = boundary.size;
+
+      // Yeni bir resim kaydedici (recorder) oluştur
+      final ui.PictureRecorder recorder = ui.PictureRecorder();
+      final Canvas canvas = Canvas(recorder, Rect.fromLTWH(0, 0, imageSize.width, imageSize.height));
+
+      // Kanvasın tamamını beyaz arka planla doldur
+      canvas.drawRect(Rect.fromLTWH(0, 0, imageSize.width, imageSize.height), Paint()..color = Colors.white);
+
+      // Tüm mevcut çizimleri bu yeni kanvas üzerine yeniden çiz
+      for (var stroke in _allStrokes) {
+        if (stroke.points.isEmpty) continue;
+        final paint = Paint()
+          ..color = stroke.color
+          ..strokeCap = StrokeCap.round
+          ..strokeWidth = stroke.width;
+        for (int i = 0; i < stroke.points.length - 1; i++) {
+          canvas.drawLine(stroke.points[i].point, stroke.points[i + 1].point, paint);
+        }
+      }
+      // Mevcut çizim noktalarını da çiz (eğer varsa)
+      if (_currentDrawingPoints.isNotEmpty) {
+        final currentPaint = Paint()
+          ..color = _strokeColor // Sabitlenen çizgi rengini kullan
+          ..strokeCap = StrokeCap.round
+          ..strokeWidth = _strokeWidth; // Sabitlenen çizgi kalınlığını kullan
+        for (int i = 0; i < _currentDrawingPoints.length - 1; i++) {
+          canvas.drawLine(_currentDrawingPoints[i].point, _currentDrawingPoints[i + 1].point, currentPaint);
+        }
+      }
+
+      // Kaydı tamamla ve bir ui.Picture nesnesi al
+      final ui.Picture picture = recorder.endRecording();
+      // ui.Picture'ı ui.Image'a dönüştür
+      final ui.Image image = await picture.toImage(imageSize.width.toInt(), imageSize.height.toInt());
 
       // ui.Image'ı PNG ByteData'ya dönüştür
       final ByteData? byteData = await image.toByteData(
@@ -144,33 +181,37 @@ class DrawingCanvasState extends State<DrawingCanvas> {
   Widget build(BuildContext context) {
     return Column(
       children: [
+        // Kontrol paneli geri getirildi
         _buildControlPanel(),
         Expanded(
-          child: Container(
-            margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-            decoration: BoxDecoration(
-              color: widget.backgroundColor,
-              border: Border.all(color: Colors.grey.shade300, width: 2),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              // Burayı RepaintBoundary ile sarıyoruz
-              child: RepaintBoundary(
-                key: _repaintBoundaryKey,
-                child: GestureDetector(
-                  onPanStart: _onPanStart,
-                  onPanUpdate: _onPanUpdate,
-                  onPanEnd: _onPanEnd,
-                  child: CustomPaint(
-                    painter: _DrawingPainter(
-                      allStrokes: _allStrokes,
-                      currentDrawingPoints: _currentDrawingPoints,
-                      currentStrokeColor: _strokeColor,
-                      currentStrokeWidth: _strokeWidth,
-                    ),
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints.expand(),
+          child: AspectRatio( // Tuvali kare yapmak için AspectRatio eklendi
+            aspectRatio: 1.0, // 1:1 oranında kare
+            child: Container(
+              margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              decoration: BoxDecoration(
+                color: widget.backgroundColor, // Bu zaten varsayılan olarak beyaz
+                border: Border.all(color: Colors.grey.shade300, width: 2),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                // Burayı RepaintBoundary ile sarıyoruz
+                child: RepaintBoundary(
+                  key: _repaintBoundaryKey,
+                  child: GestureDetector(
+                    onPanStart: _onPanStart,
+                    onPanUpdate: _onPanUpdate,
+                    onPanEnd: _onPanEnd,
+                    child: CustomPaint(
+                      painter: _DrawingPainter(
+                        allStrokes: _allStrokes,
+                        currentDrawingPoints: _currentDrawingPoints,
+                        currentStrokeColor: _strokeColor, // Sabit renk
+                        currentStrokeWidth: _strokeWidth, // Sabit kalınlık
+                      ),
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints.expand(),
+                      ),
                     ),
                   ),
                 ),
@@ -182,6 +223,7 @@ class DrawingCanvasState extends State<DrawingCanvas> {
     );
   }
 
+  // _buildControlPanel metodu geri getirildi ve sadeleştirildi
   Widget _buildControlPanel() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
@@ -193,27 +235,28 @@ class DrawingCanvasState extends State<DrawingCanvas> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Row(
-                children: [
-                  const Icon(Icons.line_weight, color: Colors.grey, size: 20),
-                  Expanded(
-                    child: Slider(
-                      value: _strokeWidth,
-                      min: 1.0,
-                      max: 10.0,
-                      divisions: 9,
-                      label: _strokeWidth.round().toString(),
-                      onChanged: (double value) {
-                        setState(() {
-                          _strokeWidth = value;
-                        });
-                      },
-                      activeColor: Theme.of(context).colorScheme.primary,
-                      inactiveColor: Colors.grey.shade300,
-                    ),
-                  ),
-                ],
-              ),
+              // Fırça boyutu slider'ı kaldırıldı
+              // Row(
+              //   children: [
+              //     const Icon(Icons.line_weight, color: Colors.grey, size: 20),
+              //     Expanded(
+              //       child: Slider(
+              //         value: _strokeWidth,
+              //         min: 1.0,
+              //         max: 10.0,
+              //         divisions: 9,
+              //         label: _strokeWidth.round().toString(),
+              //         onChanged: (double value) {
+              //           setState(() {
+              //             _strokeWidth = value;
+              //           });
+              //         },
+              //         activeColor: Theme.of(context).colorScheme.primary,
+              //         inactiveColor: Colors.grey.shade300,
+              //       ),
+              //     ),
+              //   ],
+              // ),
               SizedBox(
                 height: 40,
                 child: ListView.builder(
@@ -253,33 +296,34 @@ class DrawingCanvasState extends State<DrawingCanvas> {
                   },
                 ),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.undo, size: 24),
-                    onPressed: _allStrokes.isNotEmpty ? undo : null,
-                    tooltip: 'Geri Al',
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.redo, size: 24),
-                    onPressed: _undoneStrokes.isNotEmpty ? redo : null,
-                    tooltip: '─░leri Al',
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.clear_all, size: 24),
-                    onPressed:
-                        _allStrokes.isNotEmpty ||
-                            _currentDrawingPoints.isNotEmpty
-                        ? clearCanvas
-                        : null,
-                    tooltip: 'Tuvali Temizle',
-                    color: Theme.of(context).colorScheme.error,
-                  ),
-                ],
-              ),
+              // Geri al/ileri al/temizle butonları kaldırıldı
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.spaceAround,
+              //   children: [
+              //     IconButton(
+              //       icon: const Icon(Icons.undo, size: 24),
+              //       onPressed: _allStrokes.isNotEmpty ? undo : null,
+              //       tooltip: 'Geri Al',
+              //       color: Theme.of(context).colorScheme.primary,
+              //     ),
+              //     IconButton(
+              //       icon: const Icon(Icons.redo, size: 24),
+              //       onPressed: _undoneStrokes.isNotEmpty ? redo : null,
+              //       tooltip: 'İleri Al',
+              //       color: Theme.of(context).colorScheme.primary,
+              //     ),
+              //     IconButton(
+              //       icon: const Icon(Icons.clear_all, size: 24),
+              //       onPressed:
+              //           _allStrokes.isNotEmpty ||
+              //               _currentDrawingPoints.isNotEmpty
+              //           ? clearCanvas
+              //           : null,
+              //       tooltip: 'Tuvali Temizle',
+              //       color: Theme.of(context).colorScheme.error,
+              //     ),
+              //   ],
+              // ),
             ],
           ),
         ),
@@ -303,6 +347,10 @@ class _DrawingPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
+    // Arka planı burada çizmiyoruz, çünkü exportDrawingAsPngBytes metodu zaten beyaz arka planla çiziyor.
+    // Eğer burada da çizilirse, tuvalde beyaz arka plan görünecektir.
+    // canvas.drawRect(Offset.zero & size, Paint()..color = Colors.white);
+
     for (var stroke in allStrokes) {
       if (stroke.points.isEmpty) continue;
 

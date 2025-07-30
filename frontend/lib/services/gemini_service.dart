@@ -9,7 +9,6 @@ class GeminiService {
   final String apiKey;
   final String modelName;
 
-  // KRİTİK DÜZELTME: _apiBase URL'si. 'modelsML' yerine 'models' kullanılmalı ve sondaki '/' önemli
   // URL şöyle oluşacak: https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=YOUR_KEY
   static const String _apiBaseUrl = 'https://generativelanguage.googleapis.com/v1beta/models/';
 

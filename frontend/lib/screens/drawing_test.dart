@@ -120,8 +120,8 @@ class _DrawingTestScreenState extends State<DrawingTestScreen> {
 
   bool _isLoading = false;
 
-  final String _backendUrl = 'http://192.168.1.5:8000/predict_tremor';
-
+  final String _backendUrl = 'http://192.168.1.160:8000/spiral/predict_tremor';
+  
   @override
   void initState() {
     super.initState();

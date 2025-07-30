@@ -66,5 +66,4 @@ flutter:
     - assets/images/profile.png
     - assets/images/spiralCircle.svg
     - assets/images/spiralSquare.svg
-    - assets/modelsML/denseNet121.tflite
     - .env

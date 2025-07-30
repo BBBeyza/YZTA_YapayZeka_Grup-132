@@ -11,3 +11,4 @@ flask
 pandas
 google-generativeai
 openpyxl
+dotenv

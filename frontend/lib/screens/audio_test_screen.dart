@@ -156,7 +156,7 @@ class _ReadingTestScreenState extends State<ReadingTestScreen> {
 
       var request = http.MultipartRequest(
         'POST',
-        Uri.parse('http://10.0.2.2:8000/text/record_and_analyze'),
+        Uri.parse('http://192.168.1.160:8000/text/record_and_analyze'),
       );
 
       request.files.add(
