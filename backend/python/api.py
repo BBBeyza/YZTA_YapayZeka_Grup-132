@@ -4,6 +4,7 @@ import spiral_app
 import kisametintesti
 import cognitive_test
 import meander_app
+import clock_drawing_app
 
 app = FastAPI()
 
@@ -36,6 +37,12 @@ app.include_router(
     cognitive_test.router,
     prefix="/cognitive",
     tags=["cognitive"]
+)
+
+app.include_router(
+    clock_drawing_app.router,
+    prefix="/clock",
+    tags=["clock"]
 )
 
 @app.get("/")

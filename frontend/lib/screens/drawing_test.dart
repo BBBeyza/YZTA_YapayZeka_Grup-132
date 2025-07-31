@@ -99,7 +99,7 @@ class DrawingTestButtons extends StatelessWidget {
 
 // --- DrawingTestScreen Class ---
 class DrawingTestScreen extends StatefulWidget {
-  final String testKey; // 'spiral' veya 'meander'
+  final String testKey; // 'spiral', 'meander' veya 'clock'
   final String testTitle;
   final String testInstruction;
 
@@ -129,6 +129,9 @@ class _DrawingTestScreenState extends State<DrawingTestScreen> {
     } else if (widget.testKey == 'meander') {
       // Meander testi için backend endpoint'i
       return '$baseUrl/meander/predict_meander_tremor';
+    } else if (widget.testKey == 'clock') {
+      // Saat çizim testi için backend endpoint'i
+      return '$baseUrl/clock/predict_clock_tremor'; // Yeni endpoint
     }
     // Bilinmeyen bir testKey gelirse varsayılan veya hata durumu
     print('Hata: Bilinmeyen testKey: ${widget.testKey}');
