@@ -54,18 +54,29 @@ class _LoginScreenState extends State<LoginScreen> {
     });
 
     try {
+      // Önce mevcut oturumu temizle
+      await FirebaseAuth.instance.signOut();
+      // Firebase'in senkronize olmasını bekle
+      await Future.delayed(const Duration(milliseconds: 500));
+
       User? user = await _auth.loginWithEmail(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
 
       if (user != null && mounted) {
+        if (_rememberMe) {
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setString('email', _emailController.text.trim());
+          await prefs.setString('password', _passwordController.text.trim());
+        }
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const HomeScreen()),
         );
       }
     } on FirebaseAuthException catch (e) {
+      // Firebase hatalarını işle
       String errorMessage;
       switch (e.code) {
         case 'invalid-email':
@@ -85,14 +96,53 @@ class _LoginScreenState extends State<LoginScreen> {
               'Çok fazla deneme yaptınız. Lütfen daha sonra tekrar deneyin';
           break;
         default:
-          errorMessage = 'Giriş başarısız: ${e.message}';
+          errorMessage = 'Giriş başarısız: ${e.message ?? "Bilinmeyen hata"}';
       }
       setState(() => _errorMessage = errorMessage);
     } catch (e) {
-      setState(() => _errorMessage = 'Beklenmeyen bir hata oluştu: $e');
+      // Genel hataları işle
+      debugPrint('Login error: $e');
+      setState(
+        () => _errorMessage =
+            'Beklenmeyen bir hata oluştu. Lütfen tekrar deneyin.',
+      );
     } finally {
       if (mounted) {
         setState(() => _isLoading = false);
+      }
+    }
+  }
+
+  Future<void> _resetPassword(String email) async {
+    try {
+      await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Şifre sıfırlama linki $email adresine gönderildi'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } on FirebaseAuthException catch (e) {
+      String errorMessage;
+      switch (e.code) {
+        case 'invalid-email':
+          errorMessage = 'Geçersiz email formatı';
+          break;
+        case 'user-not-found':
+          errorMessage = 'Bu email ile kayıtlı kullanıcı bulunamadı';
+          break;
+        default:
+          errorMessage =
+              'Şifre sıfırlama başarısız: ${e.message ?? "Bilinmeyen hata"}';
+      }
+      if (mounted) {
+        setState(() => _errorMessage = errorMessage);
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _errorMessage = 'Beklenmeyen bir hata oluştu: $e');
       }
     }
   }
@@ -158,7 +208,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       context,
                     ).textTheme.titleMedium?.copyWith(color: Colors.black54),
                   ),
-
                   if (_errorMessage != null) ...[
                     const SizedBox(height: 20),
                     Container(
@@ -182,7 +231,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                   ],
-
                   const SizedBox(height: 20),
                   TextField(
                     controller: _emailController,
@@ -195,7 +243,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ? 'Bu alan gereklidir'
                           : null,
                     ),
-                    onChanged: (_) => setState(() {}),
+                    onChanged: (_) => setState(() => _errorMessage = null),
                   ),
                   const SizedBox(height: 20),
                   TextField(
@@ -220,7 +268,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ? 'Bu alan gereklidir'
                           : null,
                     ),
-                    onChanged: (_) => setState(() {}),
+                    onChanged: (_) => setState(() => _errorMessage = null),
                   ),
                   const SizedBox(height: 20),
                   Row(
@@ -255,9 +303,17 @@ class _LoginScreenState extends State<LoginScreen> {
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
                               padding: const EdgeInsets.symmetric(vertical: 16),
+                              backgroundColor: Theme.of(context).primaryColor,
+                              foregroundColor: Colors.white,
                             ),
                             onPressed: _login,
-                            child: const Text('Giriş Yap'),
+                            child: const Text(
+                              'Giriş Yap',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           ),
                         ),
                   const SizedBox(height: 20),
@@ -279,38 +335,5 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       ),
     );
-  }
-
-  Future<void> _resetPassword(String email) async {
-    try {
-      await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Şifre sıfırlama linki $email adresine gönderildi'),
-            backgroundColor: Colors.green,
-          ),
-        );
-      }
-    } on FirebaseAuthException catch (e) {
-      String errorMessage;
-      switch (e.code) {
-        case 'invalid-email':
-          errorMessage = 'Geçersiz email formatı';
-          break;
-        case 'user-not-found':
-          errorMessage = 'Bu email ile kayıtlı kullanıcı bulunamadı';
-          break;
-        default:
-          errorMessage = 'Şifre sıfırlama başarısız: ${e.message}';
-      }
-      if (mounted) {
-        setState(() => _errorMessage = errorMessage);
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() => _errorMessage = 'Beklenmeyen bir hata oluştu: $e');
-      }
-    }
   }
 }

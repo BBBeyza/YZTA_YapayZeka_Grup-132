@@ -28,7 +28,6 @@ def convert_audio(input_path: str) -> str:
             "-ac", "1",
             "-ar", "16000",
             "-acodec", "pcm_s16le",
-            "-af", "highpass=f=200,lowpass=f=3000,loudnorm=I=-16:LRA=11:TP=-1.5",
             output_path
         ], check=True, capture_output=True, timeout=30)
         logger.info(f"FFmpeg dönüşüm tamamlandı: {output_path}, çıkış kodu: {result.returncode}")

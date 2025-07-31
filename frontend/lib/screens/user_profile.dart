@@ -23,7 +23,20 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   @override
   void initState() {
     super.initState();
-    _currentUser = _auth.currentUser!;
+    // currentUser null olabilir, kontrol et
+    final currentUser = _auth.currentUser;
+    if (currentUser == null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => const LoginScreen()),
+          (Route<dynamic> route) => false,
+        );
+      });
+      return;
+    }
+
+    _currentUser = currentUser;
     _nameController.text = _currentUser.displayName ?? '';
     _emailController.text = _currentUser.email ?? '';
   }
@@ -31,7 +44,20 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   Future<void> _signOut() async {
     try {
       setState(() => _isLoading = true);
+
+      // 1. Önce auth state değişikliklerini dinlemeye başla
+      final authStateSubscription = _auth.authStateChanges().listen((_) {});
+
+      // 2. Çıkış yap
       await _auth.signOut();
+
+      // 3. Firebase'in senkronize olmasını bekle (en az 500ms)
+      await Future.delayed(const Duration(milliseconds: 500));
+
+      // 4. Subscription'ı temizle
+      await authStateSubscription.cancel();
+
+      // 5. Uygulama durumunu temizle ve login ekranına yönlendir
       if (!mounted) return;
       Navigator.pushAndRemoveUntil(
         context,
@@ -39,6 +65,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
         (Route<dynamic> route) => false,
       );
     } catch (e) {
+      debugPrint('Sign out error: $e');
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

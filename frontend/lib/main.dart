@@ -38,22 +38,47 @@ class MyApp extends StatelessWidget {
       title: 'NeuroGraph',
       debugShowCheckedModeBanner: false,
       theme: _buildThemeData(context),
-      home: StreamBuilder<User?>(
-        stream: AuthService().user,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Scaffold(
-              body: Center(child: CircularProgressIndicator()),
-            );
-          }
+      home: AuthWrapper(),
+    );
+  }
+}
 
-          if (snapshot.hasData) {
-            return const HomeScreen();
-          }
+class AuthWrapper extends StatefulWidget {
+  const AuthWrapper({super.key});
 
+  @override
+  State<AuthWrapper> createState() => _AuthWrapperState();
+}
+
+class _AuthWrapperState extends State<AuthWrapper> {
+  final AuthService _authService = AuthService();
+  late Stream<User?> _authStream;
+
+  @override
+  void initState() {
+    super.initState();
+    _authStream = _authService.user;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<User?>(
+      stream: _authStream,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+        }
+
+        if (snapshot.hasError) {
+          debugPrint('Auth error: ${snapshot.error}');
+          // Hata durumunda login ekranına yönlendir
           return const LoginScreen();
-        },
-      ),
+        }
+
+        return snapshot.data != null ? const HomeScreen() : const LoginScreen();
+      },
     );
   }
 }

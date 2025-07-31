@@ -122,10 +122,10 @@ class _DrawingTestScreenState extends State<DrawingTestScreen> {
 
   // Backend URL'sini testKey'e göre dinamik olarak belirle
   String get _backendUrl {
-    const String baseUrl = 'http://192.168.1.160:8000'; // Backend'inizin ana URL'si
+    const String baseUrl = 'http://10.0.2.2:8000'; // Backend'inizin ana URL'si
     if (widget.testKey == 'spiral') {
       // Spiral testi için backend endpoint'i
-      return '$baseUrl/spiral/predict_tremor'; 
+      return '$baseUrl/spiral/predict_tremor';
     } else if (widget.testKey == 'meander') {
       // Meander testi için backend endpoint'i
       return '$baseUrl/meander/predict_meander_tremor';
@@ -137,7 +137,7 @@ class _DrawingTestScreenState extends State<DrawingTestScreen> {
     print('Hata: Bilinmeyen testKey: ${widget.testKey}');
     return '$baseUrl/spiral/predict_tremor'; // Varsayılan olarak spiral endpoint'ini kullan
   }
-  
+
   @override
   void initState() {
     super.initState();
