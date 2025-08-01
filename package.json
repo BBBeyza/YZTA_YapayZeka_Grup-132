@@ -4,10 +4,10 @@
   "description": "Neurograph project with Flutter frontend and Python backend",
   "main": "index.js",
   "scripts": {
-    "start": "concurrently -k \"cd frontend && flutter run\" \"cd backend/python && uvicorn api:app --host 0.0.0.0 --port 8000 --reload\"",
-    "backend": "cd backend/python && uvicorn api:app --host 10.0.2.2 --port 8000 --reload",
-    "backend-local": "cd backend/python && uvicorn api:app --host 10.0.2.2 --port 8000 --reload",
-    "backend-all": "cd backend/python && uvicorn api:app --host 0.0.0.0 --port 8000 --reload",
+    "start": "concurrently -k \"cd frontend && flutter run\" \"cd backend/python && uvicorn api:app --host 192.168.1.160 --port 8000 --reload\"",
+    "backend": "cd backend/python && uvicorn api:app --host 192.168.1.160 --port 8000 --reload",
+    "backend-local": "cd backend/python && uvicorn api:app --host 192.168.1.160 --port 8000 --reload",
+    "backend-all": "cd backend/python && uvicorn api:app --host 192.168.1.160 --port 8000 --reload",
     "frontend": "cd frontend && flutter run",
     "dev": "concurrently -k -n \"FLUTTER,BACKEND\" -c \"blue,green\" \"npm run frontend\" \"npm run backend\"",
     "test": "echo \"Error: no test specified\" && exit 1"

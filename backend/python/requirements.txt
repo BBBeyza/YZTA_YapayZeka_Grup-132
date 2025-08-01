@@ -12,3 +12,6 @@ pandas
 google-generativeai
 openpyxl
 dotenv
+pytesseract
+opencv-python
+scikit-learn

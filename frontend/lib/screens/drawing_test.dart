@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:neurograph/widgets/drawing_canvas.dart';
-import 'package:neurograph/models/stroke.dart'; // Bu modelin var olduğunu varsayıyorum
-import 'package:neurograph/services/gemini_service.dart'; // Bu servisin var olduğunu varsayıyorum
+import 'package:neurograph/models/stroke.dart';
+import 'package:neurograph/services/gemini_service.dart';
 import 'dart:typed_data';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
@@ -9,7 +9,6 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:http_parser/http_parser.dart'; // MediaType için
 
-// --- InstructionSection Widget ---
 class InstructionSection extends StatelessWidget {
   final String title;
   final String instruction;
@@ -40,7 +39,6 @@ class InstructionSection extends StatelessWidget {
   }
 }
 
-// --- DrawingTestButtons Widget ---
 class DrawingTestButtons extends StatelessWidget {
   final VoidCallback onSave;
   final VoidCallback onFinish;
@@ -97,9 +95,8 @@ class DrawingTestButtons extends StatelessWidget {
   }
 }
 
-// --- DrawingTestScreen Class ---
 class DrawingTestScreen extends StatefulWidget {
-  final String testKey; // 'spiral', 'meander' veya 'clock'
+  final String testKey; // 'spiral', 'meander', 'clock' veya 'handwriting'
   final String testTitle;
   final String testInstruction;
 
@@ -120,22 +117,19 @@ class _DrawingTestScreenState extends State<DrawingTestScreen> {
 
   bool _isLoading = false;
 
-  // Backend URL'sini testKey'e göre dinamik olarak belirle
   String get _backendUrl {
-    const String baseUrl = 'http://10.0.2.2:8000'; // Backend'inizin ana URL'si
+    const String baseUrl = 'http://192.168.1.160:8000';
     if (widget.testKey == 'spiral') {
-      // Spiral testi için backend endpoint'i
       return '$baseUrl/spiral/predict_tremor';
     } else if (widget.testKey == 'meander') {
-      // Meander testi için backend endpoint'i
       return '$baseUrl/meander/predict_meander_tremor';
     } else if (widget.testKey == 'clock') {
-      // Saat çizim testi için backend endpoint'i
-      return '$baseUrl/clock/predict_clock_tremor'; // Yeni endpoint
+      return '$baseUrl/clock/predict_clock_drawing_score';
+    } else if (widget.testKey == 'handwriting') {
+      return '$baseUrl/handwriting/analyze_handwriting'; 
     }
-    // Bilinmeyen bir testKey gelirse varsayılan veya hata durumu
     print('Hata: Bilinmeyen testKey: ${widget.testKey}');
-    return '$baseUrl/spiral/predict_tremor'; // Varsayılan olarak spiral endpoint'ini kullan
+    return '$baseUrl/spiral/predict_tremor';
   }
 
   @override
@@ -177,14 +171,6 @@ class _DrawingTestScreenState extends State<DrawingTestScreen> {
         );
         return;
       }
-
-      // Hata Ayıklama: Orijinal çizim baytlarını dosyaya kaydet (isteğe bağlı)
-      final directory = await getApplicationDocumentsDirectory();
-      final originalFilePath =
-          '${directory.path}/original_drawing_${widget.testKey}_${DateTime.now().millisecondsSinceEpoch}.png';
-      final originalFile = File(originalFilePath);
-      await originalFile.writeAsBytes(drawingImageBytes);
-      print('Orijinal çizim kaydedildi: $originalFilePath');
     } catch (e) {
       print('Çizim resmi dışa aktarılırken hata: $e');
       drawingImageBytes = null;
@@ -200,16 +186,15 @@ class _DrawingTestScreenState extends State<DrawingTestScreen> {
       return;
     }
 
-    String tremorClassificationResult = "Tremor analizi yapılamadı.";
+    String classificationResult = "Analiz yapılamadı.";
     try {
-      // Çizim PNG baytlarını backend sunucusuna gönder
       var request = http.MultipartRequest('POST', Uri.parse(_backendUrl));
       request.files.add(
         http.MultipartFile.fromBytes(
-          'image', // Backend'de beklenen alan adı (FastAPI'de File(...) veya Form(...))
+          'image', 
           drawingImageBytes,
           filename: 'drawing.png',
-          contentType: MediaType('image', 'png'), // http_parser'dan MediaType
+          contentType: MediaType('image', 'png'),
         ),
       );
 
@@ -221,43 +206,103 @@ class _DrawingTestScreenState extends State<DrawingTestScreen> {
 
         try {
           final Map<String, dynamic> jsonResponse = json.decode(responseBody);
-          // Backend'den gelen tahminin JSON formatına göre key isimlerini ayarlayın
-          final double controlProbability = jsonResponse['control_probability'];
-          final double patientsProbability =
-              jsonResponse['patients_probability'];
 
-          if (patientsProbability > controlProbability) {
-            tremorClassificationResult =
-                "🟡 Titreme Algılandı — Güven: ${patientsProbability.toStringAsFixed(2)}";
-          } else {
-            tremorClassificationResult =
-                "✅ Temiz Yazım — Güven: ${controlProbability.toStringAsFixed(2)}";
+          if (widget.testKey == 'clock') {
+            final int shulmanScore = jsonResponse['shulman_score'];
+            final double confidence = jsonResponse['confidence'];
+            classificationResult =
+                "Shulman Puanı: $shulmanScore (Güven: ${confidence.toStringAsFixed(2)})";
+          } else if (widget.testKey == 'spiral' || widget.testKey == 'meander') {
+            final double controlProbability = jsonResponse['control_probability'];
+            final double patientsProbability = jsonResponse['patients_probability'];
+            if (patientsProbability > controlProbability) {
+              classificationResult =
+                  "🟡 Titreme Algılandı — Güven: ${patientsProbability.toStringAsFixed(2)}";
+            } else {
+              classificationResult =
+                  "✅ Temiz Çizim — Güven: ${controlProbability.toStringAsFixed(2)}";
+            }
+          } else if (widget.testKey == 'handwriting') {
+            final List<dynamic> lineResults = jsonResponse['line_analysis_results'];
+            if (lineResults.isNotEmpty) {
+              // Enhanced handwriting analysis results
+              final double overallQuality = jsonResponse['overall_quality_score'] ?? 0.0;
+              final String qualityLevel = jsonResponse['overall_handwriting_quality'] ?? 'unknown';
+              final double micrographyScore = jsonResponse['overall_micrography_score'] ?? 0.0;
+              final String micrographySeverity = jsonResponse['micrography_severity'] ?? 'none';
+                             final double sizeConsistency = jsonResponse['size_consistency_score'] ?? 0.0;
+               final double alignmentQuality = jsonResponse['alignment_quality_score'] ?? 0.0;
+               final double spacingRegularity = jsonResponse['spacing_regularity_score'] ?? 0.0;
+               final double baselineStability = jsonResponse['baseline_stability_score'] ?? 0.0;
+               
+                               // Canvas size analysis - only show warnings for extreme cases
+                String canvasSizeNote = "";
+                if (lineResults.isNotEmpty) {
+                  final firstLine = lineResults.first;
+                  final canvasAnalysis = firstLine['canvas_size_analysis'] ?? 'normal';
+                  switch (canvasAnalysis) {
+                    case 'characters_too_small':
+                      canvasSizeNote = "💡 Harfler çok küçük - daha büyük yazmayı deneyin";
+                      break;
+                    case 'characters_too_large':
+                      canvasSizeNote = "💡 Harfler çok büyük - daha küçük yazmayı deneyin";
+                      break;
+                    case 'optimal_size':
+                    default:
+                      canvasSizeNote = ""; // Don't show anything for optimal size
+                  }
+                }
+              
+              String qualityEmoji = "✅";
+              if (qualityLevel == "poor") qualityEmoji = "❌";
+              else if (qualityLevel == "fair") qualityEmoji = "⚠️";
+              else if (qualityLevel == "good") qualityEmoji = "✅";
+              
+              String micrographyEmoji = "";
+              if (micrographySeverity == "severe") micrographyEmoji = "🔴";
+              else if (micrographySeverity == "moderate") micrographyEmoji = "🟡";
+              else if (micrographySeverity == "mild") micrographyEmoji = "🟠";
+              else micrographyEmoji = "✅";
+              
+                             classificationResult =
+                   "$qualityEmoji Metin Kalitesi: ${qualityLevel.toUpperCase()}\n"
+                   "$micrographyEmoji Mikrografi: ${micrographySeverity.toUpperCase()} (${micrographyScore.toStringAsFixed(2)})\n"
+                   "📊 Medyan harf yüksekliğinden %40 farklı olan harfler: ${(micrographyScore * 100).toStringAsFixed(0)}%\n"
+                   "$canvasSizeNote";
+            } else {
+              classificationResult = "El yazısı tespit edilemedi.";
+            }
           }
+
+        } on FormatException catch (e) {
+          classificationResult =
+              "Backend yanıtı işlenirken hata: Yanıt bir JSON değil. Hata: $e";
         } catch (e) {
-          tremorClassificationResult =
-              "Backend yanıtı işlenirken hata: $e. Yanıt: $responseBody";
+          classificationResult =
+              "Backend yanıtı işlenirken beklenmeyen hata: $e";
         }
       } else {
-        tremorClassificationResult =
-            "Backend hatası: ${response.statusCode} - ${await response.stream.bytesToString()}";
+        String errorBody = await response.stream.bytesToString();
+        classificationResult =
+            "Backend hatası: ${response.statusCode} - $errorBody";
+        print("Backend Hata Yanıtı: $errorBody");
       }
     } catch (e) {
       print('Backend ile iletişim hatası: $e');
-      tremorClassificationResult = "Backend ile iletişim hatası: $e";
+      classificationResult = "Backend ile iletişim hatası: $e";
     } finally {
       setState(() {
         _isLoading = false;
       });
     }
 
-    // Gemini'ye nihai raporlama prompt'unu gönder (ML sonucuyla birlikte)
     final prompt =
         '''
 Kullanıcının yaptığı "${widget.testTitle}" adlı ${widget.testKey} çizim testinin sonuçlarını değerlendirir misin?
 Test Talimatı: "${widget.testInstruction}"
-Cihaz üzerindeki ML modelinden gelen tremor sınıflandırma sonucu (backend'den): "$tremorClassificationResult"
+Cihaz üzerindeki ML modelinden gelen analiz sonucu (backend'den): "$classificationResult"
 
-Bu bilgilere dayanarak, çizimin genel tremor durumunu ve varsa potansiyel anomalileri kullanıcıya anlaşılır bir dille raporla. Bilimsel terimlerden kaçın, nazik ve destekleyici ol. Sadece verilen bilgilere odaklan, çizim hakkında doğrudan görsel yorum yapma.
+Bu bilgilere dayanarak, çizimin genel durumunu ve varsa potansiyel anomalileri kullanıcıya anlaşılır bir dille raporla. Bilimsel terimlerden kaçın, nazik ve destekleyici ol. Sadece verilen bilgilere odaklan, çizim hakkında doğrudan görsel yorum yapma.
 ''';
     final evaluation = await _geminiService.askGemini(prompt);
 
@@ -274,7 +319,7 @@ Bu bilgilere dayanarak, çizimin genel tremor durumunu ve varsa potansiyel anoma
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                'ML Model Analizi: $tremorClassificationResult',
+                'ML Model Analizi: $classificationResult',
                 style: const TextStyle(fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 20),
@@ -313,7 +358,11 @@ Bu bilgilere dayanarak, çizimin genel tremor durumunu ve varsa potansiyel anoma
                   title: widget.testTitle,
                   instruction: widget.testInstruction,
                 ),
-                Expanded(child: DrawingCanvas(key: _canvasKey)),
+                Expanded(
+                  child: DrawingCanvas(
+                    key: _canvasKey,
+                  ),
+                ),
                 DrawingTestButtons(
                   onSave: _saveCurrentDrawing,
                   onFinish: _finishTest,
