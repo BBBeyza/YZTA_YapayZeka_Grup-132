@@ -5,7 +5,7 @@ class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   bool _isLoggingOut = false;
 
-  // Kayıt olma metodu
+  // Kayıt olma metodu - improved error handling
   Future<User?> registerWithEmail({
     required String email,
     required String password,
@@ -13,9 +13,7 @@ class AuthService {
   }) async {
     try {
       // Firebase'in başlatıldığından emin ol
-      if (Firebase.apps.isEmpty) {
-        throw Exception('Firebase başlatılmamış');
-      }
+      await Firebase.initializeApp();
 
       UserCredential result = await _auth.createUserWithEmailAndPassword(
         email: email,
@@ -26,37 +24,41 @@ class AuthService {
 
       if (user != null) {
         try {
+          // Display name güncelleme
           await user.updateDisplayName(fullName);
+          await user.reload(); // Kullanıcı bilgilerini yenile
         } catch (e) {
           print("Display name güncelleme hatası: $e");
-          // Display name güncellenemese bile kullanıcı oluşturulmuş olur
         }
       }
       
       return user;
     } on FirebaseAuthException catch (e) {
       print("Firebase Auth kayıt hatası: ${e.code} - ${e.message}");
-      throw e;
+      rethrow;
     } catch (e) {
       print("Genel kayıt hatası: $e");
-      throw Exception('Kayıt işlemi sırasında beklenmeyen bir hata oluştu: $e');
+      throw FirebaseAuthException(
+        code: 'unknown',
+        message: 'Kayıt işlemi sırasında beklenmeyen bir hata oluştu: $e',
+      );
     }
   }
 
-  // Giriş yapma metodu
+  // Giriş yapma metodu - improved with better error handling
   Future<User?> loginWithEmail({
     required String email,
     required String password,
   }) async {
     try {
       // Firebase'in başlatıldığından emin ol
-      if (Firebase.apps.isEmpty) {
-        throw Exception('Firebase başlatılmamış');
-      }
+      await Firebase.initializeApp();
 
-      // Önce mevcut oturumu temizle
-      if (!_isLoggingOut && _auth.currentUser != null) {
+      // Mevcut kullanıcı varsa önce çıkış yap
+      if (_auth.currentUser != null && !_isLoggingOut) {
         await _safeSignOut();
+        // Auth state'in temizlenmesini bekle
+        await Future.delayed(const Duration(milliseconds: 500));
       }
 
       UserCredential result = await _auth.signInWithEmailAndPassword(
@@ -64,16 +66,25 @@ class AuthService {
         password: password,
       );
 
-      // Auth state'in güncellenmesini bekle
-      await _auth.authStateChanges().firstWhere((user) => user != null);
+      User? user = result.user;
+      
+      if (user != null) {
+        // Kullanıcı bilgilerini yenile
+        await user.reload();
+        // Auth state değişikliğini bekle
+        await Future.delayed(const Duration(milliseconds: 300));
+      }
 
-      return result.user;
+      return user;
     } on FirebaseAuthException catch (e) {
       print("Firebase Auth giriş hatası: ${e.code} - ${e.message}");
       rethrow;
     } catch (e) {
       print("Genel giriş hatası: $e");
-      throw Exception('Giriş işlemi sırasında beklenmeyen bir hata oluştu: $e');
+      throw FirebaseAuthException(
+        code: 'unknown', 
+        message: 'Giriş işlemi sırasında beklenmeyen bir hata oluştu: $e',
+      );
     }
   }
 
@@ -83,8 +94,8 @@ class AuthService {
     _isLoggingOut = true;
     try {
       await _auth.signOut();
-      // Firebase'in tamamen senkronize olmasını bekle
-      await _auth.authStateChanges().firstWhere((user) => user == null);
+      // Auth state değişikliğini bekle
+      await Future.delayed(const Duration(milliseconds: 300));
     } catch (e) {
       print("Çıkış hatası: $e");
     } finally {
@@ -96,10 +107,13 @@ class AuthService {
     await _safeSignOut();
   }
 
-  // Kullanıcı durumu akışı
+  // Kullanıcı durumu akışı - improved error handling
   Stream<User?> get user {
     try {
-      return _auth.authStateChanges();
+      return _auth.authStateChanges().handleError((error) {
+        print("Auth state stream hatası: $error");
+        return null;
+      });
     } catch (e) {
       print("Auth state stream hatası: $e");
       return Stream.value(null);
@@ -113,6 +127,16 @@ class AuthService {
     } catch (e) {
       print('Current user error: $e');
       return null;
+    }
+  }
+
+  // Şifre sıfırlama metodu
+  Future<void> sendPasswordResetEmail(String email) async {
+    try {
+      await _auth.sendPasswordResetEmail(email: email);
+    } on FirebaseAuthException catch (e) {
+      print("Şifre sıfırlama hatası: ${e.code} - ${e.message}");
+      rethrow;
     }
   }
 }
