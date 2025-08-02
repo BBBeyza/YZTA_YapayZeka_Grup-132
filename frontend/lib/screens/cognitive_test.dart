@@ -79,7 +79,7 @@ class _CognitiveTestScreenState extends State<CognitiveTestScreen> {
 
     try {
       final response = await http.post(
-        Uri.parse('http://10.0.2.2:8000/cognitive/run_cognitive_test'),
+        Uri.parse('http://192.168.1.160:8000/cognitive/run_cognitive_test'),
         headers: {'Content-Type': 'application/json'},
       );
 
@@ -153,7 +153,7 @@ class _CognitiveTestScreenState extends State<CognitiveTestScreen> {
           .toList();
 
       final response = await http.post(
-        Uri.parse('http://10.0.2.2:8000/cognitive/run_cognitive_test'),
+        Uri.parse('http://192.168.1.160:8000/cognitive/run_cognitive_test'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'qa_list': qaList}),
       );
@@ -239,9 +239,9 @@ class _CognitiveTestScreenState extends State<CognitiveTestScreen> {
       appBar: AppBar(
         title: const Text(
           'Bilişsel Test',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+          style: TextStyle(color: Color.fromARGB(255, 0, 0, 0), fontWeight: FontWeight.w600),
         ),
-        backgroundColor: const Color(0xFF72B0D3),
+        backgroundColor: const Color(0xFFE1BEE7),
         centerTitle: true,
         elevation: 0,
       ),
