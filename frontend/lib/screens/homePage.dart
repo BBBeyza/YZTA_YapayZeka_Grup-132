@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:neurograph/widgets/bottom_navigation_bar.dart';
+import 'package:neurograph/widgets/modern_bottom_navigation_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'cognitive_test.dart';
 import 'drawing_test_selection_screen.dart';
@@ -59,16 +59,22 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _widgetOptions.elementAt(_selectedIndex),
-      bottomNavigationBar: AppBottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: (index) {
-          setState(() {
-            _selectedIndex = index;
-          });
-        },
-        selectedItemColor: const Color(0xFF1E3A8A),
-        unselectedItemColor: Colors.grey,
+      backgroundColor: Colors.white, // Arka planı geri beyaz yap
+      extendBody: true,
+      body: Column(
+        children: [
+          Expanded(
+            child: _widgetOptions.elementAt(_selectedIndex),
+          ),
+          ModernBottomNavigationBar(
+            currentIndex: _selectedIndex,
+            onTap: (index) {
+              setState(() {
+                _selectedIndex = index;
+              });
+            },
+          ),
+        ],
       ),
     );
   }

@@ -1,17 +1,19 @@
 // lib/widgets/modern_bottom_navigation_bar.dart
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'dart:ui';
 
 class ModernBottomNavigationBar extends StatelessWidget {
   final int currentIndex;
   final ValueChanged<int> onTap;
 
-  const ModernBottomNavigationBar({
+  ModernBottomNavigationBar({
     super.key,
     required this.currentIndex,
     required this.onTap,
   });
 
-  // Navigasyon öğelerini tanımlıyoruz - resimdeki gibi
+  // Navigasyon öğelerini tanımlıyoruz
   static const List<Map<String, dynamic>> _navItems = [
     {
       'icon': Icons.home_outlined,
@@ -38,9 +40,9 @@ class ModernBottomNavigationBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
+      margin: const EdgeInsets.only(bottom: 20), // Sadece alt margin
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Colors.white.withOpacity(0.9), // Şeffaflık ekle
         borderRadius: BorderRadius.circular(25),
         boxShadow: [
           BoxShadow(
@@ -53,32 +55,33 @@ class ModernBottomNavigationBar extends StatelessWidget {
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(25),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: List.generate(_navItems.length, (index) {
-              final item = _navItems[index];
-              final isSelected = index == currentIndex;
+        child: BackdropFilter( // Blur efekti ekle
+          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: List.generate(_navItems.length, (index) {
+                final item = _navItems[index];
+                final isSelected = index == currentIndex;
 
-              return Expanded(
-                child: GestureDetector(
-                  onTap: () => onTap(index),
-                  behavior: HitTestBehavior.opaque,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        isSelected ? item['activeIcon'] : item['icon'],
-                        size: 22,
-                        color: isSelected
-                            ? Colors.black87
-                            : Colors.grey.shade600,
-                      ),
-                      const SizedBox(height: 4),
-                      Flexible(
-                        child: Text(
+                return Expanded(
+                  child: GestureDetector(
+                    onTap: () => onTap(index),
+                    behavior: HitTestBehavior.opaque,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          isSelected ? item['activeIcon'] : item['icon'],
+                          size: 22,
+                          color: isSelected
+                              ? Colors.black87
+                              : Colors.grey.shade600,
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
                           item['label'],
                           style: TextStyle(
                             fontSize: 10,
@@ -92,12 +95,12 @@ class ModernBottomNavigationBar extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                           maxLines: 1,
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-              );
-            }),
+                );
+              }),
+            ),
           ),
         ),
       ),

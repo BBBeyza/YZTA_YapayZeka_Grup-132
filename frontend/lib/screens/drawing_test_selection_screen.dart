@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:neurograph/screens/drawing_test.dart';
 import 'tutorial_screen.dart';
-import 'package:neurograph/widgets/bottom_navigation_bar.dart';
+import 'package:neurograph/widgets/modern_bottom_navigation_bar.dart';
 
 // Assuming these are separate screens within the DrawingTest flow,
 // or placeholder for other content when this tab is selected.

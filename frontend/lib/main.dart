@@ -44,6 +44,18 @@ class MyApp extends StatelessWidget {
       title: 'NeuroGraph',
       debugShowCheckedModeBanner: false,
       theme: _buildThemeData(context),
+      builder: (context, child) {
+        // Sistem navigation bar'ını beyaz yap
+        SystemChrome.setSystemUIOverlayStyle(
+          const SystemUiOverlayStyle(
+            systemNavigationBarColor: Colors.white,
+            systemNavigationBarIconBrightness: Brightness.dark,
+            statusBarColor: Colors.transparent,
+            statusBarIconBrightness: Brightness.dark,
+          ),
+        );
+        return child!;
+      },
       home: AuthWrapper(),
     );
   }
@@ -97,6 +109,7 @@ class _AuthWrapperState extends State<AuthWrapper> {
 ThemeData _buildThemeData(BuildContext context) {
   return ThemeData(
     useMaterial3: true,
+    scaffoldBackgroundColor: Colors.white,
     colorScheme: ColorScheme.fromSeed(
       seedColor: const Color.fromARGB(255, 90, 20, 175),
       primary: const Color.fromARGB(255, 125, 141, 213),
