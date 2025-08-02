@@ -96,7 +96,6 @@ def get_gemini_feedback(qa_list):
         logger.error(f"HATA: Gemini'den analiz alınırken bir sorun oluştu: {e}")
         return f"Gemini'den yanıt alınamadı. Hata: {str(e)}"
 
-# Yeni endpoint - Sadece soruları getirir
 @router.get("/get_questions")
 async def get_questions():
     try:
@@ -105,7 +104,6 @@ async def get_questions():
         soru_indices = random.sample(range(len(df_sorular)), 10)
         secilen_sorular = df_sorular.iloc[soru_indices].copy()
         
-        # Sadece soruları döndür, cevaplar boş
         sonuc = secilen_sorular[['Index', 'Soru']].to_dict(orient='records')
         logger.info("Dönen sorular: %s", sonuc)
         return sonuc
@@ -114,13 +112,11 @@ async def get_questions():
         logger.error("Sorular alınırken hata: %s", str(e))
         raise HTTPException(status_code=500, detail=str(e))
 
-# Yeni endpoint - Cevapları değerlendirir
 @router.post("/evaluate_answers")
 async def evaluate_answers(qa_list: List[Dict[str, str]] = Body(...)):
     try:
         logger.info("Cevaplar değerlendiriliyor, gelen qa_list: %s", qa_list)
         
-        # Gelen veriyi kontrol et
         if len(qa_list) != 10:
             raise HTTPException(
                 status_code=422, 
@@ -134,7 +130,6 @@ async def evaluate_answers(qa_list: List[Dict[str, str]] = Body(...)):
                     detail=f"{i+1}. öğede 'Soru' veya 'Cevap' anahtarı eksik"
                 )
         
-        # Gemini'den rapor al
         feedback_report = get_gemini_feedback(qa_list)
         logger.info("Oluşturulan rapor: %s", feedback_report)
         
