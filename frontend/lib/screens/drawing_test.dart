@@ -118,7 +118,7 @@ class _DrawingTestScreenState extends State<DrawingTestScreen> {
   bool _isLoading = false;
 
   String get _backendUrl {
-    const String baseUrl = 'http://192.168.1.160:8000';
+    const String baseUrl = 'http://10.0.2.2:8000';
     if (widget.testKey == 'spiral') {
       return '$baseUrl/spiral/predict_tremor';
     } else if (widget.testKey == 'meander') {
@@ -126,7 +126,7 @@ class _DrawingTestScreenState extends State<DrawingTestScreen> {
     } else if (widget.testKey == 'clock') {
       return '$baseUrl/clock/predict_clock_drawing_score';
     } else if (widget.testKey == 'handwriting') {
-      return '$baseUrl/handwriting/analyze_handwriting'; 
+      return '$baseUrl/handwriting/analyze_handwriting';
     }
     print('Hata: Bilinmeyen testKey: ${widget.testKey}');
     return '$baseUrl/spiral/predict_tremor';
@@ -191,7 +191,7 @@ class _DrawingTestScreenState extends State<DrawingTestScreen> {
       var request = http.MultipartRequest('POST', Uri.parse(_backendUrl));
       request.files.add(
         http.MultipartFile.fromBytes(
-          'image', 
+          'image',
           drawingImageBytes,
           filename: 'drawing.png',
           contentType: MediaType('image', 'png'),
@@ -212,9 +212,12 @@ class _DrawingTestScreenState extends State<DrawingTestScreen> {
             final double confidence = jsonResponse['confidence'];
             classificationResult =
                 "Shulman Puanı: $shulmanScore (Güven: ${confidence.toStringAsFixed(2)})";
-          } else if (widget.testKey == 'spiral' || widget.testKey == 'meander') {
-            final double controlProbability = jsonResponse['control_probability'];
-            final double patientsProbability = jsonResponse['patients_probability'];
+          } else if (widget.testKey == 'spiral' ||
+              widget.testKey == 'meander') {
+            final double controlProbability =
+                jsonResponse['control_probability'];
+            final double patientsProbability =
+                jsonResponse['patients_probability'];
             if (patientsProbability > controlProbability) {
               classificationResult =
                   "🟡 Titreme Algılandı — Güven: ${patientsProbability.toStringAsFixed(2)}";
@@ -223,57 +226,75 @@ class _DrawingTestScreenState extends State<DrawingTestScreen> {
                   "✅ Temiz Çizim — Güven: ${controlProbability.toStringAsFixed(2)}";
             }
           } else if (widget.testKey == 'handwriting') {
-            final List<dynamic> lineResults = jsonResponse['line_analysis_results'];
+            final List<dynamic> lineResults =
+                jsonResponse['line_analysis_results'];
             if (lineResults.isNotEmpty) {
               // Enhanced handwriting analysis results
-              final double overallQuality = jsonResponse['overall_quality_score'] ?? 0.0;
-              final String qualityLevel = jsonResponse['overall_handwriting_quality'] ?? 'unknown';
-              final double micrographyScore = jsonResponse['overall_micrography_score'] ?? 0.0;
-              final String micrographySeverity = jsonResponse['micrography_severity'] ?? 'none';
-                             final double sizeConsistency = jsonResponse['size_consistency_score'] ?? 0.0;
-               final double alignmentQuality = jsonResponse['alignment_quality_score'] ?? 0.0;
-               final double spacingRegularity = jsonResponse['spacing_regularity_score'] ?? 0.0;
-               final double baselineStability = jsonResponse['baseline_stability_score'] ?? 0.0;
-               
-                               // Canvas size analysis - only show warnings for extreme cases
-                String canvasSizeNote = "";
-                if (lineResults.isNotEmpty) {
-                  final firstLine = lineResults.first;
-                  final canvasAnalysis = firstLine['canvas_size_analysis'] ?? 'normal';
-                  switch (canvasAnalysis) {
-                    case 'characters_too_small':
-                      canvasSizeNote = "💡 Harfler çok küçük - daha büyük yazmayı deneyin";
-                      break;
-                    case 'characters_too_large':
-                      canvasSizeNote = "💡 Harfler çok büyük - daha küçük yazmayı deneyin";
-                      break;
-                    case 'optimal_size':
-                    default:
-                      canvasSizeNote = ""; // Don't show anything for optimal size
-                  }
+              final double overallQuality =
+                  jsonResponse['overall_quality_score'] ?? 0.0;
+              final String qualityLevel =
+                  jsonResponse['overall_handwriting_quality'] ?? 'unknown';
+              final double micrographyScore =
+                  jsonResponse['overall_micrography_score'] ?? 0.0;
+              final String micrographySeverity =
+                  jsonResponse['micrography_severity'] ?? 'none';
+              final double sizeConsistency =
+                  jsonResponse['size_consistency_score'] ?? 0.0;
+              final double alignmentQuality =
+                  jsonResponse['alignment_quality_score'] ?? 0.0;
+              final double spacingRegularity =
+                  jsonResponse['spacing_regularity_score'] ?? 0.0;
+              final double baselineStability =
+                  jsonResponse['baseline_stability_score'] ?? 0.0;
+
+              // Canvas size analysis - only show warnings for extreme cases
+              String canvasSizeNote = "";
+              if (lineResults.isNotEmpty) {
+                final firstLine = lineResults.first;
+                final canvasAnalysis =
+                    firstLine['canvas_size_analysis'] ?? 'normal';
+                switch (canvasAnalysis) {
+                  case 'characters_too_small':
+                    canvasSizeNote =
+                        "💡 Harfler çok küçük - daha büyük yazmayı deneyin";
+                    break;
+                  case 'characters_too_large':
+                    canvasSizeNote =
+                        "💡 Harfler çok büyük - daha küçük yazmayı deneyin";
+                    break;
+                  case 'optimal_size':
+                  default:
+                    canvasSizeNote = ""; // Don't show anything for optimal size
                 }
-              
+              }
+
               String qualityEmoji = "✅";
-              if (qualityLevel == "poor") qualityEmoji = "❌";
-              else if (qualityLevel == "fair") qualityEmoji = "⚠️";
-              else if (qualityLevel == "good") qualityEmoji = "✅";
-              
+              if (qualityLevel == "poor")
+                qualityEmoji = "❌";
+              else if (qualityLevel == "fair")
+                qualityEmoji = "⚠️";
+              else if (qualityLevel == "good")
+                qualityEmoji = "✅";
+
               String micrographyEmoji = "";
-              if (micrographySeverity == "severe") micrographyEmoji = "🔴";
-              else if (micrographySeverity == "moderate") micrographyEmoji = "🟡";
-              else if (micrographySeverity == "mild") micrographyEmoji = "🟠";
-              else micrographyEmoji = "✅";
-              
-                             classificationResult =
-                   "$qualityEmoji Metin Kalitesi: ${qualityLevel.toUpperCase()}\n"
-                   "$micrographyEmoji Mikrografi: ${micrographySeverity.toUpperCase()} (${micrographyScore.toStringAsFixed(2)})\n"
-                   "📊 Medyan harf yüksekliğinden %40 farklı olan harfler: ${(micrographyScore * 100).toStringAsFixed(0)}%\n"
-                   "$canvasSizeNote";
+              if (micrographySeverity == "severe")
+                micrographyEmoji = "🔴";
+              else if (micrographySeverity == "moderate")
+                micrographyEmoji = "🟡";
+              else if (micrographySeverity == "mild")
+                micrographyEmoji = "🟠";
+              else
+                micrographyEmoji = "✅";
+
+              classificationResult =
+                  "$qualityEmoji Metin Kalitesi: ${qualityLevel.toUpperCase()}\n"
+                  "$micrographyEmoji Mikrografi: ${micrographySeverity.toUpperCase()} (${micrographyScore.toStringAsFixed(2)})\n"
+                  "📊 Medyan harf yüksekliğinden %40 farklı olan harfler: ${(micrographyScore * 100).toStringAsFixed(0)}%\n"
+                  "$canvasSizeNote";
             } else {
               classificationResult = "El yazısı tespit edilemedi.";
             }
           }
-
         } on FormatException catch (e) {
           classificationResult =
               "Backend yanıtı işlenirken hata: Yanıt bir JSON değil. Hata: $e";
@@ -358,11 +379,7 @@ Bu bilgilere dayanarak, çizimin genel durumunu ve varsa potansiyel anomalileri 
                   title: widget.testTitle,
                   instruction: widget.testInstruction,
                 ),
-                Expanded(
-                  child: DrawingCanvas(
-                    key: _canvasKey,
-                  ),
-                ),
+                Expanded(child: DrawingCanvas(key: _canvasKey)),
                 DrawingTestButtons(
                   onSave: _saveCurrentDrawing,
                   onFinish: _finishTest,
