@@ -10,20 +10,26 @@ import 'services/auth_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await dotenv.load();
+  
+  try {
+    await dotenv.load();
+  } catch (e) {
+    print('Dotenv yükleme hatası: $e');
+  }
 
   try {
-    // Firebase.apps.isEmpty kontrolü bazen yetersiz kalabiliyor
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    ).catchError((error) {
-      if (error.toString().contains('duplicate-app')) {
-        return Firebase.app();
-      }
-      throw error;
-    });
+    // Firebase'in zaten başlatılıp başlatılmadığını kontrol et
+    if (Firebase.apps.isEmpty) {
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
+      print('Firebase başarıyla başlatıldı');
+    } else {
+      print('Firebase zaten başlatılmış');
+    }
   } catch (e) {
-    print('Firebase initialization error: $e');
+    print('Firebase başlatma hatası: $e');
+    // Firebase başlatılamasa bile uygulamayı çalıştır
   }
 
   runApp(const MyApp());
@@ -57,7 +63,12 @@ class _AuthWrapperState extends State<AuthWrapper> {
   @override
   void initState() {
     super.initState();
-    _authStream = _authService.user;
+    try {
+      _authStream = _authService.user;
+    } catch (e) {
+      print('Auth stream başlatma hatası: $e');
+      _authStream = Stream.value(null);
+    }
   }
 
   @override
@@ -74,10 +85,10 @@ class _AuthWrapperState extends State<AuthWrapper> {
         if (snapshot.hasError) {
           debugPrint('Auth error: ${snapshot.error}');
           // Hata durumunda login ekranına yönlendir
-          return const LoginScreen();
+          return const LoginPage();
         }
 
-        return snapshot.data != null ? const HomeScreen() : const LoginScreen();
+        return snapshot.data != null ? const HomeScreen() : const LoginPage();
       },
     );
   }

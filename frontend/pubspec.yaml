@@ -58,6 +58,7 @@ flutter:
   assets:
     - assets/images/neuron_background.png
     - assets/audios/
+    - assets/images/
     - assets/videos/MeanderTutorialVideo.mp4
     - assets/videos/SpiralTutorialVideo.mp4
     - assets/images/logo.png

@@ -29,7 +29,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (context) => const LoginScreen()),
+          MaterialPageRoute(builder: (context) => const LoginPage()),
           (Route<dynamic> route) => false,
         );
       });
@@ -61,7 +61,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
       if (!mounted) return;
       Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(builder: (context) => const LoginScreen()),
+        MaterialPageRoute(builder: (context) => const LoginPage()),
         (Route<dynamic> route) => false,
       );
     } catch (e) {

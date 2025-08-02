@@ -72,7 +72,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         if (!mounted) return;
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const LoginScreen()),
+          MaterialPageRoute(builder: (context) => const LoginPage()),
         );
 
         ScaffoldMessenger.of(context).showSnackBar(
@@ -302,7 +302,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => const LoginScreen(),
+                              builder: (context) => const LoginPage(),
                             ),
                           );
                         },

@@ -1,7 +1,7 @@
 plugins {
     id("com.android.application")
     // START: FlutterFire Configuration
-    id("com.google.gms.google-services")
+    id("com.google.gms.google-services") // Yeni eklenen satır
     // END: FlutterFire Configuration
     id("kotlin-android")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
@@ -10,11 +10,11 @@ plugins {
 
 dependencies {
     // Import the BoM for the Firebase platform
-    implementation(platform("com.google.firebase:firebase-bom:34.0.0"))
+    implementation(platform("com.google.firebase:firebase-bom:34.0.0")) // Yeni eklenen satır
 
     // Add the dependency for the Firebase ML model downloader library
     // When using the BoM, you don't specify versions in Firebase library dependencies
-    implementation("com.google.firebase:firebase-ml-modeldownloader")
+    implementation("com.google.firebase:firebase-ml-modeldownloader") // Yeniden eklenen satır
 
     // Also add the dependency for the TensorFlow Lite library and specify its version
     implementation("org.tensorflow:tensorflow-lite:2.3.0")
@@ -23,7 +23,7 @@ dependencies {
 android {
     namespace = "com.example.neurograph"
     compileSdk = 35
-    ndkVersion = "27.0.12077973" // NDK versiyonunu buraya sabitledik
+    ndkVersion = "27.0.12077973"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -39,11 +39,8 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "com.example.neurograph"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = 23 // minSdkVersion'─▒ 23'e y├╝kselttik
+        minSdk = 23
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
@@ -51,8 +48,6 @@ android {
 
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig = signingConfigs.getByName("debug")
         }
     }

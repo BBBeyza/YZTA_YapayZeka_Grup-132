@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -11,19 +12,34 @@ class AuthService {
     required String fullName,
   }) async {
     try {
+      // Firebase'in başlatıldığından emin ol
+      if (Firebase.apps.isEmpty) {
+        throw Exception('Firebase başlatılmamış');
+      }
+
       UserCredential result = await _auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
+      
       User? user = result.user;
 
       if (user != null) {
-        await user.updateDisplayName(fullName);
+        try {
+          await user.updateDisplayName(fullName);
+        } catch (e) {
+          print("Display name güncelleme hatası: $e");
+          // Display name güncellenemese bile kullanıcı oluşturulmuş olur
+        }
       }
+      
       return user;
     } on FirebaseAuthException catch (e) {
-      print("Kayıt hatası: ${e.message}");
-      throw e; // Hataları iletmek için throw kullanıyoruz
+      print("Firebase Auth kayıt hatası: ${e.code} - ${e.message}");
+      throw e;
+    } catch (e) {
+      print("Genel kayıt hatası: $e");
+      throw Exception('Kayıt işlemi sırasında beklenmeyen bir hata oluştu: $e');
     }
   }
 
@@ -33,6 +49,11 @@ class AuthService {
     required String password,
   }) async {
     try {
+      // Firebase'in başlatıldığından emin ol
+      if (Firebase.apps.isEmpty) {
+        throw Exception('Firebase başlatılmamış');
+      }
+
       // Önce mevcut oturumu temizle
       if (!_isLoggingOut && _auth.currentUser != null) {
         await _safeSignOut();
@@ -48,8 +69,11 @@ class AuthService {
 
       return result.user;
     } on FirebaseAuthException catch (e) {
-      print("Giriş hatası: ${e.message}");
+      print("Firebase Auth giriş hatası: ${e.code} - ${e.message}");
       rethrow;
+    } catch (e) {
+      print("Genel giriş hatası: $e");
+      throw Exception('Giriş işlemi sırasında beklenmeyen bir hata oluştu: $e');
     }
   }
 
@@ -61,6 +85,8 @@ class AuthService {
       await _auth.signOut();
       // Firebase'in tamamen senkronize olmasını bekle
       await _auth.authStateChanges().firstWhere((user) => user == null);
+    } catch (e) {
+      print("Çıkış hatası: $e");
     } finally {
       _isLoggingOut = false;
     }
@@ -72,7 +98,12 @@ class AuthService {
 
   // Kullanıcı durumu akışı
   Stream<User?> get user {
-    return _auth.authStateChanges();
+    try {
+      return _auth.authStateChanges();
+    } catch (e) {
+      print("Auth state stream hatası: $e");
+      return Stream.value(null);
+    }
   }
 
   // Mevcut kullanıcı
