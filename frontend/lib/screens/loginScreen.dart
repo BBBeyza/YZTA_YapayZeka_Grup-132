@@ -46,49 +46,69 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void _login() async {
-    if (!mounted) return;
+    if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
+      setState(() => _errorMessage = 'Lütfen tüm alanları doldurunuz');
+      return;
+    }
 
     setState(() {
-      _errorMessage = null;
       _isLoading = true;
+      _errorMessage = null;
     });
 
     try {
-      // Validasyon kontrolleri
-      if (_emailController.text.isEmpty) {
-        throw 'E-posta alanı boş bırakılamaz';
-      }
+      // Önce mevcut oturumu temizle
+      await FirebaseAuth.instance.signOut();
+      // Firebase'in senkronize olmasını bekle
+      await Future.delayed(const Duration(milliseconds: 500));
 
-      if (!_emailController.text.contains('@')) {
-        throw 'Geçerli bir e-posta adresi girin';
-      }
-
-      if (_passwordController.text.isEmpty) {
-        throw 'Şifre alanı boş bırakılamaz';
-      }
-
-      // Firebase giriş işlemi
       User? user = await _auth.loginWithEmail(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
 
       if (user != null && mounted) {
-        // Onboarding'i gördük olarak işaretle (eğer zaten işaretli değilse)
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setBool('hasSeenOnboarding', true);
-
-        if (!mounted) return;
-        // Giriş başarılı, ana sayfaya yönlendir ve geri dönülmesini engelle
+        if (_rememberMe) {
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setString('email', _emailController.text.trim());
+          await prefs.setString('password', _passwordController.text.trim());
+        }
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const HomeScreen()),
         );
       }
     } on FirebaseAuthException catch (e) {
-      setState(() => _errorMessage = _getFirebaseErrorMessage(e));
+      // Firebase hatalarını işle
+      String errorMessage;
+      switch (e.code) {
+        case 'invalid-email':
+          errorMessage = 'Geçersiz email formatı';
+          break;
+        case 'user-disabled':
+          errorMessage = 'Bu hesap devre dışı bırakılmış';
+          break;
+        case 'user-not-found':
+          errorMessage = 'Bu email ile kayıtlı kullanıcı bulunamadı';
+          break;
+        case 'wrong-password':
+          errorMessage = 'Hatalı şifre';
+          break;
+        case 'too-many-requests':
+          errorMessage =
+              'Çok fazla deneme yaptınız. Lütfen daha sonra tekrar deneyin';
+          break;
+        default:
+          errorMessage = 'Giriş başarısız: ${e.message ?? "Bilinmeyen hata"}';
+      }
+      setState(() => _errorMessage = errorMessage);
     } catch (e) {
-      setState(() => _errorMessage = e.toString());
+      // Genel hataları işle
+      debugPrint('Login error: $e');
+      setState(
+        () => _errorMessage =
+            'Beklenmeyen bir hata oluştu. Lütfen tekrar deneyin.',
+      );
     } finally {
       if (mounted) {
         setState(() => _isLoading = false);
@@ -96,25 +116,40 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  String _getFirebaseErrorMessage(FirebaseAuthException e) {
-    switch (e.code) {
-      case 'user-not-found':
-        return 'Bu e-posta adresi ile kayıtlı kullanıcı bulunamadı';
-      case 'wrong-password':
-        return 'Hatalı şifre';
-      case 'invalid-email':
-        return 'Geçersiz e-posta formatı';
-      case 'user-disabled':
-        return 'Bu hesap devre dışı bırakılmış';
-      case 'too-many-requests':
-        return 'Çok fazla başarısız giriş denemesi. Lütfen daha sonra tekrar deneyin';
-      case 'operation-not-allowed':
-        return 'E-posta/şifre ile giriş devre dışı';
-      default:
-        return 'Giriş sırasında hata oluştu: ${e.message}';
+  Future<void> _resetPassword(String email) async {
+    try {
+      await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Şifre sıfırlama linki $email adresine gönderildi'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } on FirebaseAuthException catch (e) {
+      String errorMessage;
+      switch (e.code) {
+        case 'invalid-email':
+          errorMessage = 'Geçersiz email formatı';
+          break;
+        case 'user-not-found':
+          errorMessage = 'Bu email ile kayıtlı kullanıcı bulunamadı';
+          break;
+        default:
+          errorMessage =
+              'Şifre sıfırlama başarısız: ${e.message ?? "Bilinmeyen hata"}';
+      }
+      if (mounted) {
+        setState(() => _errorMessage = errorMessage);
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _errorMessage = 'Beklenmeyen bir hata oluştu: $e');
+      }
     }
   }
-
+  
   @override
   void dispose() {
     _emailController.dispose();

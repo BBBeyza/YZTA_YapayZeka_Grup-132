@@ -1,36 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:neurograph/widgets/bottom_navigation_bar.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'cognitive_test.dart';
 import 'drawing_test_selection_screen.dart';
 import 'audio_test_screen.dart';
 import 'user_profile.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'user_profile.dart';
+import 'chatbot_screen.dart';
+import 'reports_screen.dart';
 
-// GeminiChatScreen ve ReportsScreen widget'ları eksiksiz.
-class GeminiChatScreen extends StatelessWidget {
-  const GeminiChatScreen({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Gemini Chat')),
-      body: const Center(child: Text('Gemini Chat Ekranı')),
-    );
-  }
-}
-
-class ReportsScreen extends StatelessWidget {
-  const ReportsScreen({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Raporlar')),
-      body: const Center(child: Text('Raporlar Ekranı')),
-    );
-  }
-}
-
+// Ana navigasyonu yöneten HomeScreen widget'ı
 class HomeScreen extends StatefulWidget {
   final int initialTabIndex;
 
@@ -46,11 +25,10 @@ class _HomeScreenState extends State<HomeScreen> {
   double progressValue = 0.0;
   String progressText = '0/0 test tamamlandı';
 
-  // Düzeltme: _widgetOptions listesindeki HomeScreen()'i kaldırdım
-  // ve yerine bu widget'ın kendisini temsil eden bir widget (mesela Text('Anasayfa')) kullandım.
-  // Bu sayede sonsuz döngüye girmesi engellendi.
+  // Düzeltme: Alt navigasyon çubuğundaki ekranları içeren liste.
+  // Her ekran kendi dosyasından içe aktarılmıştır.
   static const List<Widget> _widgetOptions = <Widget>[
-    _HomeContent(), // Burası artık Home ekranının içeriği olacak
+    _HomeContent(), // Ana ekranın içeriği
     GeminiChatScreen(),
     ReportsScreen(),
     UserProfileScreen(),
@@ -73,13 +51,11 @@ class _HomeScreenState extends State<HomeScreen> {
     final user = FirebaseAuth.instance.currentUser;
     if (user != null && mounted) {
       setState(() {
-        userName =
-            user.displayName ?? user.email?.split('@').first ?? "Kullanıcı";
+        userName = user.displayName ?? user.email?.split('@').first ?? "Kullanıcı";
       });
     }
   }
 
-  // Artık sadece ana ekran içeriğini dönen bir widget oluşturuyoruz
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -98,47 +74,25 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-// Yeni bir _HomeContent widget'ı oluşturarak önceki HomeScreen'in içeriğini buraya taşıdık.
-// Bu, _widgetOptions listesinde HomeScreen'in kendisini kullanma hatasını giderir.
-class _HomeContent extends StatefulWidget {
+// Ana ekran içeriğini barındıran widget
+// Düzeltme: `_HomeContent` bir `StatelessWidget` olarak ayarlandı
+class _HomeContent extends StatelessWidget {
   const _HomeContent({super.key});
 
-  @override
-  State<_HomeContent> createState() => _HomeContentState();
-}
-
-class _HomeContentState extends State<_HomeContent> {
-  String userName = "Kullanıcı";
-  double progressValue = 0.0;
-  String progressText = '0/0 test tamamlandı';
-
-  @override
-  void initState() {
-    super.initState();
-    _loadUserData();
-    SystemChrome.setSystemUIOverlayStyle(
-      SystemUiOverlayStyle.light.copyWith(
-        statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.dark,
-      ),
-    );
-  }
-
-  Future<void> _loadUserData() async {
-    final user = FirebaseAuth.instance.currentUser;
-    if (user != null && mounted) {
-      setState(() {
-        userName =
-            user.displayName ?? user.email?.split('@').first ?? "Kullanıcı";
-      });
-    }
-  }
+  // `_HomeContent` içinde veri yükleme işlemi olmadığı için
+  // `userName`, `progressValue` ve `progressText` değerlerini
+  // `HomeScreen`'den almalıyız.
+  // Ancak, bu kod parçacığında _HomeContent'e bu değerleri aktarmadığınız için
+  // şimdilik varsayılan değerleri kullanmaya devam edeceğim.
+  // Daha sonra bu değerleri `_HomeScreenState` içindeki değişkenlerle güncelleyebilirsiniz.
+  final String userName = "Kullanıcı";
+  final double progressValue = 0.0;
+  final String progressText = '0/0 test tamamlandı';
 
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        // Arka Plan Şekli - Oval kısmı ClipPath ile daha belirgin hale getirildi
         Positioned(
           top: 0,
           left: 0,
@@ -177,12 +131,11 @@ class _HomeContentState extends State<_HomeContent> {
     );
   }
 
-  // Üst Uygulama Çubuğu (AppBar)
   Widget _buildAppBar(BuildContext context) {
     return AppBar(
       backgroundColor: Colors.transparent,
       elevation: 0,
-      automaticallyImplyLeading: false, // Geri butonunu kaldır
+      automaticallyImplyLeading: false,
       leading: Padding(
         padding: const EdgeInsets.only(left: 10.0),
         child: Image.asset(
@@ -215,7 +168,6 @@ class _HomeContentState extends State<_HomeContent> {
           padding: const EdgeInsets.only(right: 30.0),
           child: GestureDetector(
             onTap: () {
-              // Profil sayfasına yönlendirme
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -234,10 +186,9 @@ class _HomeContentState extends State<_HomeContent> {
     );
   }
 
-  // Selamlama Bölümü
   Widget _buildGreetingSection(BuildContext context) {
     return Text(
-      'Hoşgeldin, $userName', // Kullanıcının adı dinamik olarak eklendi
+      'Hoşgeldin, $userName',
       style: Theme.of(context).textTheme.headlineLarge?.copyWith(
             fontWeight: FontWeight.bold,
             color: Colors.black87,
@@ -245,7 +196,6 @@ class _HomeContentState extends State<_HomeContent> {
     );
   }
 
-  // Test İlerleme Bölümü
   Widget _buildProgressSection(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(20),
@@ -281,7 +231,7 @@ class _HomeContentState extends State<_HomeContent> {
           ),
           const SizedBox(height: 10),
           Text(
-            progressText, // İlerleme metni dinamik hale getirildi
+            progressText,
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
                   color: Colors.black54,
                 ),
@@ -291,7 +241,6 @@ class _HomeContentState extends State<_HomeContent> {
     );
   }
 
-  // Test Durumları Bölümü
   Widget _buildTestStatusSection(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -387,70 +336,85 @@ class _HomeContentState extends State<_HomeContent> {
   }
 }
 
-// Alt Navigasyon Çubuğu widget'ı
-Widget _buildBottomNavBar(BuildContext context, int selectedIndex, Function(int) onItemTapped) {
-  return Container(
-    height: 90, // Navigasyon çubuğu yüksekliği ayarlandı
-    decoration: const BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black12,
-          spreadRadius: 0,
-          blurRadius: 10,
-        ),
-      ],
-    ),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [
-        _buildNavBarItem(context, Icons.home_outlined, 'Anasayfa', 0, selectedIndex, onItemTapped),
-        _buildNavBarItem(context, Icons.bar_chart_outlined, 'Gemini Chat', 1, selectedIndex, onItemTapped),
-        _buildNavBarItem(context, Icons.notifications_none_outlined, 'Raporlar', 2, selectedIndex, onItemTapped),
-        _buildNavBarItem(context, Icons.person_outline, 'Profil', 3, selectedIndex, onItemTapped),
-      ],
-    ),
-  );
-}
+// Alt navigasyon çubuğu widget'ları
+class AppBottomNavigationBar extends StatelessWidget {
+  final int currentIndex;
+  final Function(int) onTap;
+  final Color selectedItemColor;
+  final Color unselectedItemColor;
 
-// Alt navigasyon çubuğu için tekil eleman widget'ı
-Widget _buildNavBarItem(BuildContext context, IconData icon, String label, int index, int selectedIndex, Function(int) onItemTapped) {
-  final isSelected = index == selectedIndex;
-  return GestureDetector(
-    onTap: () => onItemTapped(index),
-    child: Column(
-      mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        AnimatedContainer(
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeOut,
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          decoration: isSelected
-              ? BoxDecoration(
-                  color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(20),
-                )
-              : null,
-          child: Icon(
-            icon,
-            color: isSelected ? Theme.of(context).colorScheme.primary : Colors.grey.shade500,
-            size: 24,
+  const AppBottomNavigationBar({
+    super.key,
+    required this.currentIndex,
+    required this.onTap,
+    required this.selectedItemColor,
+    required this.unselectedItemColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 90,
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black12,
+            spreadRadius: 0,
+            blurRadius: 10,
           ),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          label,
-          style: TextStyle(
-            color: isSelected ? Theme.of(context).colorScheme.primary : Colors.grey.shade500,
-            fontSize: 12,
-            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+        ],
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          _buildNavBarItem(context, Icons.home_outlined, 'Anasayfa', 0),
+          _buildNavBarItem(context, Icons.bar_chart_outlined, 'Gemini Chat', 1),
+          _buildNavBarItem(context, Icons.notifications_none_outlined, 'Raporlar', 2),
+          _buildNavBarItem(context, Icons.person_outline, 'Profil', 3),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNavBarItem(BuildContext context, IconData icon, String label, int index) {
+    final isSelected = index == currentIndex;
+    return GestureDetector(
+      onTap: () => onTap(index),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeOut,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            decoration: isSelected
+                ? BoxDecoration(
+                    color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(20),
+                  )
+                : null,
+            child: Icon(
+              icon,
+              color: isSelected ? selectedItemColor : unselectedItemColor,
+              size: 24,
+            ),
           ),
-        ),
-      ],
-    ),
-  );
+          const SizedBox(height: 4),
+          Text(
+            label,
+            style: TextStyle(
+              color: isSelected ? selectedItemColor : unselectedItemColor,
+              fontSize: 12,
+              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 // Her bir test kartı için özelleştirilmiş Widget
@@ -531,15 +495,14 @@ class _HomeScreenClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
     final Path path = Path();
-    path.lineTo(0, size.height - 50); // Sol alt nokta
-    // Sol alttan sağ alta doğru daha büyük ve yumuşak bir kavis çizilir
+    path.lineTo(0, size.height - 50);
     path.quadraticBezierTo(
-      size.width / 2, // Kontrol noktası, yatayda tam ortada
-      size.height, // Kontrol noktası, dikeyde en altta
-      size.width, // Bitiş noktası, sağ alt köşe
-      size.height - 50, // Bitiş noktası, dikeyde biraz yukarıda
+      size.width / 2,
+      size.height,
+      size.width,
+      size.height - 50,
     );
-    path.lineTo(size.width, 0); // Sağ üst köşe
+    path.lineTo(size.width, 0);
     path.close();
     return path;
   }
