@@ -323,7 +323,7 @@ Kullanıcının yaptığı "${widget.testTitle}" adlı ${widget.testKey} çizim 
 Test Talimatı: "${widget.testInstruction}"
 Cihaz üzerindeki ML modelinden gelen analiz sonucu (backend'den): "$classificationResult"
 
-Bu bilgilere dayanarak, çizimin genel durumunu ve varsa potansiyel anomalileri kullanıcıya anlaşılır bir dille kısa bir şekilde raporla. Bilimsel terimlerden kaçın, nazik ve destekleyici ol. Sadece verilen bilgilere odaklan, çizim hakkında doğrudan görsel yorum yapma. Yüzdelik olarak skorunu belirt ve kullanıcıya çizimlerini geliştirmesi için önerilerde bulun. Eğer çizim temizse, bunu da belirt.
+Bu bilgilere dayanarak, çizimin genel durumunu ve varsa potansiyel anomalileri kullanıcıya anlaşılır bir dille kısa bir şekilde raporla. Bilimsel terimlerden kaçın, nazik ve destekleyici ol. Sadece verilen bilgilere odaklan, çizim hakkında doğrudan görsel yorum yapma. Yüzdelik olarak skorunu belirt ve kullanıcıya çizimlerini geliştirmesi için önerilerde bulun. Eğer çizim temizse, bunu da belirt. Kalın font kullanma.
 ''';
     final evaluation = await _geminiService.askGemini(prompt);
 

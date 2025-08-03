@@ -4,7 +4,7 @@ from datetime import datetime
 import google.generativeai as genai
 from fastapi import Body, APIRouter, HTTPException
 import logging
-from typing import Optional, List, Dict
+from typing import Optional, List, Dict, Any
 from dotenv import load_dotenv
 import os
 
@@ -96,6 +96,112 @@ def get_gemini_feedback(qa_list):
         logger.error(f"HATA: Gemini'den analiz alınırken bir sorun oluştu: {e}")
         return f"Gemini'den yanıt alınamadı. Hata: {str(e)}"
 
+# FIXED: Combined endpoint that handles both getting questions and evaluating answers
+@router.post("/run_cognitive_test")
+async def run_cognitive_test(request_data: Optional[Any] = Body(None)):
+    """
+    Combined endpoint that handles both getting questions and evaluating answers
+    based on the request data structure.
+    """
+    try:
+        logger.info("Gelen istek verisi: %s", request_data)
+        logger.info("Veri tipi: %s", type(request_data))
+        
+        # If request_data is empty dict, None, or missing, return questions
+        if request_data is None or request_data == {} or not request_data:
+            logger.info("Boş istek - sorular döndürülüyor...")
+            df_sorular = load_questions()
+            soru_indices = random.sample(range(len(df_sorular)), 10)
+            secilen_sorular = df_sorular.iloc[soru_indices].copy()
+            
+            sonuc = secilen_sorular[['Index', 'Soru']].to_dict(orient='records')
+            logger.info("Dönen sorular: %s", sonuc)
+            return sonuc
+        
+        # If request_data is a list, it contains answers to evaluate
+        elif isinstance(request_data, list):
+            logger.info("Liste formatında cevaplar alındı - değerlendirme yapılıyor...")
+            
+            if len(request_data) != 10:
+                raise HTTPException(
+                    status_code=422, 
+                    detail="10 adet soru-cevap çifti gönderilmelidir"
+                )
+                
+            for i, qa in enumerate(request_data):
+                if not isinstance(qa, dict) or 'Soru' not in qa or 'Cevap' not in qa:
+                    raise HTTPException(
+                        status_code=422,
+                        detail=f"{i+1}. öğede 'Soru' veya 'Cevap' anahtarı eksik veya format yanlış"
+                    )
+            
+            feedback_report = get_gemini_feedback(request_data)
+            logger.info("Oluşturulan rapor: %s", feedback_report)
+            
+            return {
+                "analysis_report": feedback_report,
+                "timestamp": datetime.now().strftime('%d_%m_%Y_%H_%M_%S')
+            }
+        
+        # If request_data has qa_list key, extract it
+        elif isinstance(request_data, dict) and 'qa_list' in request_data:
+            logger.info("Dict formatında qa_list bulundu - değerlendirme yapılıyor...")
+            qa_list = request_data['qa_list']
+            
+            if len(qa_list) != 10:
+                raise HTTPException(
+                    status_code=422, 
+                    detail="10 adet soru-cevap çifti gönderilmelidir"
+                )
+                
+            for i, qa in enumerate(qa_list):
+                if not isinstance(qa, dict) or 'Soru' not in qa or 'Cevap' not in qa:
+                    raise HTTPException(
+                        status_code=422,
+                        detail=f"{i+1}. öğede 'Soru' veya 'Cevap' anahtarı eksik"
+                    )
+            
+            feedback_report = get_gemini_feedback(qa_list)
+            logger.info("Oluşturulan rapor: %s", feedback_report)
+            
+            return {
+                "analysis_report": feedback_report,
+                "timestamp": datetime.now().strftime('%d_%m_%Y_%H_%M_%S')
+            }
+        
+        else:
+            raise HTTPException(
+                status_code=422,
+                detail="Geçersiz istek formatı. Boş istek (sorular için) veya soru-cevap listesi gönderin."
+            )
+            
+    except HTTPException as he:
+        raise he
+    except Exception as e:
+        logger.error("İstek işlenirken hata: %s", str(e))
+        raise HTTPException(status_code=500, detail=str(e))
+
+# Alternative: Separate GET endpoint for questions to avoid confusion
+@router.get("/get_questions_simple")
+async def get_questions_simple():
+    """
+    Simple GET endpoint to fetch questions without any request body
+    """
+    try:
+        logger.info("Sorular yükleniyor (GET endpoint)...")
+        df_sorular = load_questions()
+        soru_indices = random.sample(range(len(df_sorular)), 10)
+        secilen_sorular = df_sorular.iloc[soru_indices].copy()
+        
+        sonuc = secilen_sorular[['Index', 'Soru']].to_dict(orient='records')
+        logger.info("Dönen sorular: %s", sonuc)
+        return sonuc
+        
+    except Exception as e:
+        logger.error("Sorular alınırken hata: %s", str(e))
+        raise HTTPException(status_code=500, detail=str(e))
+
+# Keep original endpoints for backward compatibility
 @router.get("/get_questions")
 async def get_questions():
     try:
