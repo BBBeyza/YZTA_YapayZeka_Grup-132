@@ -35,24 +35,32 @@
 **Hedef Kitle**
 - NeuroGraph'ın hedef kitlesi, bilişsel sağlıklarını proaktif bir şekilde takip etmek isteyen geniş bir yelpazedeki bireylerden oluşmaktadır. Bu kitlenin başında, yaşlanma süreciyle birlikte bilişsel fonksiyonlarında meydana gelebilecek değişiklikler hakkında endişeleri olan veya mevcut durumlarını gözlemlemek isteyen orta yaş ve üzeri yetişkinler gelmektedir. Ayrıca, yoğun iş temposu, stres veya uyku düzeni bozuklukları gibi nedenlerle dikkat, hafıza veya odaklanma sorunları yaşadığını düşünen genç ve orta yaşlı profesyoneller de NeuroGraph'ın potansiyel kullanıcıları arasındadır. Uygulama, herhangi bir ön bilgi veya tıbbi geçmiş gerektirmediği için, bilişsel testlere erişimi olmayan veya ön değerlendirme yapmak isteyen herkes için ideal bir başlangıç noktası sunar. Özetle, NeuroGraph, bilişsel farkındalığını artırmak ve zihinsel sağlık yolculuğunda ilk adımı atmak isteyen herkese hitap eden kapsayıcı bir araçtır.
 
-<h4>Uygulamanın Arayüz Tasarımı</h4>
+<h3>Uygulamanın Arayüz Tasarımı</h3>
 <br/>
 <p align="center">
   <img src="images/Latest App Screenshots/Login.png" alt="1" width="450" height="930"/>
   <br/>
+  <br/>
   <img src="images/Latest App Screenshots/Info.png" alt="2" width="450" height="930"/>
+  <br/>
   <br/>
   <img src="images/Latest App Screenshots/HomePage.png" alt="3" width="450" height="930"/>
   <br/>
+  <br/>
   <img src="images/Latest App Screenshots/ChatBot.png" alt="4" width="450" height="930"/>
+  <br/>
   <br/>
   <img src="images/Latest App Screenshots/Profile.png" alt="5" width="450" height="930"/>
   <br/>
+  <br/>
   <img src="images/Latest App Screenshots/CognitiveTest1.png" alt="6" width="450" height="930"/>
+  <br/>
   <br/>
   <img src="images/Latest App Screenshots/DrawingTest.png" alt="7" width="450" height="930"/>
   <br/>
+  <br/>
   <img src="images/Latest App Screenshots/Records.png" alt="8" width="450" height="930"/>
+  <br/>
   <br/>
 </p>
 
