@@ -38,17 +38,17 @@
 <h3>Uygulamanın Arayüz Tasarımı</h3>
 <br/>
 <p align="center">
-  <img src="images/Latest App Screenshots/Login.png" alt="1" width="450" height="930" style="margin: 10px;"/>
-  <img src="images/Latest App Screenshots/Info.png" alt="2" width="450" height="930" style="margin: 10px;"/>
+  <img src="images/Latest App Screenshots/Login.png" alt="1" width="400" height="800" style="margin: 50px;"/>
+  <img src="images/Latest App Screenshots/Info.png" alt="2" width="400" height="800" style="margin: 50px;"/>
   <br/>
-  <img src="images/Latest App Screenshots/HomePage.png" alt="3" width="450" height="930" style="margin: 10px;"/>
-  <img src="images/Latest App Screenshots/ChatBot.png" alt="4" width="450" height="930" style="margin: 10px;"/>
+  <img src="images/Latest App Screenshots/HomePage.png" alt="3" width="400" height="800" style="margin: 50px;"/>
+  <img src="images/Latest App Screenshots/ChatBot.png" alt="4" width="400" height="800" style="margin: 50px;"/>
   <br/>
-  <img src="images/Latest App Screenshots/Profile.png" alt="5" width="450" height="930" style="margin: 10px;"/>
-  <img src="images/Latest App Screenshots/CognitiveTest1.png" alt="6" width="450" height="930" style="margin: 10px;"/>
+  <img src="images/Latest App Screenshots/Profile.png" alt="5" width="400" height="900" style="margin: 50px;"/>
+  <img src="images/Latest App Screenshots/CognitiveTest1.png" alt="6" width="400" height="800" style="margin: 50px;"/>
   <br/>
-  <img src="images/Latest App Screenshots/DrawingTest.png" alt="7" width="450" height="930" style="margin: 10px;"/>
-  <img src="images/Latest App Screenshots/Records.png" alt="8" width="450" height="930" style="margin: 10px;"/>
+  <img src="images/Latest App Screenshots/DrawingTest.png" alt="7" width="400" height="800" style="margin: 50px;"/>
+  <img src="images/Latest App Screenshots/Records.png" alt="8" width="400" height="800" style="margin: 50px;"/>
 </p>
 
 
@@ -344,17 +344,17 @@
 <details>
   <summary><h3>Sprint 3 - App Screenshots</h3></summary>
 <p align="center">
-  <img src="images/Latest App Screenshots/Login.png" alt="1" width="450" height="930" style="margin: 10px;"/>
-  <img src="images/Latest App Screenshots/Info.png" alt="2" width="450" height="930" style="margin: 10px;"/>
+  <img src="images/Latest App Screenshots/Login.png" alt="1" width="400" height="800" style="margin: 50px;"/>
+  <img src="images/Latest App Screenshots/Info.png" alt="2" width="400" height="800" style="margin: 50px;"/>
   <br/>
-  <img src="images/Latest App Screenshots/HomePage.png" alt="3" width="450" height="930" style="margin: 10px;"/>
-  <img src="images/Latest App Screenshots/ChatBot.png" alt="4" width="450" height="930" style="margin: 10px;"/>
+  <img src="images/Latest App Screenshots/HomePage.png" alt="3" width="400" height="800" style="margin: 50px;"/>
+  <img src="images/Latest App Screenshots/ChatBot.png" alt="4" width="400" height="800" style="margin: 50px;"/>
   <br/>
-  <img src="images/Latest App Screenshots/Profile.png" alt="5" width="450" height="930" style="margin: 10px;"/>
-  <img src="images/Latest App Screenshots/CognitiveTest1.png" alt="6" width="450" height="930" style="margin: 10px;"/>
+  <img src="images/Latest App Screenshots/Profile.png" alt="5" width="400" height="800" style="margin: 50px;"/>
+  <img src="images/Latest App Screenshots/CognitiveTest1.png" alt="6" width="400" height="800" style="margin: 50px;"/>
   <br/>
-  <img src="images/Latest App Screenshots/DrawingTest.png" alt="7" width="450" height="930" style="margin: 10px;"/>
-  <img src="images/Latest App Screenshots/Records.png" alt="8" width="450" height="930" style="margin: 10px;"/>
+  <img src="images/Latest App Screenshots/DrawingTest.png" alt="7" width="400" height="800" style="margin: 50px;"/>
+  <img src="images/Latest App Screenshots/Records.png" alt="8" width="400" height="800" style="margin: 50px;"/>
 </p>
 </details>
 
