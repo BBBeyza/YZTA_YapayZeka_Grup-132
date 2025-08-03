@@ -356,22 +356,30 @@
 
 <details>
   <summary><h3>Sprint 3 - App Screenshots</h3></summary>
-    <p align="center">
-    <img src="images/Latest App Screenshots/Login.png" alt="Onboarding 1"/>
+  <p align="center">
+    <img src="images/Latest App Screenshots/Login.png" alt="1" width="450" height="930"/>
     <br/>
-    <img src="images/Latest App Screenshots/Info.png" alt="Onboarding 2"/>
     <br/>
-    <img src="images/Latest App Screenshots/HomePage.png" alt="Login Screen"/>
+    <img src="images/Latest App Screenshots/Info.png" alt="2" width="450" height="930"/>
     <br/>
-    <img src="images/Latest App Screenshots/ChatBot.png" alt="Home Page"/>
     <br/>
-    <img src="images/Latest App Screenshots/Profile.png" alt="Cognitive Test 1"/>
+    <img src="images/Latest App Screenshots/HomePage.png" alt="3" width="450" height="930"/>
     <br/>
-    <img src="images/Latest App Screenshots/CognitiveTest1.png" alt="Cognitive Test 2"/>
     <br/>
-    <img src="images/Latest App Screenshots/DrawingTest.png" alt="Cognitive Test 3"/>
+    <img src="images/Latest App Screenshots/ChatBot.png" alt="4" width="450" height="930"/>
     <br/>
-    <img src="images/Latest App Screenshots/Records.png" alt="Cognitive Test 4"/>
+    <br/>
+    <img src="images/Latest App Screenshots/Profile.png" alt="5" width="450" height="930"/>
+    <br/>
+    <br/>
+    <img src="images/Latest App Screenshots/CognitiveTest1.png" alt="6" width="450" height="930"/>
+    <br/>
+    <br/>
+    <img src="images/Latest App Screenshots/DrawingTest.png" alt="7" width="450" height="930"/>
+    <br/>
+    <br/>
+    <img src="images/Latest App Screenshots/Records.png" alt="8" width="450" height="930"/>
+    <br/>
     <br/>
   </p>
 </details>
