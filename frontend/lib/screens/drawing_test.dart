@@ -302,7 +302,7 @@ Kullanıcının yaptığı "${widget.testTitle}" adlı ${widget.testKey} çizim 
 Test Talimatı: "${widget.testInstruction}"
 Cihaz üzerindeki ML modelinden gelen analiz sonucu (backend'den): "$classificationResult"
 
-Bu bilgilere dayanarak, çizimin genel durumunu ve varsa potansiyel anomalileri kullanıcıya anlaşılır bir dille raporla. Bilimsel terimlerden kaçın, nazik ve destekleyici ol. Sadece verilen bilgilere odaklan, çizim hakkında doğrudan görsel yorum yapma.
+Bu bilgilere dayanarak, çizimin genel durumunu ve varsa potansiyel anomalileri kullanıcıya anlaşılır bir dille kısa bir şekilde raporla. Bilimsel terimlerden kaçın, nazik ve destekleyici ol. Sadece verilen bilgilere odaklan, çizim hakkında doğrudan görsel yorum yapma. Yüzdelik olarak skorunu belirt ve kullanıcıya çizimlerini geliştirmesi için önerilerde bulun. Eğer çizim temizse, bunu da belirt.
 ''';
     final evaluation = await _geminiService.askGemini(prompt);
 
@@ -318,15 +318,7 @@ Bu bilgilere dayanarak, çizimin genel durumunu ve varsa potansiyel anomalileri 
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
-                'ML Model Analizi: $classificationResult',
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
               const SizedBox(height: 20),
-              const Text(
-                'Genel Değerlendirme (Gemini):',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
               Text(evaluation),
             ],
           ),

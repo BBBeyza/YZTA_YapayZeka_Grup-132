@@ -62,7 +62,11 @@ class _TutorialScreenState extends State<TutorialScreen> {
           aspectRatio: _videoPlayerController.value.aspectRatio.isFinite && _videoPlayerController.value.aspectRatio > 0
               ? _videoPlayerController.value.aspectRatio
               : 16 / 9,
-          placeholder: const Center(child: CircularProgressIndicator()),
+          placeholder: const Center(
+            child: CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+            ),
+          ),
           errorBuilder: (context, errorMessage) {
             return Center(
               child: Padding(
@@ -101,95 +105,121 @@ class _TutorialScreenState extends State<TutorialScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('${widget.testTitle} Dersi'),
+        title: Text('${widget.testTitle}'),
         centerTitle: true,
         backgroundColor: Theme.of(context).colorScheme.primary,
         foregroundColor: Colors.white,
       ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(
-                widget.testTitle,
-                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.onSurface,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 10),
-              Text(
-                widget.instruction,
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  fontSize: 16,
-                ),
-                textAlign: TextAlign.justify,
-              ),
-              const SizedBox(height: 20),
-              _isLoadingVideo
-                  ? const Center(child: CircularProgressIndicator())
-                  : _errorMessage.isNotEmpty
-                  ? Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Text(
-                    _errorMessage,
-                    style: const TextStyle(color: Colors.red, fontSize: 16),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              )
-                  : _chewieController != null && _chewieController!.videoPlayerController.value.isInitialized
-                  ? SizedBox(
-                height: MediaQuery.of(context).size.width * 9 / 16,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: Chewie(
-                    controller: _chewieController!,
-                  ),
-                ),
-              )
-                  : const Center(
-                child: Padding(
-                  padding: EdgeInsets.all(20.0),
-                  child: Text('Video yüklenemedi veya oynatılamıyor.'),
-                ),
-              ),
-              const SizedBox(height: 30),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => DrawingTestScreen(
-                        testKey: widget.testKey,
-                        testTitle: widget.testTitle,
-                        testInstruction: widget.instruction,
+      body: Column(
+        children: [
+          // İçerik alanı - scrollable
+          Expanded(
+            child: SafeArea(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const SizedBox(height: 10),
+                    Text(
+                      widget.instruction,
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        fontSize: 16,
+                      ),
+                      textAlign: TextAlign.justify,
+                    ),
+                    const SizedBox(height: 20),
+                    _isLoadingVideo
+                        ? const Center(
+                            child: CircularProgressIndicator(
+                              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                            ),
+                          )
+                        : _errorMessage.isNotEmpty
+                        ? Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(20.0),
+                        child: Text(
+                          _errorMessage,
+                          style: const TextStyle(color: Colors.red, fontSize: 16),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    )
+                        : _chewieController != null && _chewieController!.videoPlayerController.value.isInitialized
+                        ? SizedBox(
+                      height: MediaQuery.of(context).size.width * 9 / 16,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Chewie(
+                          controller: _chewieController!,
+                        ),
+                      ),
+                    )
+                        : const Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(20.0),
+                        child: Text('Video yüklenemedi veya oynatılamıyor.'),
                       ),
                     ),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Theme.of(context).colorScheme.primary,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  elevation: 5,
-                ),
-                child: const Text(
-                  'Çizime Başla',
-                  style: TextStyle(fontSize: 18),
+                    const SizedBox(height: 20), // Video ile buton arası boşluk
+                  ],
                 ),
               ),
-            ],
+            ),
           ),
-        ),
+          // Sabit buton alanı
+          Container(
+            padding: const EdgeInsets.all(20.0),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 10,
+                  offset: const Offset(0, -2),
+                ),
+              ],
+            ),
+            child: SafeArea(
+              top: false,
+              child: SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => DrawingTestScreen(
+                          testKey: widget.testKey,
+                          testTitle: widget.testTitle,
+                          testInstruction: widget.instruction,
+                        ),
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 18),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    elevation: 5,
+                  ),
+                  child: const Text(
+                    'Çizime Başla',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

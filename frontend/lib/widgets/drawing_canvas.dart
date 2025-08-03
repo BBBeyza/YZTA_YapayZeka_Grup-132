@@ -27,13 +27,14 @@ class DrawingCanvasState extends State<DrawingCanvas> {
 
   final List<Color> _colorOptions = const [
     Colors.black,
+    Colors.brown,
     Colors.red,
-    Colors.blue,
+    Color.fromARGB(255, 255, 147, 23),
+    Color.fromARGB(255, 247, 207, 31),
     Colors.green,
-    Colors.yellow,
-    Colors.pink,
-    Colors.orange,
-    Colors.purple,
+    Color.fromARGB(255, 52, 95, 235),
+    Color.fromARGB(255, 113, 26, 163),
+    Color.fromARGB(255, 243, 89, 179),
   ];
 
   void _onPanStart(DragStartDetails details) {

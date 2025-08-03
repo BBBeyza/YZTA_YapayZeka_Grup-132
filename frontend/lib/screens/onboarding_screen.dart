@@ -1,6 +1,3 @@
-
-
-
 import 'package:flutter/material.dart';
 import 'dart:ui'; // BackdropFilter için gerekli
 import 'package:shared_preferences/shared_preferences.dart'; // SharedPreferences için gerekli
@@ -18,10 +15,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   int _currentPage = 0;
 
   // Ana renk paleti
-  static const Color primaryAccentColor = Color(0xFFFE7950); // Buton ve aktif nokta rengi
-  static const Color lightOrangeColor = Color(0xFFFFF0EB); // Arka plan üst gradient rengi
-  static const Color midOrangeColor = Color(0xFFF4B4A1); // Arka plan orta gradient rengi
-  static const Color darkestGradientColor = Color(0xFFE9577A); // Arka plan alt gradient rengi
+  static const Color primaryAccentColor = Color(0xFFFE7950);
+  static const Color lightOrangeColor = Color(0xFFFFF0EB);
+  static const Color midOrangeColor = Color(0xFFF4B4A1);
+  static const Color darkestGradientColor = Color(0xFFE9577A);
+
+  final int _numPages = 4;
 
   @override
   void dispose() {
@@ -34,11 +33,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
 
-    // Resmin kaplayacağı boyut
-    final double illustrationSize = screenWidth * 0.6; // Görsel boyutu daha da küçültüldü
+    final double illustrationSize = screenWidth * 0.6;
+    final double cardTopPosition = screenHeight * 0.50;
 
-    // Bilgilendirme kartının başlayacağı yükseklik
-    final double cardTopPosition = screenHeight * 0.50; // Kartın konumu eski haline getirildi
+    // ✨ YENİ: Resmi, üstteki boş alanda (kartın yukarısındaki alanda) dikey olarak ortalamak için hesaplama
+    final double imageTopPosition = (cardTopPosition - illustrationSize) / 2;
+
 
     return Scaffold(
       body: Stack(
@@ -50,26 +50,27 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  lightOrangeColor, // Açık turuncu
-                  midOrangeColor, // Orta turuncu/pembe
-                  darkestGradientColor, // Koyu turuncu
+                  lightOrangeColor,
+                  midOrangeColor,
+                  darkestGradientColor,
                 ],
               ),
             ),
           ),
-          
-          // 🖼️ ÜSTTEKİ İLLÜSTRASYON GÖRSELİ (Daha küçük ve ortalı, tam yuvarlak)
+
+          // 🖼️ ÜSTTEKİ İLLÜSTRASYON GÖRSELİ (Konumu Güncellendi)
           Positioned(
-            top: screenHeight * 0.05, // Resim yukarı çekildi
-            left: (screenWidth - illustrationSize) / 2, // Yatayda ortala
-            child: ClipRRect( // Resmin yuvarlak bir şekilde kesilmesi için yeni bir ClipRRect
+            // ✨ DEĞİŞİKLİK: 'top' değeri artık sabit değil, hesaplanan dinamik değer.
+            top: imageTopPosition,
+            left: (screenWidth - illustrationSize) / 2,
+            child: ClipRRect(
               borderRadius: BorderRadius.circular(illustrationSize / 2),
               child: SizedBox(
                 width: illustrationSize,
                 height: illustrationSize,
                 child: Image.asset(
-                  'assets/images/splash_brain_illustration.png', // LÜTFEN KENDİ İLLÜSTRASYON GÖRSEL YOLUNUZU BURAYA YAZIN
-                  fit: BoxFit.cover, // Resmi tamamen dolduracak şekilde sığdır
+                  'assets/images/splash_brain_illustration.png',
+                  fit: BoxFit.cover,
                 ),
               ),
             ),
@@ -77,26 +78,26 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
           // ➡️ SAYFA GEÇİŞLERİ İÇİN PageView ve Buğulu Kart
           Positioned(
-            top: cardTopPosition, // Kartın başlama noktası
+            top: cardTopPosition,
             left: 0,
             right: 0,
             bottom: 0,
             child: ClipRRect(
               borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(30.0), // Kartın üst köşeleri yuvarlak
+                topLeft: Radius.circular(30.0),
                 topRight: Radius.circular(30.0),
               ),
               child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0), // Daha hafif buğulu efekti
+                filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 30), // Kartın iç boşluğu
+                  padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 30),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.65), // Kartın rengi hafif saydam beyaz
+                    color: Colors.white.withOpacity(0.65),
                     borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(30.0),
                       topRight: Radius.circular(30.0),
                     ),
-                    boxShadow: const [ // Hafif bir gölge eklendi
+                    boxShadow: const [
                       BoxShadow(
                         color: Colors.black12,
                         blurRadius: 10,
@@ -114,82 +115,83 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                               _currentPage = page;
                             });
                           },
-                          physics: const AlwaysScrollableScrollPhysics(), // Kaydırma sorunlarını gidermek için
+                          physics: const AlwaysScrollableScrollPhysics(),
                           children: [
-                            // Sayfa 1: Giriş ve Kısa Açıklama
                             _buildOnboardingPage(
                               context,
                               title: "NeuroGraph'a Hoş Geldiniz",
                               description:
                                   'Beyin sağlığınızı bilimsel temelli testlerle düzenli olarak değerlendirin. NeuroGraph, hafıza, dikkat, problem çözme ve dil akıcılığı gibi kognitif alanlardaki performansınızı ölçmek üzere tasarlandı.',
-                              titleColor: primaryAccentColor, // Başlık rengi turuncumsu/pembe
+                              titleColor: primaryAccentColor,
                             ),
-                            // Sayfa 2: Uygulama ve Testler Hakkında Genel Bilgi
                             _buildOnboardingPage(
                               context,
-                              title: 'Uygulama ve Test Bilgisi',
+                              title: 'Uygulama Bilgisi',
                               description:
-                                  'Uygulamamızdaki testler nöropsikolojik değerlendirme prensiplerine dayanır. Her test, belirli beyin fonksiyonlarını hedefler. Sonuçlarınız, yaş ve eğitim düzeyiniz gibi demografik bilgilerinizle karşılaştırılarak anlamlandırılır.\n\n'
-                                  'Testler: Bilişsel, Çizim ve Sesli Okuma görevleri içerir. Detaylı raporlar sunulur. Unutmayın, bu uygulama bir teşhis aracı değildir; sağlık şüpheniz varsa profesyonele danışın.',
-                              titleColor: primaryAccentColor, // Başlık rengi turuncumsu/pembe
+                                  'Uygulamamızdaki testler nöropsikolojik değerlendirme prensiplerine dayanır. Her test, belirli beyin fonksiyonlarını hedefler. Sonuçlarınız, yaş ve eğitim düzeyiniz gibi demografik bilgilerinizle karşılaştırılarak anlamlandırılır.',
+                              titleColor: primaryAccentColor,
                             ),
-                            // Sayfa 3: Veri Güvenliği ve Başlangıç Çağrısı
+                            _buildOnboardingPage(
+                              context,
+                              title: 'Test Bilgisi',
+                              description:
+                                  'Testler bilişsel, çizim ve sesli okuma görevleri içerir. Detaylı raporlar sunulur. Unutmayın, bu uygulama bir teşhis aracı değildir; sağlık şüpheniz varsa profesyonele danışın.',
+                              titleColor: primaryAccentColor,
+                            ),
                             _buildOnboardingPage(
                               context,
                               title: 'Veri Güvenliği ve Başlangıç',
                               description:
                                   'Verileriniz güvenli şekilde saklanır ve gizlilikle korunur. Sağlıklı bir beyin için ilk adımı atın. Testleri düzenli tamamlayarak gelişiminizi takip edin.',
-                              showButton: true, // Büyük butonu göster
+                              showButton: true,
                               buttonText: 'Devam Et ve Uygulamayı Başlat',
-                              titleColor: primaryAccentColor, // Başlık rengi turuncumsu/pembe
+                              titleColor: primaryAccentColor,
                             ),
                           ],
                         ),
                       ),
-                      // Alt navigasyon barı (indicatorlar ve ileri/skip butonu)
-                      // Sadece son sayfada gizlenecek
-                      if (_currentPage != 2) // Eğer son sayfada değilsek göster
-                        Padding(
-                          padding: const EdgeInsets.only(left: 10.0, right: 10.0, bottom: 10.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              // Indicator noktaları
-                              Row(
-                                children: List.generate(3, (index) {
-                                  return AnimatedContainer(
-                                    duration: const Duration(milliseconds: 300),
-                                    margin: const EdgeInsets.symmetric(horizontal: 4.0),
-                                    height: 10,
-                                    width: _currentPage == index ? 20 : 10,
-                                    decoration: BoxDecoration(
-                                      color: _currentPage == index
-                                          ? primaryAccentColor // Aktif nokta
-                                          : Colors.grey.withOpacity(0.5), // Pasif nokta
-                                      borderRadius: BorderRadius.circular(5),
-                                    ),
-                                  );
-                                }),
-                              ),
-                              // İleri butonu (son sayfada gizlendiği için burası sadece ilk 2 sayfada görünür)
-                              TextButton(
-                                onPressed: () {
-                                  _pageController.nextPage(
-                                    duration: const Duration(milliseconds: 400),
-                                    curve: Curves.easeIn,
-                                  );
-                                },
-                                child: const Text(
-                                  'İleri',
-                                  style: TextStyle(
-                                    color: Colors.grey,
-                                    fontSize: 16,
+                      Padding(
+                        padding: const EdgeInsets.only(left: 10.0, right: 10.0, bottom: 10.0, top: 15.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              children: List.generate(_numPages, (index) {
+                                return AnimatedContainer(
+                                  duration: const Duration(milliseconds: 300),
+                                  margin: const EdgeInsets.symmetric(horizontal: 4.0),
+                                  height: 10,
+                                  width: _currentPage == index ? 20 : 10,
+                                  decoration: BoxDecoration(
+                                    color: _currentPage == index
+                                        ? primaryAccentColor
+                                        : Colors.grey.withOpacity(0.5),
+                                    borderRadius: BorderRadius.circular(5),
                                   ),
-                                ),
-                              ),
-                            ],
-                          ),
+                                );
+                              }),
+                            ),
+                            _currentPage != _numPages - 1
+                                ? TextButton(
+                                    onPressed: () {
+                                      _pageController.nextPage(
+                                        duration: const Duration(milliseconds: 400),
+                                        curve: Curves.easeIn,
+                                      );
+                                    },
+                                    child: const Text(
+                                      'İleri',
+                                      style: TextStyle(
+                                        color: Colors.grey,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  )
+                                : const SizedBox(width: 50),
+                          ],
                         ),
+                      ),
                     ],
                   ),
                 ),
@@ -201,55 +203,48 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     );
   }
 
-  // Her bir onboarding sayfası için yardımcı widget
   Widget _buildOnboardingPage(
     BuildContext context, {
     required String title,
     required String description,
     bool showButton = false,
     String? buttonText,
-    Color? titleColor, // Başlık rengi için yeni parametre
+    Color? titleColor,
   }) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.center, // Metinleri ortala
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        // Başlık
+        const Spacer(flex: 2),
         Text(
           title,
           style: TextStyle(
             fontSize: 26,
-            fontWeight: FontWeight.w700, // Başlık font kalınlığı ayarlandı
-            color: titleColor ?? Colors.black87, // Başlık rengi parametreden alınacak, yoksa siyah
+            fontWeight: FontWeight.w700,
+            color: titleColor ?? Colors.black87,
           ),
-          textAlign: TextAlign.center, // Metni ortala
+          textAlign: TextAlign.center,
         ),
-        const SizedBox(height: 15), // Başlık ile açıklama arasına boşluk
-        // Açıklama metni
-        Expanded(
-          child: SingleChildScrollView(
-            child: Text(
-              description,
-              style: const TextStyle(
-                fontSize: 15, // Açıklama font boyutu biraz küçültüldü
-                color: Colors.black54, // Açıklama rengi siyah karta göre ayarlandı
-                height: 1.6, // Satır yüksekliği biraz artırıldı
-                fontWeight: FontWeight.w400, // Açıklama font kalınlığı ayarlandı
-              ),
-              textAlign: TextAlign.center, // Metni ortala
-            ),
+        const SizedBox(height: 20),
+        Text(
+          description,
+          style: const TextStyle(
+            fontSize: 15,
+            color: Colors.black54,
+            height: 1.6,
+            fontWeight: FontWeight.w400,
           ),
+          textAlign: TextAlign.center,
         ),
+        const Spacer(flex: 1),
         if (showButton) ...[
-          const SizedBox(height: 25), // Metin ile buton arasına boşluk
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
               onPressed: () async {
-                // Onboarding'i görüldü olarak işaretle
                 final prefs = await SharedPreferences.getInstance();
                 await prefs.setBool('hasSeenOnboarding', true);
 
-                // LoginPage'e yönlendirme
                 if (mounted) {
                   Navigator.pushReplacement(
                     context,
@@ -258,10 +253,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 }
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: primaryAccentColor, // Buton rengi
+                backgroundColor: primaryAccentColor,
                 padding: const EdgeInsets.symmetric(vertical: 18),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15), // Yuvarlak köşeler
+                  borderRadius: BorderRadius.circular(15),
                 ),
               ),
               child: Text(
@@ -275,8 +270,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             ),
           ),
         ],
+        const Spacer(flex: 2),
       ],
     );
   }
 }
-

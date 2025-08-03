@@ -405,11 +405,11 @@ class _DrawingTestSelectionScreenContent extends StatelessWidget {
       case 'clock':
         return 'Ekrana saat 11\'i 10 geçeyi gösteren bir saat çizin. Saatin tüm öğelerini (sayılar, akrep, yelkovan) eklemeyi unutmayın.';
       case 'spiral':
-        return 'Ekranın ortasına, mümkün olduğunca düzgün ve tutarlı bir içe doğru (veya dışa doğru) spiral çizin. Çizgilerinizin birbirine değmemesine ve merkeze doğru düzenli bir şekilde daralmasına dikkat edin.';
+        return 'Ekranın ortasına, mümkün olduğunca düzgün ve tutarlı bir içe doğru (veya dışa doğru) spiral çizin. Çizgilerinizin birbirine değmemesine ve merkeze doğru düzenli bir şekilde daralmasına dikkat edin. Aşağıdaki spiral örneğini referans alabilirsiniz:';
       case 'meander':
-        return 'Ekranın ortasına, birbirine paralel çizgilerden oluşan, köşeli ve düzenli bir "meander" (spiral kare) deseni çizin. Köşelerin keskin ve çizgilerin birbirine yakın ama değmeyen şekilde olmasına özen gösterin.';
+        return 'Ekranın ortasına, birbirine paralel çizgilerden oluşan, köşeli ve düzenli bir kare spiral deseni çizin. Köşelerin keskin ve çizgilerin birbirine yakın ama değmeyen şekilde olmasına özen gösterin. Aşağıdaki kare spiral örneğini referans alabilirsiniz:';
       case 'handwriting':
-        return 'Lütfen aşağıdaki cümleyi ekrana okunaklı ve doğal el yazınızla yazın: "Yarın hava güneşli olacak." Yazınızın boyutu ve eğimi doğal olsun.';
+        return 'Lütfen aşağıdaki cümleyi ekrana okunaklı ve doğal el yazınızla yazın: \nYarın hava güneşli olacak. \nYazınızın boyutu ve eğimi doğal olsun.';
       default:
         return 'Bu test için talimat bulunamadı.';
     }

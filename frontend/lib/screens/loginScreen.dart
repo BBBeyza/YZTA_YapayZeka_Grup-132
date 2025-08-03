@@ -33,10 +33,8 @@ class _LoginPageState extends State<LoginPage> {
     final prefs = await SharedPreferences.getInstance();
     final bool? hasSeenOnboarding = prefs.getBool('hasSeenOnboarding');
 
-    // Eğer onboarding görülmediyse veya null ise onboarding ekranına yönlendir
     if (hasSeenOnboarding == null || !hasSeenOnboarding) {
       if (mounted) {
-        // Onboarding'e yönlendirirken, geri tuşuyla tekrar geri dönülmemesi için pushReplacement kullan
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const OnboardingScreen()),
@@ -57,9 +55,7 @@ class _LoginPageState extends State<LoginPage> {
     });
 
     try {
-      // Önce mevcut oturumu temizle
       await FirebaseAuth.instance.signOut();
-      // Firebase'in senkronize olmasını bekle
       await Future.delayed(const Duration(milliseconds: 500));
 
       User? user = await _auth.loginWithEmail(
@@ -79,7 +75,6 @@ class _LoginPageState extends State<LoginPage> {
         );
       }
     } on FirebaseAuthException catch (e) {
-      // Firebase hatalarını işle
       String errorMessage;
       switch (e.code) {
         case 'invalid-email':
@@ -103,7 +98,6 @@ class _LoginPageState extends State<LoginPage> {
       }
       setState(() => _errorMessage = errorMessage);
     } catch (e) {
-      // Genel hataları işle
       debugPrint('Login error: $e');
       setState(
         () => _errorMessage =
@@ -149,7 +143,7 @@ class _LoginPageState extends State<LoginPage> {
       }
     }
   }
-  
+
   @override
   void dispose() {
     _emailController.dispose();
@@ -159,17 +153,16 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    // LoginPage'in kendisi bir Scaffold döndürüyor, bu Material context sorununu çözecektir.
     return Scaffold(
-      // extendBodyBehindAppBar: true, // Bu satırı kaldırdık, çünkü AppBar kullanmıyoruz ve gereksiz olabilir.
-      body: Container( // Bu Container Scaffold'un body'si oldu
+      body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
+            // ✨ DEĞİŞİKLİK: Arka plan gradyan renkleri isteğinize göre güncellendi.
             colors: [
-              Theme.of(context).colorScheme.primary.withOpacity(0.8), // Ana turuncu
-              Theme.of(context).colorScheme.secondary.withOpacity(0.8), // İkincil turuncu
-              Theme.of(context).colorScheme.tertiary.withOpacity(0.8), // Üçüncül turuncu
-              Theme.of(context).colorScheme.primary.withOpacity(0.9), // Daha koyu bir turuncu
+              Colors.orange.shade300,
+              Colors.purple.shade300,
+              Colors.pink.shade300,
+              Colors.blue.shade300,
             ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
@@ -182,11 +175,11 @@ class _LoginPageState extends State<LoginPage> {
             child: Container(
               padding: const EdgeInsets.all(24.0),
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surface, // Tema yüzey rengi (genellikle beyaz)
+                color: Theme.of(context).colorScheme.surface,
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1), // Gölgeyi biraz yumuşattık
+                    color: Colors.black.withOpacity(0.1),
                     blurRadius: 10.0,
                     spreadRadius: 2.0,
                     offset: const Offset(0, 5),
@@ -196,27 +189,34 @@ class _LoginPageState extends State<LoginPage> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  const SizedBox(height: 30),
+                  
                   // Logo
                   Image.asset(
-                    'assets/images/logowt.png', // Logo görselinin doğru yolu
-                    height: 100, // Logo boyutu ayarlandı
+                    'assets/images/logowt.png',
+                    height: 160,
                   ),
                   const SizedBox(height: 20),
+
+                  // ✨ DEĞİŞİKLİK: Hoş geldiniz yazısı küçültüldü.
                   Text(
-                    'Hoş Geldiniz!',
-                    style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                          color: Theme.of(context).colorScheme.onSurface, // Tema yüzey üzerindeki metin rengi
-                          fontWeight: FontWeight.bold,
-                        ),
-                  ),
-                  Text(
-                    'NeuroGraph',
+                    'Hoş Geldiniz',
                     style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                          color: Theme.of(context).colorScheme.primary, // Tema ana rengi (turuncu)
+                          color: Theme.of(context).colorScheme.onSurface,
                           fontWeight: FontWeight.bold,
                         ),
                   ),
-                  const SizedBox(height: 40),
+                  const SizedBox(height: 8), // ✨ DEĞİŞİKLİK: Başlık altına boşluk eklendi.
+                  
+                  // ✨ DEĞİŞİKLİK: Hoş geldiniz yazısının altına yeni bir metin eklendi.
+                  Text(
+                    'Devam etmek için giriş yapın.',
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                  ),
+                  const SizedBox(height: 32),
 
                   // Hata Mesajı
                   if (_errorMessage != null)
@@ -246,6 +246,8 @@ class _LoginPageState extends State<LoginPage> {
                     keyboardType: TextInputType.emailAddress,
                     decoration: const InputDecoration(
                       labelText: 'E-posta',
+                      // ✨ DEĞİŞİKLİK: E-posta label rengi pembe yapıldı.
+                      labelStyle: TextStyle(color: Colors.pink),
                       prefixIcon: Icon(Icons.email),
                     ),
                   ),
@@ -255,6 +257,8 @@ class _LoginPageState extends State<LoginPage> {
                     obscureText: !_isPasswordVisible,
                     decoration: InputDecoration(
                       labelText: 'Şifre',
+                      // ✨ DEĞİŞİKLİK: Şifre label rengi pembe yapıldı.
+                      labelStyle: const TextStyle(color: Colors.pink),
                       prefixIcon: const Icon(Icons.lock),
                       suffixIcon: IconButton(
                         icon: Icon(
@@ -268,7 +272,8 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  // ✨ DEĞİŞİKLİK: Üstteki boşluk azaltılarak bu bölüm yukarı çekildi.
+                  const SizedBox(height: 10), 
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -309,25 +314,112 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 30),
                   _isLoading
-                      ? CircularProgressIndicator(
-                          color: Theme.of(context).colorScheme.primary,
+                      ? Container(
+                          height: 56,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(16),
+                            gradient: LinearGradient(
+                              colors: [
+                                Theme.of(context).colorScheme.primary.withOpacity(0.7),
+                                Theme.of(context).colorScheme.secondary.withOpacity(0.7),
+                              ],
+                            ),
+                          ),
+                          child: const Center(
+                            child: SizedBox(
+                              width: 24,
+                              height: 24,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 3,
+                              ),
+                            ),
+                          ),
                         )
-                      : ElevatedButton(
-                          onPressed: _login,
-                          child: const Text('Giriş Yap'),
+                      : Container(
+                          width: double.infinity,
+                          height: 56,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(16),
+                            gradient: LinearGradient(
+                              colors: [
+                                Theme.of(context).colorScheme.primary,
+                                Theme.of(context).colorScheme.secondary,
+                              ],
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Theme.of(context).colorScheme.primary.withOpacity(0.4),
+                                blurRadius: 15,
+                                offset: const Offset(0, 8),
+                              ),
+                            ],
+                          ),
+                          child: ElevatedButton(
+                            onPressed: _login,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.transparent,
+                              foregroundColor: Colors.white,
+                              shadowColor: Colors.transparent,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                            ),
+                            child: const Text(
+                              'Giriş Yap',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
                         ),
-                  const SizedBox(height: 20),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => const RegisterScreen(),
+                  const SizedBox(height: 24),
+                  Container(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Hesabın yok mu? ',
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.onSurfaceVariant,
+                            fontSize: 16,
+                          ),
                         ),
-                      );
-                    },
-                    child: const Text('Hesabın yok mu? Kayıt Ol'),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).push(
+                              PageRouteBuilder(
+                                pageBuilder: (context, animation, secondaryAnimation) =>
+                                    const RegisterScreen(),
+                                transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                  return SlideTransition(
+                                    position: Tween<Offset>(
+                                      begin: const Offset(1.0, 0.0),
+                                      end: Offset.zero,
+                                    ).animate(animation),
+                                    child: child,
+                                  );
+                                },
+                              ),
+                            );
+                          },
+                          style: TextButton.styleFrom(
+                            foregroundColor: Theme.of(context).colorScheme.primary,
+                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                          ),
+                          child: const Text(
+                            'Kayıt Ol',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),

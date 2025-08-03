@@ -108,7 +108,7 @@ class _HomeContent extends StatelessWidget {
             child: Container(
               height: 250,
               decoration: BoxDecoration(
-                color: Colors.purple.shade100.withOpacity(0.6),
+                color: const Color(0xFFE1BEE7).withOpacity(0.6),
               ),
             ),
           ),
@@ -315,7 +315,7 @@ class _HomeContent extends StatelessWidget {
                 title: 'Sesli Okuma Testi',
                 description: 'Okuma akıcılığı ve anlama becerileri',
                 cardColor: Colors.white,
-                barColor: Color.fromARGB(255, 191, 118, 135),
+                barColor: Color(0xFFBF7687),
               ),
             ),
             GestureDetector(
@@ -332,7 +332,7 @@ class _HomeContent extends StatelessWidget {
                 title: 'Geçmiş Raporlar',
                 description: 'Tüm test geçmişin burada',
                 cardColor: Colors.white,
-                barColor: Color.fromARGB(255, 100, 170, 149),
+                barColor: Color(0xFF64AA95),
               ),
             ),
           ],

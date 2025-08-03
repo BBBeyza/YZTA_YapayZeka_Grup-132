@@ -112,7 +112,7 @@ ThemeData _buildThemeData(BuildContext context) {
     scaffoldBackgroundColor: Colors.white,
     colorScheme: ColorScheme.fromSeed(
       seedColor: const Color.fromARGB(255, 90, 20, 175),
-      primary: const Color.fromARGB(255, 125, 141, 213),
+      primary: const Color(0xFFE1BEE7),
       onPrimary: Colors.white,
       secondary: const Color.fromARGB(255, 239, 173, 240),
       onSecondary: Colors.white,
