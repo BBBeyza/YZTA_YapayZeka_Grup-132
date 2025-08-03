@@ -418,9 +418,10 @@ Muhammet Emin Balmuk, kullanıcı yetkilendirme (authorization) işlemleri için
 Beyza Yaylak, tüm sprint boyunca toplantı planlamalarını organize etti, süreç takibini ve görev koordinasyonunu sağladı. Günlük durum kontrollerini yaptı, sprint dokümantasyonlarını hazırladı ve projenin zamanında ilerlemesini sağladı.
 
 - <h3>Product Backlog URL</h3>
-<br/>
 https://app.asana.com/1/1117726919553654/project/1210954592726356
 <br/>
+<br/>
+
   <p align="center">
     <img src="images/sprint_board_update_ss_3.jpeg" alt="Screenshot 4" />
     <br/>
