@@ -364,11 +364,11 @@
 <details>
   <summary><h3>Sprint 3 - Sprint Board Update Screenshots</h3></summary>
   <p align="center">
-    <img src="images/sprint_board_update_ss_3.jpg" alt="Screenshot 1" />
+    <img src="images/sprint_board_update_ss_3.jpeg" alt="Screenshot 4" />
     <br/>
-    <img src="images/sprint_board_update_ss_4.jpg" alt="Screenshot 2" />
+    <img src="images/sprint_board_update_ss_4.jpeg" alt="Screenshot 5" />
     <br/>
-    <img src="images/sprint_board_update_ss_5.jpg" alt="Screenshot 3" />
+    <img src="images/sprint_board_update_ss_5.jpeg" alt="Screenshot 6" />
   </p>
 </details>
 
