@@ -72,8 +72,8 @@ class _CognitiveTestScreenState extends State<CognitiveTestScreen> {
   static const List<String> baseUrls = [
     'http://localhost:8000/cognitive',
     'http://127.0.0.1:8000/cognitive',
-    'http://10.0.2.2:8000/cognitive', // Android emulator
-    'http://10.0.2.2:8000/cognitive', // Your original IP
+    'http://192.168.1.160:8000/cognitive', // Android emulator
+    'http://192.168.1.160:8000/cognitive', // Your original IP
   ];
 
   int _currentQuestionIndex = 0;

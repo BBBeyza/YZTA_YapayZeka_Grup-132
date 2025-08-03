@@ -1,22 +1,25 @@
-import 'package:flutter/material.dart';
-import 'package:neurograph/widgets/drawing_canvas.dart';
-import 'package:neurograph/models/stroke.dart';
-import 'package:neurograph/services/gemini_service.dart';
+// main imports
 import 'dart:typed_data';
-import 'dart:io';
-import 'package:path_provider/path_provider.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'package:http_parser/http_parser.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import '../models/report_model.dart';
-import '../services/report_service.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/services.dart';
 import 'dart:convert';
-import 'package:http/http.dart' as http;
 import 'dart:async';
-import '../screens/reports_screen.dart';
+
+// firebase imports
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+// project imports
+import 'package:neurograph/widgets/drawing_canvas.dart';
+import 'package:neurograph/models/stroke.dart'; // Bu import kullanılmıyorsa kaldırılabilir
+import 'package:neurograph/services/gemini_service.dart';
+import '../models/report_model.dart';
+// import '../screens/reports_screen.dart'; // Bu import artık gerekli değil
+
+//------------------------------------------------------------------
+// Sabit Widget'lar (Değişiklik Gerekmiyor)
+//------------------------------------------------------------------
 
 class InstructionSection extends StatelessWidget {
   final String title;
@@ -37,9 +40,9 @@ class InstructionSection extends StatelessWidget {
           Text(
             instruction,
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-              fontSize: 16,
-            ),
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  fontSize: 16,
+                ),
             textAlign: TextAlign.start,
           ),
         ],
@@ -104,6 +107,10 @@ class DrawingTestButtons extends StatelessWidget {
   }
 }
 
+//------------------------------------------------------------------
+// Ana Ekran Widget'ı (Düzenlenmiş Hali)
+//------------------------------------------------------------------
+
 class DrawingTestScreen extends StatefulWidget {
   final String testKey;
   final String testTitle;
@@ -123,207 +130,88 @@ class DrawingTestScreen extends StatefulWidget {
 class _DrawingTestScreenState extends State<DrawingTestScreen> {
   final GlobalKey<DrawingCanvasState> _canvasKey = GlobalKey();
   final GeminiService _geminiService = GeminiService();
-
   bool _isLoading = false;
 
+  /// Backend URL'sini test anahtarına göre dinamik olarak döndürür.
   String get _backendUrl {
-    const String baseUrl = 'http://10.0.2.2:8000';
-    if (widget.testKey == 'spiral') {
-      return '$baseUrl/spiral/predict_tremor';
-    } else if (widget.testKey == 'meander') {
-      return '$baseUrl/meander/predict_meander_tremor';
-    } else if (widget.testKey == 'clock') {
-      return '$baseUrl/clock/predict_clock_drawing_score';
-    } else if (widget.testKey == 'handwriting') {
-      return '$baseUrl/handwriting/analyze_handwriting';
+    // TODO: IP adresini kendi yerel IP adresinizle veya sunucu adresinizle değiştirin.
+    const String baseUrl = 'http://192.168.1.160:8000'; 
+    switch (widget.testKey) {
+      case 'spiral':
+        return '$baseUrl/spiral/predict_tremor';
+      case 'meander':
+        return '$baseUrl/meander/predict_meander_tremor';
+      case 'clock':
+        return '$baseUrl/clock/predict_clock_drawing_score';
+      case 'handwriting':
+        return '$baseUrl/handwriting/analyze_handwriting';
+      default:
+        // Varsayılan bir uç nokta veya hata yönetimi
+        print('Hata: Bilinmeyen testKey: ${widget.testKey}');
+        return '$baseUrl/spiral/predict_tremor';
     }
-    print('Hata: Bilinmeyen testKey: ${widget.testKey}');
-    return '$baseUrl/spiral/predict_tremor';
   }
 
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
+  /// Geçici olarak çizimi kaydettiğini belirten bir mesaj gösterir.
   void _saveCurrentDrawing() {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text('${widget.testTitle} çizimi kaydedildi.')),
     );
   }
 
-  String _parseResult(Map<String, dynamic> jsonResponse) {
-    switch (widget.testKey) {
-      case 'clock':
-        return "Shulman Puanı: ${jsonResponse['shulman_score']} "
-            "(Güven: ${(jsonResponse['confidence'] as double).toStringAsFixed(2)})";
-
-      case 'spiral':
-      case 'meander':
-        final controlProb = jsonResponse['control_probability'] as double;
-        final patientProb = jsonResponse['patients_probability'] as double;
-        return patientProb > controlProb
-            ? "🟡 Titreme Algılandı — Güven: ${patientProb.toStringAsFixed(2)}"
-            : "✅ Temiz Çizim — Güven: ${controlProb.toStringAsFixed(2)}";
-
-      default:
-        return "Test sonucu: ${jsonResponse.toString()}";
-    }
-  }
-
-  Future<void> _showResult(dynamic result) async {
-    if (!mounted) return;
-
-    await showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('${widget.testTitle} Sonucu'),
-        content: SingleChildScrollView(child: Text(result.toString())),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Tamam'),
-          ),
-        ],
-      ),
-    );
-  }
-
+  /// "Testi Bitir" butonuna basıldığında çalışan ana süreç.
   Future<void> _finishTest() async {
     if (!mounted) return;
 
     setState(() => _isLoading = true);
 
     try {
-      // 1. Çizimi al
-      final drawingImageBytes = await _canvasKey.currentState
-          ?.exportDrawingAsPngBytes();
+      // 1. Çizimi resim verisi (bytes) olarak al
+      final drawingImageBytes = await _canvasKey.currentState?.exportDrawingAsPngBytes();
       if (drawingImageBytes == null || drawingImageBytes.isEmpty) {
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Çizim alınamadı! Lütfen tekrar deneyin.'),
-          ),
+          const SnackBar(content: Text('Lütfen bir çizim yapın!')),
         );
+        setState(() => _isLoading = false);
         return;
       }
 
-      // 2. Backend'e gönder
-      var request = http.MultipartRequest('POST', Uri.parse(_backendUrl));
-      request.files.add(
-        http.MultipartFile.fromBytes(
-          'image',
-          drawingImageBytes,
-          filename: '${widget.testKey}_drawing.png',
-          contentType: MediaType('image', 'png'),
-        ),
-      );
+      // 2. Çizimi backend'e gönderip analiz sonucunu al
+      final analysisResult = await _analyzeDrawing(drawingImageBytes);
 
-      final response = await request.send().timeout(
-        const Duration(seconds: 30),
-      );
-      final responseBody = await response.stream.bytesToString();
-
-      if (response.statusCode != 200) {
-        throw Exception(
-          'Backend hatası: ${response.statusCode} - $responseBody',
-        );
-      }
-
-      final jsonResponse = json.decode(responseBody);
-      final analysisResult = _parseAnalysisResult(jsonResponse);
-
-      // 3. Gemini ile değerlendirme yap
+      // 3. Analiz sonucunu Gemini'ye gönderip kullanıcı dostu bir değerlendirme al
       final evaluation = await _getGeminiEvaluation(analysisResult);
 
-      // 4. Raporu kaydet ve ekranı güncelle
-      await _saveAndShowReport(analysisResult, evaluation);
+      // 4. Test raporunu veritabanına kaydet
+      await _saveTestReport(analysisResult, evaluation);
+
+      // 5. Sonucu diyalogda göster. Kullanıcı "Tamam" dediğinde ekran kapanacak.
+      if (mounted) {
+        await _showEvaluationResult(evaluation);
+      }
+
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Hata: ${e.toString()}')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Bir hata oluştu: ${e.toString()}')),
+      );
     } finally {
+      // Hata durumunda veya süreç normalden farklı biterse loading indicator'ı kapat
       if (mounted) {
         setState(() => _isLoading = false);
       }
     }
   }
 
-  String _parseAnalysisResult(Map<String, dynamic> jsonResponse) {
-    switch (widget.testKey) {
-      case 'clock':
-        return "Shulman Puanı: ${jsonResponse['shulman_score']} "
-            "(Güven: ${(jsonResponse['confidence'] as double).toStringAsFixed(2)})";
-
-      case 'spiral':
-      case 'meander':
-        final controlProb = jsonResponse['control_probability'] as double;
-        final patientProb = jsonResponse['patients_probability'] as double;
-        return patientProb > controlProb
-            ? "🟡 Titreme Algılandı — Güven: ${patientProb.toStringAsFixed(2)}"
-            : "✅ Temiz Çizim — Güven: ${controlProb.toStringAsFixed(2)}";
-
-      default:
-        return "Test sonucu: ${jsonResponse.toString()}";
-    }
-  }
-
-  Future<void> _saveAndShowReport(
-    String analysisResult,
-    String evaluation,
-  ) async {
-    final user = FirebaseAuth.instance.currentUser;
-    if (user == null) return;
-
-    final report = Report(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
-      title: '${widget.testTitle} Raporu',
-      content:
-          '''
-**Test Türü:** ${widget.testKey.toUpperCase()}
-**Analiz Sonucu:** $analysisResult
-**Değerlendirme:** $evaluation
-''',
-      date: DateTime.now(),
-      type: 'drawing',
-      userId: user.uid,
-    );
-
-    await FirebaseFirestore.instance
-        .collection('reports')
-        .doc(report.id)
-        .set(report.toMap());
-
-    if (!mounted) return;
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(builder: (context) => ReportsScreen()),
-      (route) => false,
-    );
-  }
-
-  String _parseSpiralResult(Map<String, dynamic> json) {
-    final controlProb = json['control_probability'] as double;
-    final patientProb = json['patients_probability'] as double;
-
-    return patientProb > controlProb
-        ? "🟡 Titreme Algılandı (Güven: ${patientProb.toStringAsFixed(2)})"
-        : "✅ Normal Çizim (Güven: ${controlProb.toStringAsFixed(2)})";
-  }
-
+  /// Çizim verisini backend'e gönderir ve ham analiz sonucunu döndürür.
   Future<String> _analyzeDrawing(Uint8List drawingImageBytes) async {
     final request = http.MultipartRequest('POST', Uri.parse(_backendUrl));
     request.files.add(
       http.MultipartFile.fromBytes(
         'image',
         drawingImageBytes,
-        filename: 'drawing.png',
+        filename: '${widget.testKey}_drawing.png',
         contentType: MediaType('image', 'png'),
       ),
     );
@@ -337,11 +225,11 @@ class _DrawingTestScreenState extends State<DrawingTestScreen> {
 
     final jsonResponse = json.decode(responseBody) as Map<String, dynamic>;
 
+    // Analiz sonucunu test türüne göre formatla
     switch (widget.testKey) {
       case 'clock':
         return "Shulman Puanı: ${jsonResponse['shulman_score']} "
             "(Güven: ${(jsonResponse['confidence'] as double).toStringAsFixed(2)})";
-
       case 'spiral':
       case 'meander':
         final controlProb = jsonResponse['control_probability'] as double;
@@ -349,61 +237,25 @@ class _DrawingTestScreenState extends State<DrawingTestScreen> {
         return patientProb > controlProb
             ? "🟡 Titreme Algılandı — Güven: ${patientProb.toStringAsFixed(2)}"
             : "✅ Temiz Çizim — Güven: ${controlProb.toStringAsFixed(2)}";
-
       default:
         return "Test sonucu: ${jsonResponse.toString()}";
     }
   }
 
-  Future<void> _showEvaluationResult(String evaluation) async {
-    await showDialog(
-      context: context,
-      barrierDismissible: false, // Kullanıcı dokunmayla kapatamasın
-      builder: (context) => AlertDialog(
-        title: Text('${widget.testTitle} Sonucu'),
-        content: SingleChildScrollView(child: Text(evaluation)),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context); // Dialog'u kapat
-              Navigator.pop(context); // Çizim ekranından çık
-            },
-            child: const Text('Tamam'),
-          ),
-        ],
-      ),
-    );
-  }
-
+  /// Ham analiz sonucunu alıp Gemini'den bir değerlendirme metni ister.
   Future<String> _getGeminiEvaluation(String analysisResult) async {
     final prompt =
         '''
-Kullanıcının yaptığı "${widget.testTitle}" adlı ${widget.testKey} çizim testinin sonuçlarını değerlendirir misin?
+Kullanıcının yaptığı "${widget.testTitle}" adlı çizim testinin sonuçlarını değerlendirir misin?
 Test Talimatı: "${widget.testInstruction}"
 Analiz Sonucu: "$analysisResult"
 
-Bu bilgilere dayanarak, çizimin genel durumunu ve varsa potansiyel anomalileri kullanıcıya anlaşılır bir dille kısa bir şekilde raporla.
+Bu bilgilere dayanarak, çizimin genel durumunu ve varsa potansiyel anomalileri kullanıcıya anlaşılır, kısa ve tıbbi olmayan bir dille raporla.
 ''';
     return await _geminiService.askGemini(prompt);
   }
-
-  Future<void> _showResultDialog(String evaluation) async {
-    return showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        title: Text('${widget.testTitle} Değerlendirme Raporu'),
-        content: SingleChildScrollView(child: Text(evaluation)),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Tamam'),
-          ),
-        ],
-      ),
-    );
-  }
-
+  
+  /// Analiz ve değerlendirme sonuçlarını içeren raporu Firestore'a kaydeder.
   Future<void> _saveTestReport(String analysisResult, String evaluation) async {
     try {
       final user = FirebaseAuth.instance.currentUser;
@@ -412,8 +264,7 @@ Bu bilgilere dayanarak, çizimin genel durumunu ve varsa potansiyel anomalileri 
       final report = Report(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
         title: '${widget.testTitle} Test Raporu',
-        content:
-            '''
+        content: '''
 **Test Türü:** ${widget.testKey.toUpperCase()}
 **Analiz Sonucu:** $analysisResult
 **Değerlendirme:** $evaluation
@@ -428,9 +279,35 @@ Bu bilgilere dayanarak, çizimin genel durumunu ve varsa potansiyel anomalileri 
           .doc(report.id)
           .set(report.toMap());
     } catch (e) {
+      // Hata olsa bile süreç devam etmeli, sadece konsola yazdır.
       print('Rapor kaydedilirken hata: $e');
-      throw Exception('Rapor kaydedilemedi: $e');
+      // İsteğe bağlı olarak kullanıcıya bir uyarı gösterebilirsiniz.
+      // throw Exception('Rapor kaydedilemedi: $e');
     }
+  }
+
+  /// Değerlendirme sonucunu gösteren ve kapatıldığında bir önceki ekrana dönen diyalogu açar.
+  Future<void> _showEvaluationResult(String evaluation) async {
+    if (!mounted) return;
+    await showDialog(
+      context: context,
+      barrierDismissible: false, // Dışarı tıklayarak kapatmayı engelle
+      builder: (dialogContext) => AlertDialog(
+        title: Text('${widget.testTitle} Değerlendirme Raporu'),
+        content: SingleChildScrollView(child: Text(evaluation)),
+        actions: [
+          TextButton(
+            onPressed: () {
+              // İlk pop diyalogu kapatır.
+              Navigator.of(dialogContext).pop(); 
+              // İkinci pop çizim ekranını (DrawingTestScreen) kapatır.
+              Navigator.of(context).pop(); 
+            },
+            child: const Text('Tamam'),
+          ),
+        ],
+      ),
+    );
   }
 
   @override

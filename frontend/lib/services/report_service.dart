@@ -52,9 +52,9 @@ class ReportService {
         title: '$testTitle Test Raporu',
         content:
             '''
-  **Test Türü:** ${testType.toUpperCase()}
-  **Analiz Sonucu:** $analysisResult
-  **Değerlendirme:** $geminiEvaluation
+  Test Türü: ${testType.toUpperCase()}
+  Analiz Sonucu: $analysisResult
+  Değerlendirme: $geminiEvaluation
   ''',
         date: DateTime.now(),
         type: 'drawing',

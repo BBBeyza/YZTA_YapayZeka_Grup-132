@@ -82,7 +82,7 @@ def get_gemini_feedback(qa_list):
     İşte Analiz Edilecek Sorular ve Cevaplar:
     {qa_block}
 
-    Lütfen yukarıdaki verilere dayanarak ayrıntılı geri bildirim raporunu oluştur.
+    Lütfen yukarıdaki verilere dayanarak ayrıntılı geri bildirim raporunu oluştur. Kalın font kullanma, soruları ve cevapları olduğu gibi bırak, sadece analiz ve öneri kısmını yaz. Raporu net ve anlaşılır bir dilde yaz, tıbbi terimlerden kaçın.
     """
     try:
         response = model.generate_content(prompt)
