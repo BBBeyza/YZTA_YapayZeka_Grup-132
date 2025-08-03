@@ -37,19 +37,26 @@
 
 <h3>Uygulamanın Arayüz Tasarımı</h3>
 <br/>
-<p style="text-align: center;">
-  <img src="images/Latest App Screenshots/Login.png" alt="1" width="400" height="800" style="display:inline-block; margin: 25px;"/>
-  <img src="images/Latest App Screenshots/Info.png" alt="2" width="400" height="800" style="display:inline-block; margin: 25px;"/>
-  <br/>
-  <img src="images/Latest App Screenshots/HomePage.png" alt="3" width="400" height="800" style="display:inline-block; margin: 25px;"/>
-  <img src="images/Latest App Screenshots/ChatBot.png" alt="4" width="400" height="800" style="display:inline-block; margin: 25px;"/>
-  <br/>
-  <img src="images/Latest App Screenshots/Profile.png" alt="5" width="400" height="800" style="display:inline-block; margin: 25px;"/>
-  <img src="images/Latest App Screenshots/CognitiveTest1.png" alt="6" width="400" height="800" style="display:inline-block; margin: 25px;"/>
-  <br/>
-  <img src="images/Latest App Screenshots/DrawingTest.png" alt="7" width="400" height="800" style="display:inline-block; margin: 25px;"/>
-  <img src="images/Latest App Screenshots/Records.png" alt="8" width="400" height="800" style="display:inline-block; margin: 25px;"/>
-</p>
+<div style="display: flex; justify-content: center; gap: 50px; margin-bottom: 30px;">
+  <img src="images/Latest App Screenshots/Login.png" alt="1" width="400" height="800"/>
+  <img src="images/Latest App Screenshots/Info.png" alt="2" width="400" height="800"/>
+</div>
+
+<div style="display: flex; justify-content: center; gap: 50px; margin-bottom: 30px;">
+  <img src="images/Latest App Screenshots/HomePage.png" alt="3" width="400" height="800"/>
+  <img src="images/Latest App Screenshots/ChatBot.png" alt="4" width="400" height="800"/>
+</div>
+
+<div style="display: flex; justify-content: center; gap: 50px; margin-bottom: 30px;">
+  <img src="images/Latest App Screenshots/Profile.png" alt="5" width="400" height="800"/>
+  <img src="images/Latest App Screenshots/CognitiveTest1.png" alt="6" width="400" height="800"/>
+</div>
+
+<div style="display: flex; justify-content: center; gap: 50px; margin-bottom: 30px;">
+  <img src="images/Latest App Screenshots/DrawingTest.png" alt="7" width="400" height="800"/>
+  <img src="images/Latest App Screenshots/Records.png" alt="8" width="400" height="800"/>
+</div>
+
 
 <details>
 <summary><h2>Product Backlog</h2></summary>
@@ -342,19 +349,26 @@
 
 <details>
   <summary><h3>Sprint 3 - App Screenshots</h3></summary>
-<p style="text-align: center;">
-  <img src="images/Latest App Screenshots/Login.png" alt="1" width="400" height="800" style="display:inline-block; margin: 25px;"/>
-  <img src="images/Latest App Screenshots/Info.png" alt="2" width="400" height="800" style="display:inline-block; margin: 25px;"/>
-  <br/>
-  <img src="images/Latest App Screenshots/HomePage.png" alt="3" width="400" height="800" style="display:inline-block; margin: 25px;"/>
-  <img src="images/Latest App Screenshots/ChatBot.png" alt="4" width="400" height="800" style="display:inline-block; margin: 25px;"/>
-  <br/>
-  <img src="images/Latest App Screenshots/Profile.png" alt="5" width="400" height="800" style="display:inline-block; margin: 25px;"/>
-  <img src="images/Latest App Screenshots/CognitiveTest1.png" alt="6" width="400" height="800" style="display:inline-block; margin: 25px;"/>
-  <br/>
-  <img src="images/Latest App Screenshots/DrawingTest.png" alt="7" width="400" height="800" style="display:inline-block; margin: 25px;"/>
-  <img src="images/Latest App Screenshots/Records.png" alt="8" width="400" height="800" style="display:inline-block; margin: 25px;"/>
-</p>
+<div style="display: flex; justify-content: center; gap: 50px; margin-bottom: 30px;">
+  <img src="images/Latest App Screenshots/Login.png" alt="1" width="400" height="800"/>
+  <img src="images/Latest App Screenshots/Info.png" alt="2" width="400" height="800"/>
+</div>
+
+<div style="display: flex; justify-content: center; gap: 50px; margin-bottom: 30px;">
+  <img src="images/Latest App Screenshots/HomePage.png" alt="3" width="400" height="800"/>
+  <img src="images/Latest App Screenshots/ChatBot.png" alt="4" width="400" height="800"/>
+</div>
+
+<div style="display: flex; justify-content: center; gap: 50px; margin-bottom: 30px;">
+  <img src="images/Latest App Screenshots/Profile.png" alt="5" width="400" height="800"/>
+  <img src="images/Latest App Screenshots/CognitiveTest1.png" alt="6" width="400" height="800"/>
+</div>
+
+<div style="display: flex; justify-content: center; gap: 50px; margin-bottom: 30px;">
+  <img src="images/Latest App Screenshots/DrawingTest.png" alt="7" width="400" height="800"/>
+  <img src="images/Latest App Screenshots/Records.png" alt="8" width="400" height="800"/>
+</div>
+
 </details>
 
 <details>
