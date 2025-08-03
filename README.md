@@ -363,13 +363,13 @@
 
 <details>
   <summary><h3>Sprint 3 - Sprint Board Update Screenshots</h3></summary>
-    <p align="center">
-    <img src="images/sprint_board_update_ss_3.jpg" alt="Screenshoot 1" />
-    </br>
-    <img src="images/sprint_board_update_ss_4.jpg" alt="Screenshoot 1" />
-    </br>
-    <img src="images/sprint_board_update_ss_5.jpg" alt="Screenshoot 1" />
-    </p>
+  <p align="center">
+    <img src="images/sprint_board_update_ss_3.jpg" alt="Screenshot 1" />
+    <br/>
+    <img src="images/sprint_board_update_ss_4.jpg" alt="Screenshot 2" />
+    <br/>
+    <img src="images/sprint_board_update_ss_5.jpg" alt="Screenshot 3" />
+  </p>
 </details>
 
 - <h3>Sprint Notes</h3>
