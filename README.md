@@ -37,26 +37,24 @@
 
 <h3>Uygulamanın Arayüz Tasarımı</h3>
 <br/>
-<div style="display: flex; justify-content: center; gap: 60px; margin-bottom: 40px;">
-  <img src="images/Latest App Screenshots/Login.png" alt="1" width="400" height="800"/>
-  <img src="images/Latest App Screenshots/Info.png" alt="2" width="400" height="800"/>
-</div>
-
-<div style="display: flex; justify-content: center; gap: 60px; margin-bottom: 40px;">
-  <img src="images/Latest App Screenshots/HomePage.png" alt="3" width="400" height="800"/>
-  <img src="images/Latest App Screenshots/ChatBot.png" alt="4" width="400" height="800"/>
-</div>
-
-<div style="display: flex; justify-content: center; gap: 60px; margin-bottom: 40px;">
-  <img src="images/Latest App Screenshots/Profile.png" alt="5" width="400" height="800"/>
-  <img src="images/Latest App Screenshots/CognitiveTest1.png" alt="6" width="400" height="800"/>
-</div>
-
-<div style="display: flex; justify-content: center; gap: 60px; margin-bottom: 40px;">
-  <img src="images/Latest App Screenshots/DrawingTest.png" alt="7" width="400" height="800"/>
-  <img src="images/Latest App Screenshots/Records.png" alt="8" width="400" height="800"/>
-</div>
-
+<table>
+  <tr>
+    <td><img src="images/Latest App Screenshots/Login.png" width="400" height="800"/></td>
+    <td><img src="images/Latest App Screenshots/Info.png" width="400" height="800"/></td>
+  </tr>
+  <tr>
+    <td><img src="images/Latest App Screenshots/HomePage.png" width="400" height="800"/></td>
+    <td><img src="images/Latest App Screenshots/ChatBot.png" width="400" height="800"/></td>
+  </tr>
+  <tr>
+    <td><img src="images/Latest App Screenshots/Profile.png" width="400" height="800"/></td>
+    <td><img src="images/Latest App Screenshots/CognitiveTest1.png" width="400" height="800"/></td>
+  </tr>
+  <tr>
+    <td><img src="images/Latest App Screenshots/DrawingTest.png" width="400" height="800"/></td>
+    <td><img src="images/Latest App Screenshots/Records.png" width="400" height="800"/></td>
+  </tr>
+</table>
 
 <details>
 <summary><h2>Product Backlog</h2></summary>
@@ -349,25 +347,24 @@
 
 <details>
   <summary><h3>Sprint 3 - App Screenshots</h3></summary>
-  <div style="display: flex; justify-content: center; gap: 60px; margin-bottom: 40px;">
-    <img src="images/Latest App Screenshots/Login.png" alt="1" width="400" height="800"/>
-    <img src="images/Latest App Screenshots/Info.png" alt="2" width="400" height="800"/>
-  </div>
-
-  <div style="display: flex; justify-content: center; gap: 60px; margin-bottom: 40px;">
-    <img src="images/Latest App Screenshots/HomePage.png" alt="3" width="400" height="800"/>
-    <img src="images/Latest App Screenshots/ChatBot.png" alt="4" width="400" height="800"/>
-  </div>
-
-  <div style="display: flex; justify-content: center; gap: 60px; margin-bottom: 40px;">
-    <img src="images/Latest App Screenshots/Profile.png" alt="5" width="400" height="800"/>
-    <img src="images/Latest App Screenshots/CognitiveTest1.png" alt="6" width="400" height="800"/>
-  </div>
-
-  <div style="display: flex; justify-content: center; gap: 60px; margin-bottom: 40px;">
-    <img src="images/Latest App Screenshots/DrawingTest.png" alt="7" width="400" height="800"/>
-    <img src="images/Latest App Screenshots/Records.png" alt="8" width="400" height="800"/>
-  </div>
+<table>
+  <tr>
+    <td><img src="images/Latest App Screenshots/Login.png" width="400" height="800"/></td>
+    <td><img src="images/Latest App Screenshots/Info.png" width="400" height="800"/></td>
+  </tr>
+  <tr>
+    <td><img src="images/Latest App Screenshots/HomePage.png" width="400" height="800"/></td>
+    <td><img src="images/Latest App Screenshots/ChatBot.png" width="400" height="800"/></td>
+  </tr>
+  <tr>
+    <td><img src="images/Latest App Screenshots/Profile.png" width="400" height="800"/></td>
+    <td><img src="images/Latest App Screenshots/CognitiveTest1.png" width="400" height="800"/></td>
+  </tr>
+  <tr>
+    <td><img src="images/Latest App Screenshots/DrawingTest.png" width="400" height="800"/></td>
+    <td><img src="images/Latest App Screenshots/Records.png" width="400" height="800"/></td>
+  </tr>
+</table>
 
 </details>
 
