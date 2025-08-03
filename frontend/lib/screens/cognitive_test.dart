@@ -34,6 +34,11 @@ class QuestionAnswer {
       correctAnswer: correctAnswer ?? this.correctAnswer,
     );
   }
+
+  @override
+  String toString() {
+    return 'QuestionAnswer(question: $question, answer: $answer, type: $type)';
+  }
 }
 
 class CognitiveTestScreen extends StatefulWidget {
@@ -71,6 +76,60 @@ class _CognitiveTestScreenState extends State<CognitiveTestScreen> {
     super.dispose();
   }
 
+  void _showSnackBar(String message) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
+  }
+
+  Future<void> _submitAnswer() async {
+    final answer = _answerController.text.trim();
+    if (answer.isEmpty) {
+      _showSnackBar('Lütfen bir cevap girin.');
+      print('Hata: Cevap boş, soru index: $_currentQuestionIndex');
+      return;
+    }
+
+    final type = _questionTypes[_currentQuestionIndex];
+    final question = _currentQuestion ?? '';
+    final qa = QuestionAnswer(question: question, answer: answer, type: type);
+
+    setState(() {
+      _history.add(qa);
+      print('Cevap eklendi: $qa');
+      print('Geçerli _history uzunluğu: ${_history.length}, içerik: $_history');
+    });
+
+    if (_currentQuestionIndex < _maxQuestions - 1) {
+      setState(() {
+        _answerController.clear();
+        _currentQuestionIndex++;
+        _currentQuestion = _questions[_currentQuestionIndex]['Soru'];
+        print(
+          'Sonraki soru: $_currentQuestion (Index: $_currentQuestionIndex)',
+        );
+      });
+    } else {
+      // Son soruya cevap eklendi, testi bitirme işlemi burada
+      setState(() {
+        _answerController.clear();
+      });
+      print('Son soru cevaplandı, _history uzunluğu: ${_history.length}');
+      if (_history.length == _maxQuestions) {
+        print('Tüm sorular cevaplandı, değerlendirme başlıyor: $_history');
+        await _evaluateTest();
+      } else {
+        _showSnackBar(
+          'Hata: Tüm sorular cevaplanmadı. Lütfen son soruya cevap verin.',
+        );
+        print(
+          'Hata: _history uzunluğu ${_history.length}, beklenen: $_maxQuestions',
+        );
+      }
+    }
+  }
+
   Future<void> _startTest() async {
     setState(() {
       _isLoading = true;
@@ -83,18 +142,17 @@ class _CognitiveTestScreenState extends State<CognitiveTestScreen> {
         headers: {'Content-Type': 'application/json'},
       );
 
+      print('Sorular API Yanıtı: ${response.statusCode} - ${response.body}');
+
       if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        _questions = List<Map<String, dynamic>>.from(data['test_results']);
+        final data = jsonDecode(response.body) as List;
         setState(() {
-          _testStarted = true;
-          _testFinished = false;
-          _currentQuestionIndex = 0;
-          _history = [];
-          _evaluationResult = null;
+          _questions = List<Map<String, dynamic>>.from(data);
           _currentQuestion = _questions[0]['Soru'];
+          _testStarted = true;
           _isLoading = false;
-          _statusMessage = null;
+          _history = [];
+          _currentQuestionIndex = 0;
         });
       } else {
         throw Exception('Backend hatası: ${response.statusCode}');
@@ -108,32 +166,6 @@ class _CognitiveTestScreenState extends State<CognitiveTestScreen> {
     }
   }
 
-  Future<void> _submitAnswer() async {
-    final answer = _answerController.text.trim();
-    if (answer.isEmpty) {
-      _showSnackBar('Lütfen bir cevap girin.');
-      return;
-    }
-
-    final type = _questionTypes[_currentQuestionIndex];
-    final question = _currentQuestion ?? '';
-    final qa = QuestionAnswer(question: question, answer: answer, type: type);
-
-    setState(() {
-      _history.add(qa);
-      _answerController.clear();
-    });
-
-    if (_currentQuestionIndex < _maxQuestions - 1) {
-      setState(() {
-        _currentQuestionIndex++;
-        _currentQuestion = _questions[_currentQuestionIndex]['Soru'];
-      });
-    } else {
-      await _evaluateTest();
-    }
-  }
-
   Future<void> _evaluateTest() async {
     setState(() {
       _isLoading = true;
@@ -141,95 +173,78 @@ class _CognitiveTestScreenState extends State<CognitiveTestScreen> {
     });
 
     try {
+      // Yeni endpoint kullanarak cevapları gönder
       final qaList = _history
-          .asMap()
-          .entries
-          .map(
-            (entry) => {
-              'Soru': _questions[entry.key]['Soru'],
-              'Cevap': entry.value.answer,
-            },
-          )
+          .map((qa) => {'Soru': qa.question, 'Cevap': qa.answer})
           .toList();
+
+      print('Gönderilen cevaplar: ${jsonEncode({'qa_list': qaList})}');
 
       final response = await http.post(
         Uri.parse('http://192.168.1.160:8000/cognitive/run_cognitive_test'),
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'qa_list': qaList}),
+        body: jsonEncode(qaList), // Direkt liste gönderiyoruz
+      );
+
+      print(
+        'Değerlendirme API Yanıtı: ${response.statusCode} - ${response.body}',
       );
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        final testResults = List<Map<String, dynamic>>.from(
-          data['test_results'],
-        );
-        final analysisReport = data['analysis_report'] as String;
-
-        final reportSections = _parseReport(analysisReport);
-
         setState(() {
-          _history = testResults.asMap().entries.map((entry) {
-            final idx = entry.key;
-            final result = entry.value;
-            return QuestionAnswer(
-              question: result['Soru'],
-              answer: result['Cevap'],
-              type: _questionTypes[idx],
-              score: null,
-              scoreComment: null,
-              correctAnswer: null,
-            );
-          }).toList();
-          _evaluationResult = reportSections;
+          _evaluationResult = data['analysis_report'];
           _testFinished = true;
           _isLoading = false;
-          _statusMessage = null;
         });
       } else {
-        throw Exception('Backend hatası: ${response.statusCode}');
+        throw Exception('Değerlendirme hatası: ${response.statusCode}');
       }
     } catch (e) {
       setState(() {
         _isLoading = false;
-        _statusMessage = null;
         _evaluationResult = 'Değerlendirme alınamadı: $e';
         _testFinished = true;
       });
-      _showSnackBar('Değerlendirme alınamadı: $e');
+      _showSnackBar('Değerlendirme hatası: $e');
     }
   }
 
   String _parseReport(String report) {
-    final lines = report.split('\n');
-    final sections = <String, String>{};
-    String currentSection = 'Genel Değerlendirme';
-    StringBuffer currentText = StringBuffer();
+    if (report.isEmpty) {
+      return 'Rapor boş döndü, lütfen tekrar deneyin.';
+    }
+    try {
+      final lines = report.split('\n').map((line) => line.trim()).toList();
+      final sections = <String, String>{};
+      String currentSection = 'Genel Değerlendirme';
+      StringBuffer currentText = StringBuffer();
 
-    for (final line in lines) {
-      if (line.trim().startsWith('* ')) {
-        if (currentText.isNotEmpty) {
-          sections[currentSection] = currentText.toString().trim();
-          currentText.clear();
+      for (final line in lines) {
+        if (line.startsWith('**') && line.endsWith('**')) {
+          if (currentText.isNotEmpty) {
+            sections[currentSection] = currentText.toString().trim();
+            currentText.clear();
+          }
+          currentSection = line.substring(2, line.length - 2).trim();
+        } else if (line.isNotEmpty) {
+          currentText.write('$line\n');
         }
-        currentSection = line.trim().substring(2);
-      } else if (line.trim().isNotEmpty) {
-        currentText.write('$line\n');
       }
-    }
-    if (currentText.isNotEmpty) {
-      sections[currentSection] = currentText.toString().trim();
-    }
+      if (currentText.isNotEmpty) {
+        sections[currentSection] = currentText.toString().trim();
+      }
 
-    return sections.entries.map((entry) {
-      return '• **${entry.key}:**\n${entry.value}\n\n';
-    }).join();
-  }
+      if (sections.isEmpty) {
+        return 'Rapor formatı beklenenden farklı, ham veri: $report';
+      }
 
-  void _showSnackBar(String message) {
-    if (!mounted) return;
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(message)));
+      return sections.entries.map((entry) {
+        return '• **${entry.key}:**\n${entry.value}\n\n';
+      }).join();
+    } catch (e) {
+      return 'Rapor işlenirken hata oluştu: $e\nHam veri: $report';
+    }
   }
 
   @override

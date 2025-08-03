@@ -109,10 +109,10 @@ class _ReadingTestScreenState extends State<ReadingTestScreen> {
             ? DateTime.now().difference(_recordingStartTime!).inSeconds
             : 0;
 
-        if (recordingDuration < 3) {
+        if (recordingDuration < 2) {
           print('Kayıt çok kısa: $recordingDuration saniye');
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Kayıt en az 3 saniye olmalı!')),
+            const SnackBar(content: Text('Kayıt en az 2 saniye olmalı!')),
           );
           setState(() {
             _isRecording = false;
