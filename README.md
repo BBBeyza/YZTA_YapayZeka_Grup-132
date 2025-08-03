@@ -363,7 +363,13 @@
 
 <details>
   <summary><h3>Sprint 3 - Sprint Board Update Screenshots</h3></summary>
-  https://docs.google.com/spreadsheets/d/1Cv6z4U5Twf6dg4QvCqDg6eEn2MUoXFmWakvXuv8ObM0/edit?gid=0#gid=0
+    <p align="center">
+    <img src="images/sprint_board_update_ss_3.jpg" alt="Screenshoot 1" />
+    </br>
+    <img src="images/sprint_board_update_ss_4.jpg" alt="Screenshoot 1" />
+    </br>
+    <img src="images/sprint_board_update_ss_5.jpg" alt="Screenshoot 1" />
+    </p>
 </details>
 
 - <h3>Sprint Notes</h3>
@@ -410,11 +416,7 @@ Beyza Yaylak, tüm sprint boyunca toplantı planlamalarını organize etti, sür
 
 - <h3>Product Backlog URL</h3> 
 <p align="center">
-  <img src="images/sprint_board_update_ss_3.jpg" alt="Screenshoot 1" />
-  </br>
-  <img src="images/sprint_board_update_ss_4.jpg" alt="Screenshoot 1" />
-  </br>
-  <img src="images/sprint_board_update_ss_5.jpg" alt="Screenshoot 1" />
+    https://docs.google.com/spreadsheets/d/1Cv6z4U5Twf6dg4QvCqDg6eEn2MUoXFmWakvXuv8ObM0/edit?gid=0#gid=0
   </p>
   
 
