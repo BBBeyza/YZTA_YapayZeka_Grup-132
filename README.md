@@ -319,3 +319,140 @@
   - MMSE ve MoCA sorularının uygulamaya eklenip test edilmesi.
 
 </details>
+<details>
+  <summary><h2>Sprint 2</h2></summary>
+
+---
+
+<details>
+  <summary><h3>Sprint 2 - App Screenshots</h3></summary>
+    <p align="center">
+    <img src="images/App Screenshots/Onboarding1.png" alt="Onboarding 1"/>
+    <br/>
+    <img src="images/App Screenshots/Onboarding2.png" alt="Onboarding 2"/>
+    <br/>
+    <img src="images/App Screenshots/LoginScreen.png" alt="Login Screen"/>
+    <br/>
+    <img src="images/App Screenshots/HomePage.png" alt="Home Page"/>
+    <br/>
+    <img src="images/App Screenshots/CognitiveTest1.png" alt="Cognitive Test 1"/>
+    <br/>
+    <img src="images/App Screenshots/CognitiveTest2.png" alt="Cognitive Test 2"/>
+    <br/>
+    <img src="images/App Screenshots/CognitiveTest3.png" alt="Cognitive Test 3"/>
+    <br/>
+    <img src="images/App Screenshots/CognitiveTest4.png" alt="Cognitive Test 4"/>
+    <br/>
+    <img src="images/App Screenshots/ClockDrawingTest.png" alt="Clock Drawing Test"/>
+    <br/>
+    <img src="images/App Screenshots/SpiralTest.png" alt="Spiral Test"/>
+    <br/>
+    <img src="images/App Screenshots/MeanderTest.png" alt="Meander Test"/>
+    <br/>
+    <img src="images/App Screenshots/HandwritingTest.png" alt="Hand Writing Test"/>
+    <br/>
+    <img src="images/App Screenshots/DrawingTestResult1.png" alt="Drawing Test Result 1"/>
+    <br/>
+    <img src="images/App Screenshots/DrawingTestResult2.png" alt="Drawing Test Result 2"/>
+    <br/>
+    <img src="images/App Screenshots/AudioReadingTest1.png" alt="Audio Reading Test 1"/>
+    <br/>
+    <img src="images/App Screenshots/AudioReadingTest2.png" alt="Audio Reading Test 2"/>
+  </p>
+</details>
+
+<details>
+  <summary><h3>Sprint 2 - Sprint Board Update Screenshots</h3></summary>
+  https://docs.google.com/spreadsheets/d/1Cv6z4U5Twf6dg4QvCqDg6eEn2MUoXFmWakvXuv8ObM0/edit?gid=0#gid=0
+</details>
+
+- <h3>Sprint Notes</h3>
+  İkinci sprintte ürün geliştirme sürecinde daha teknik ve fonksiyonel adımlara geçildi. Özellikle test altyapılarının kurulması, kullanıcı kimlik doğrulama sisteminin entegre edilmesi ve yapay zekâ destekli test sistemlerinin oluşturulması bu sprintin ana hedefleri arasında yer aldı. Ekip üyeleri, görev dağılımı ve zaman planlamasına sadık kalarak başarılı bir sprint süreci yürüttü.
+
+- <h3>Tahmin Edilen Puan ve Tamamlanan Puan</h3> 
+
+  - Beklenen: 500 puan
+
+  - Tamamlanan: 500 puan 
+
+- <h3>Puan Tamamlama Mantığı</h3> 
+  İkinci sprintte toplam 500 puanlık bir hedef belirlenmesinin temel nedeni, ekibin ilk sprintte gösterdiği yüksek performans ve hızlı adaptasyon oldu. İlk sprint sonunda ekip üyeleri hem birbirine alıştı hem de proje yapısına hâkimiyet kazandı. Bu sayede görev dağılımı daha net yapılabildi ve iş akışı daha verimli ilerledi. 
+
+  Takım üyeleri arasındaki iletişim ve koordinasyon önemli ölçüde güçlendi. Görevlerin zamanında teslim edilmesi, teknik problemlere birlikte çözüm aranması ve sorumluluk bilinciyle hareket edilmesi, yüksek puanlı bir sprint planlamasını mümkün kıldı.
+
+  Bu sprintte hem frontend hem backend tarafında yoğun geliştirmeler yapıldığı, API entegrasyonları, test ekranları, veritabanı yapıları ve güvenlik sistemleri üzerinde çalışıldığı göz önüne alındığında; 500 puanlık hedef, sprintin kapsamına uygun ve gerçekçi bir hedef olarak belirlendi. Tüm görevler eksiksiz şekilde tamamlandı.
+
+- <h3>Daily Scrum</h3>
+  </br>
+  <p align="center">
+    <img src="images/Daily Scrum/sprint2_dailyscrum_1.jpeg" alt="Daily Scrum 1" width="600"/>
+    </br>
+    </br>
+    <img src="images/Daily Scrum/sprint2_dailyscrum_2.jpeg" alt="Daily Scrum 2" width="600"/>
+    </br>
+    </br>
+    <img src="images/Daily Scrum/sprint2_dailyscrum_3.jpeg" alt="Daily Scrum 3" width="600"/>
+    </br>
+    </br>
+    <img src="images/Daily Scrum/sprint2_dailyscrum_4.jpeg" alt="Daily Scrum 4" width="600"/>
+    </br>
+    </br>
+    <img src="images/Daily Scrum/sprint2_dailyscrum_5.jpeg" alt="Daily Scrum 5" width="600"/>
+  </p>
+  </br>
+  </br>
+  Sprint 2 sürecinde ekip olarak ürünün işlevsel yönlerini geliştirmeye odaklandık. İlk sprintte temeli atılan yapının üzerine, bu kez kullanıcı etkileşimini sağlayacak sistemler ve test altyapıları inşa edilmeye başlandı. Her ekip üyesi, görev dağılımına uygun şekilde sorumluluklarını yerine getirdi ve teknik gelişmeler adım adım ilerletildi.
+
+  Sprintin başında, uygulamanın kullanıcı giriş güvenliğini sağlamak amacıyla kimlik doğrulama sisteminin kurulmasına öncelik verildi. Fatma Işıl Fidan tarafından Firebase Authentication entegrasyonu gerçekleştirildi. Bu sayede kullanıcıların e-posta ve şifreyle güvenli şekilde giriş yapmaları sağlandı. Oturum açmış kullanıcıların uygulamayı yeniden açtıklarında otomatik olarak ana sayfaya yönlendirilmeleri sağlanarak kullanıcı deneyimi geliştirildi.
+
+  Cognitive test ekranı, Melisa Bayramoğlu tarafından oluşturuldu. Melisa, bu bölümde kullanılan soruların MMSE (Mini Mental State Examination) ve MoCA (Montreal Cognitive Assessment) testlerinden uyarlanarak hazırlandığını belirtti. cognitive_test.dart dosyasında geliştirilen arayüz üzerinden kullanıcıya Gemini API aracılığıyla dinamik sorular sunulmakta ve kullanıcı cevapları toplanmaktadır. API’nin puanlaması ve değerlendirme çıktıları, Firebase Firestore veritabanına, kullanıcıların benzersiz UID’leri altında düzenli şekilde kaydedilmektedir.
+
+  Ayrıca Melisa, testin yalnızca doğru cevap odaklı olmaması gerektiğini; özellikle metin okuma testinde ses tonu, vurgu ve konuşma ritmi gibi faktörlerin de değerlendirilmesi gerektiğini ifade etti. Bu doğrultuda ses analizi özellikleri ileriki sprintlerde test sistemine entegre edilecektir.
+
+  Muhammet Emin Balmuk, kısa metin anlatımı ve detaylı paragraf okuma testlerinin backend altyapısını oluşturdu. Giriş ekranına dair sunucu taraflı kodlamalar ve kullanıcı yönlendirme mekanizmaları da bu sprintte başarıyla tamamlandı.
+
+  Fatma Işıl Fidan, Firebase Authentication dışında, test sonuçlarının güvenli ve doğru şekilde veritabanına aktarılmasını sağladı. Ayrıca çizim testlerine yönelik el yazısı verileriyle çalışan makine öğrenmesi modelleri eğitildi ve prototip süreci başlatıldı.
+
+  Harun Benli, testlerin bilimsel altyapısı konusunda destek sağladı. MMSE ve MoCA test yapılarına yönelik içerik araştırmaları yaparak, kullanılabilecek soru formatlarının oluşturulmasına katkıda bulundu.
+
+  Sprint boyunca tüm bu süreçlerin takibi, dökümantasyonu ve toplantı planlamaları Beyza Yaylak tarafından yürütüldü. Ekip içi koordinasyon sağlandı, ilerlemeler gözlemlendi ve günlük görev takibi titizlikle sürdürüldü.
+
+  Sprint 2, ürünün teknik altyapısının derinleştirildiği ve kullanıcı deneyimi boyutunun güçlendirildiği bir dönem olarak başarıyla tamamlandı.
+
+- <h3>Product Backlog URL</h3> 
+<p align="center">
+  <img src="images/sprint_board_update_ss_2.jpg" alt="Screenshoot 1" />
+  </p>
+  
+
+- <h3>Sprint Review</h3>  
+  Sprint sonunda ekip, gerçekleştirilen tüm görevleri gözden geçirdi ve test sistemlerinin çalışır durumda olduğu doğrulandı. Giriş sistemi, test ekranları ve veri kaydetme yapısı başarıyla çalıştı.
+  Gemini API’den alınan veriler üzerinden yapılan dinamik soru-cevap işlemleri düzgün çalıştı. Firebase sisteminde veri kayıtları incelendi ve test sonuçlarının doğru şekilde aktarıldığı görüldü.
+
+- <h3>Sprint Review Participants</h3>
+  
+  - Beyza Yaylak  
+  - Melisa Bayramoğlu  
+  - Harun Benli  
+  - Muhammet Emin Balmuk  
+  - Fatma Işıl Fidan
+
+- <h3>Sprint Retrospective</h3>
+
+  **Neler iyi gitti?**
+  - Firebase Authentication başarılı şekilde entegre edildi.
+  - Gemini API ile test sistemi entegre edildi.
+  - Test sonuçlarının otomatik ve kullanıcı bazlı olarak veritabanına kaydedilmesi sağlandı.
+  - Takım içi iletişim güçlüydü ve görev dağılımı dengeliydi.
+  - Belirlenen sürede hedeflenen görevler tamamlandı.
+
+  **Neler iyileştirilmeli?**
+  - Bazı görevlerde teknik detaylara daha fazla yer verilmesi gerekiyor.
+  - Test sonrası değerlendirme sonuçlarının daha kullanıcı dostu şekilde sunulması planlanmalı.
+
+  **Gelecek Sprint İçin Aksiyonlar**
+  - Kullanıcı arayüzlerinin sadeleştirilmesi ve kullanıcı deneyiminin iyileştirilmesi.
+  - Çizim testlerinin tamamlanarak sisteme entegre edilmesi.
+  - MMSE ve MoCA sorularının uygulamaya eklenip test edilmesi.
+
+</details>
