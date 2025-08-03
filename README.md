@@ -38,30 +38,17 @@
 <h3>Uygulamanın Arayüz Tasarımı</h3>
 <br/>
 <p align="center">
-  <img src="images/Latest App Screenshots/Login.png" alt="1" width="450" height="930"/>
+  <img src="images/Latest App Screenshots/Login.png" alt="1" width="450" height="930" style="margin: 10px;"/>
+  <img src="images/Latest App Screenshots/Info.png" alt="2" width="450" height="930" style="margin: 10px;"/>
   <br/>
+  <img src="images/Latest App Screenshots/HomePage.png" alt="3" width="450" height="930" style="margin: 10px;"/>
+  <img src="images/Latest App Screenshots/ChatBot.png" alt="4" width="450" height="930" style="margin: 10px;"/>
   <br/>
-  <img src="images/Latest App Screenshots/Info.png" alt="2" width="450" height="930"/>
+  <img src="images/Latest App Screenshots/Profile.png" alt="5" width="450" height="930" style="margin: 10px;"/>
+  <img src="images/Latest App Screenshots/CognitiveTest1.png" alt="6" width="450" height="930" style="margin: 10px;"/>
   <br/>
-  <br/>
-  <img src="images/Latest App Screenshots/HomePage.png" alt="3" width="450" height="930"/>
-  <br/>
-  <br/>
-  <img src="images/Latest App Screenshots/ChatBot.png" alt="4" width="450" height="930"/>
-  <br/>
-  <br/>
-  <img src="images/Latest App Screenshots/Profile.png" alt="5" width="450" height="930"/>
-  <br/>
-  <br/>
-  <img src="images/Latest App Screenshots/CognitiveTest1.png" alt="6" width="450" height="930"/>
-  <br/>
-  <br/>
-  <img src="images/Latest App Screenshots/DrawingTest.png" alt="7" width="450" height="930"/>
-  <br/>
-  <br/>
-  <img src="images/Latest App Screenshots/Records.png" alt="8" width="450" height="930"/>
-  <br/>
-  <br/>
+  <img src="images/Latest App Screenshots/DrawingTest.png" alt="7" width="450" height="930" style="margin: 10px;"/>
+  <img src="images/Latest App Screenshots/Records.png" alt="8" width="450" height="930" style="margin: 10px;"/>
 </p>
 
 
@@ -356,42 +343,25 @@
 
 <details>
   <summary><h3>Sprint 3 - App Screenshots</h3></summary>
-  <p align="center">
-    <img src="images/Latest App Screenshots/Login.png" alt="1" width="450" height="930"/>
-    <br/>
-    <br/>
-    <img src="images/Latest App Screenshots/Info.png" alt="2" width="450" height="930"/>
-    <br/>
-    <br/>
-    <img src="images/Latest App Screenshots/HomePage.png" alt="3" width="450" height="930"/>
-    <br/>
-    <br/>
-    <img src="images/Latest App Screenshots/ChatBot.png" alt="4" width="450" height="930"/>
-    <br/>
-    <br/>
-    <img src="images/Latest App Screenshots/Profile.png" alt="5" width="450" height="930"/>
-    <br/>
-    <br/>
-    <img src="images/Latest App Screenshots/CognitiveTest1.png" alt="6" width="450" height="930"/>
-    <br/>
-    <br/>
-    <img src="images/Latest App Screenshots/DrawingTest.png" alt="7" width="450" height="930"/>
-    <br/>
-    <br/>
-    <img src="images/Latest App Screenshots/Records.png" alt="8" width="450" height="930"/>
-    <br/>
-    <br/>
-  </p>
+<p align="center">
+  <img src="images/Latest App Screenshots/Login.png" alt="1" width="450" height="930" style="margin: 10px;"/>
+  <img src="images/Latest App Screenshots/Info.png" alt="2" width="450" height="930" style="margin: 10px;"/>
+  <br/>
+  <img src="images/Latest App Screenshots/HomePage.png" alt="3" width="450" height="930" style="margin: 10px;"/>
+  <img src="images/Latest App Screenshots/ChatBot.png" alt="4" width="450" height="930" style="margin: 10px;"/>
+  <br/>
+  <img src="images/Latest App Screenshots/Profile.png" alt="5" width="450" height="930" style="margin: 10px;"/>
+  <img src="images/Latest App Screenshots/CognitiveTest1.png" alt="6" width="450" height="930" style="margin: 10px;"/>
+  <br/>
+  <img src="images/Latest App Screenshots/DrawingTest.png" alt="7" width="450" height="930" style="margin: 10px;"/>
+  <img src="images/Latest App Screenshots/Records.png" alt="8" width="450" height="930" style="margin: 10px;"/>
+</p>
 </details>
 
 <details>
   <summary><h3>Sprint 3 - Sprint Board Update Screenshots</h3></summary>
   <p align="center">
-    <img src="images/sprint_board_update_ss_3.jpeg" alt="Screenshot 4" />
-    <br/>
-    <img src="images/sprint_board_update_ss_4.jpeg" alt="Screenshot 5" />
-    <br/>
-    <img src="images/sprint_board_update_ss_5.jpeg" alt="Screenshot 6" />
+    https://docs.google.com/spreadsheets/d/1Cv6z4U5Twf6dg4QvCqDg6eEn2MUoXFmWakvXuv8ObM0/edit?gid=0#gid=0
   </p>
 </details>
 
@@ -437,9 +407,13 @@ Muhammet Emin Balmuk, kullanıcı yetkilendirme (authorization) işlemleri için
 
 Beyza Yaylak, tüm sprint boyunca toplantı planlamalarını organize etti, süreç takibini ve görev koordinasyonunu sağladı. Günlük durum kontrollerini yaptı, sprint dokümantasyonlarını hazırladı ve projenin zamanında ilerlemesini sağladı.
 
-- <h3>Product Backlog URL</h3> 
-<p align="center">
-    https://docs.google.com/spreadsheets/d/1Cv6z4U5Twf6dg4QvCqDg6eEn2MUoXFmWakvXuv8ObM0/edit?gid=0#gid=0
+- <h3>Product Backlog URL</h3>
+  <p align="center">
+    <img src="images/sprint_board_update_ss_3.jpeg" alt="Screenshot 4" />
+    <br/>
+    <img src="images/sprint_board_update_ss_4.jpeg" alt="Screenshot 5" />
+    <br/>
+    <img src="images/sprint_board_update_ss_5.jpeg" alt="Screenshot 6" />
   </p>
   
 
