@@ -25,10 +25,13 @@ class _HomeScreenState extends State<HomeScreen> {
   double progressValue = 0.0;
   String progressText = '0/0 test tamamlandı';
 
-  // Düzeltme: Alt navigasyon çubuğundaki ekranları içeren liste.
-  // Her ekran kendi dosyasından içe aktarılmıştır.
-  static const List<Widget> _widgetOptions = <Widget>[
-    _HomeContent(), // Ana ekranın içeriği
+  // Sabit liste yerine get metodu kullanıyoruz
+  List<Widget> get _widgetOptions => <Widget>[
+    _HomeContent(
+      userName: userName,
+      progressValue: progressValue,
+      progressText: progressText,
+    ),
     GeminiChatScreen(),
     ReportsScreen(),
     UserProfileScreen(),
@@ -51,7 +54,8 @@ class _HomeScreenState extends State<HomeScreen> {
     final user = FirebaseAuth.instance.currentUser;
     if (user != null && mounted) {
       setState(() {
-        userName = user.displayName ?? user.email?.split('@').first ?? "Kullanıcı";
+        userName =
+            user.displayName ?? user.email?.split('@').first ?? "Kullanıcı";
       });
     }
   }
@@ -59,13 +63,11 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white, // Arka planı geri beyaz yap
+      backgroundColor: Colors.white,
       extendBody: true,
       body: Column(
         children: [
-          Expanded(
-            child: _widgetOptions.elementAt(_selectedIndex),
-          ),
+          Expanded(child: _widgetOptions.elementAt(_selectedIndex)),
           ModernBottomNavigationBar(
             currentIndex: _selectedIndex,
             onTap: (index) {
@@ -83,17 +85,16 @@ class _HomeScreenState extends State<HomeScreen> {
 // Ana ekran içeriğini barındıran widget
 // Düzeltme: `_HomeContent` bir `StatelessWidget` olarak ayarlandı
 class _HomeContent extends StatelessWidget {
-  const _HomeContent({super.key});
+  final String userName;
+  final double progressValue;
+  final String progressText;
 
-  // `_HomeContent` içinde veri yükleme işlemi olmadığı için
-  // `userName`, `progressValue` ve `progressText` değerlerini
-  // `HomeScreen`'den almalıyız.
-  // Ancak, bu kod parçacığında _HomeContent'e bu değerleri aktarmadığınız için
-  // şimdilik varsayılan değerleri kullanmaya devam edeceğim.
-  // Daha sonra bu değerleri `_HomeScreenState` içindeki değişkenlerle güncelleyebilirsiniz.
-  final String userName = "Kullanıcı";
-  final double progressValue = 0.0;
-  final String progressText = '0/0 test tamamlandı';
+  const _HomeContent({
+    super.key,
+    required this.userName,
+    required this.progressValue,
+    required this.progressText,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -116,7 +117,10 @@ class _HomeContent extends StatelessWidget {
         SafeArea(
           child: SingleChildScrollView(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 20.0,
+                vertical: 16.0,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
@@ -144,10 +148,7 @@ class _HomeContent extends StatelessWidget {
       automaticallyImplyLeading: false,
       leading: Padding(
         padding: const EdgeInsets.only(left: 10.0),
-        child: Image.asset(
-          'assets/images/logo.png',
-          height: 40,
-        ),
+        child: Image.asset('assets/images/logo.png', height: 40),
       ),
       title: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -155,17 +156,16 @@ class _HomeContent extends StatelessWidget {
           Text(
             'NeuroGraph',
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
-                  height: 1.0,
-                ),
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+              height: 1.0,
+            ),
           ),
           Text(
             'Beyin sağlığınızı keşfedin',
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Colors.black54,
-                  height: 1.0,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.bodySmall?.copyWith(color: Colors.black54, height: 1.0),
           ),
         ],
       ),
@@ -196,9 +196,9 @@ class _HomeContent extends StatelessWidget {
     return Text(
       'Hoşgeldin, $userName',
       style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-            fontWeight: FontWeight.bold,
-            color: Colors.black87,
-          ),
+        fontWeight: FontWeight.bold,
+        color: Colors.black87,
+      ),
     );
   }
 
@@ -223,9 +223,9 @@ class _HomeContent extends StatelessWidget {
           Text(
             'Test ilerlemen',
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
-                ),
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+            ),
           ),
           const SizedBox(height: 10),
           LinearProgressIndicator(
@@ -238,9 +238,9 @@ class _HomeContent extends StatelessWidget {
           const SizedBox(height: 10),
           Text(
             progressText,
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Colors.black54,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.bodySmall?.copyWith(color: Colors.black54),
           ),
         ],
       ),
@@ -254,9 +254,9 @@ class _HomeContent extends StatelessWidget {
         Text(
           'Test Durumun',
           style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
-              ),
+            fontWeight: FontWeight.bold,
+            color: Colors.black87,
+          ),
         ),
         const SizedBox(height: 16),
         GridView.count(
@@ -365,11 +365,7 @@ class AppBottomNavigationBar extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
         boxShadow: [
-          BoxShadow(
-            color: Colors.black12,
-            spreadRadius: 0,
-            blurRadius: 10,
-          ),
+          BoxShadow(color: Colors.black12, spreadRadius: 0, blurRadius: 10),
         ],
       ),
       child: Row(
@@ -377,14 +373,24 @@ class AppBottomNavigationBar extends StatelessWidget {
         children: [
           _buildNavBarItem(context, Icons.home_outlined, 'Anasayfa', 0),
           _buildNavBarItem(context, Icons.bar_chart_outlined, 'Gemini Chat', 1),
-          _buildNavBarItem(context, Icons.notifications_none_outlined, 'Raporlar', 2),
+          _buildNavBarItem(
+            context,
+            Icons.notifications_none_outlined,
+            'Raporlar',
+            2,
+          ),
           _buildNavBarItem(context, Icons.person_outline, 'Profil', 3),
         ],
       ),
     );
   }
 
-  Widget _buildNavBarItem(BuildContext context, IconData icon, String label, int index) {
+  Widget _buildNavBarItem(
+    BuildContext context,
+    IconData icon,
+    String label,
+    int index,
+  ) {
     final isSelected = index == currentIndex;
     return GestureDetector(
       onTap: () => onTap(index),
@@ -398,7 +404,9 @@ class AppBottomNavigationBar extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: isSelected
                 ? BoxDecoration(
-                    color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.primary.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(20),
                   )
                 : null,
@@ -444,21 +452,18 @@ class _TestCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       elevation: 5,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       child: Column(
         children: [
           Expanded(
             child: ClipRRect(
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(20),
+              ),
               child: Stack(
                 children: [
                   Positioned.fill(
-                    child: Image.asset(
-                      imagePath,
-                      fit: BoxFit.cover,
-                    ),
+                    child: Image.asset(imagePath, fit: BoxFit.cover),
                   ),
                 ],
               ),
@@ -469,7 +474,9 @@ class _TestCard extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
               color: barColor,
-              borderRadius: const BorderRadius.vertical(bottom: Radius.circular(20)),
+              borderRadius: const BorderRadius.vertical(
+                bottom: Radius.circular(20),
+              ),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -477,15 +484,15 @@ class _TestCard extends StatelessWidget {
                 Text(
                   title,
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
                 ),
                 Text(
                   description,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Colors.white70,
-                      ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodySmall?.copyWith(color: Colors.white70),
                 ),
               ],
             ),
