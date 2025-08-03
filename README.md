@@ -35,6 +35,27 @@
 **Hedef Kitle**
 - NeuroGraph'ın hedef kitlesi, bilişsel sağlıklarını proaktif bir şekilde takip etmek isteyen geniş bir yelpazedeki bireylerden oluşmaktadır. Bu kitlenin başında, yaşlanma süreciyle birlikte bilişsel fonksiyonlarında meydana gelebilecek değişiklikler hakkında endişeleri olan veya mevcut durumlarını gözlemlemek isteyen orta yaş ve üzeri yetişkinler gelmektedir. Ayrıca, yoğun iş temposu, stres veya uyku düzeni bozuklukları gibi nedenlerle dikkat, hafıza veya odaklanma sorunları yaşadığını düşünen genç ve orta yaşlı profesyoneller de NeuroGraph'ın potansiyel kullanıcıları arasındadır. Uygulama, herhangi bir ön bilgi veya tıbbi geçmiş gerektirmediği için, bilişsel testlere erişimi olmayan veya ön değerlendirme yapmak isteyen herkes için ideal bir başlangıç noktası sunar. Özetle, NeuroGraph, bilişsel farkındalığını artırmak ve zihinsel sağlık yolculuğunda ilk adımı atmak isteyen herkese hitap eden kapsayıcı bir araçtır.
 
+<h4>Uygulamanın Arayüz Tasarımı</h4>
+<br/>
+<p align="center">
+  <img src="images/Latest App Screenshots/Login.png" alt="Onboarding 1"/>
+  <br/>
+  <img src="images/Latest App Screenshots/Info.png" alt="Onboarding 2"/>
+  <br/>
+  <img src="images/Latest App Screenshots/HomePage.png" alt="Login Screen"/>
+  <br/>
+  <img src="images/Latest App Screenshots/ChatBot.png" alt="Home Page"/>
+  <br/>
+  <img src="images/Latest App Screenshots/Profile.png" alt="Cognitive Test 1"/>
+  <br/>
+  <img src="images/Latest App Screenshots/CognitiveTest1.png" alt="Cognitive Test 2"/>
+  <br/>
+  <img src="images/Latest App Screenshots/DrawingTest.png" alt="Cognitive Test 3"/>
+  <br/>
+  <img src="images/Latest App Screenshots/Records.png" alt="Cognitive Test 4"/>
+  <br/>
+</p>
+
 <details>
 <summary><h2>Product Backlog</h2></summary>
   <p align="center">
@@ -325,39 +346,24 @@
 ---
 
 <details>
-  <summary><h3>Sprint 2 - App Screenshots</h3></summary>
+  <summary><h3>Sprint 3 - App Screenshots</h3></summary>
     <p align="center">
-    <img src="images/App Screenshots/Onboarding1.png" alt="Onboarding 1"/>
+    <img src="images/Latest App Screenshots/Login.png" alt="Onboarding 1"/>
     <br/>
-    <img src="images/App Screenshots/Onboarding2.png" alt="Onboarding 2"/>
+    <img src="images/Latest App Screenshots/Info.png" alt="Onboarding 2"/>
     <br/>
-    <img src="images/App Screenshots/LoginScreen.png" alt="Login Screen"/>
+    <img src="images/Latest App Screenshots/HomePage.png" alt="Login Screen"/>
     <br/>
-    <img src="images/App Screenshots/HomePage.png" alt="Home Page"/>
+    <img src="images/Latest App Screenshots/ChatBot.png" alt="Home Page"/>
     <br/>
-    <img src="images/App Screenshots/CognitiveTest1.png" alt="Cognitive Test 1"/>
+    <img src="images/Latest App Screenshots/Profile.png" alt="Cognitive Test 1"/>
     <br/>
-    <img src="images/App Screenshots/CognitiveTest2.png" alt="Cognitive Test 2"/>
+    <img src="images/Latest App Screenshots/CognitiveTest1.png" alt="Cognitive Test 2"/>
     <br/>
-    <img src="images/App Screenshots/CognitiveTest3.png" alt="Cognitive Test 3"/>
+    <img src="images/Latest App Screenshots/DrawingTest.png" alt="Cognitive Test 3"/>
     <br/>
-    <img src="images/App Screenshots/CognitiveTest4.png" alt="Cognitive Test 4"/>
+    <img src="images/Latest App Screenshots/Records.png" alt="Cognitive Test 4"/>
     <br/>
-    <img src="images/App Screenshots/ClockDrawingTest.png" alt="Clock Drawing Test"/>
-    <br/>
-    <img src="images/App Screenshots/SpiralTest.png" alt="Spiral Test"/>
-    <br/>
-    <img src="images/App Screenshots/MeanderTest.png" alt="Meander Test"/>
-    <br/>
-    <img src="images/App Screenshots/HandwritingTest.png" alt="Hand Writing Test"/>
-    <br/>
-    <img src="images/App Screenshots/DrawingTestResult1.png" alt="Drawing Test Result 1"/>
-    <br/>
-    <img src="images/App Screenshots/DrawingTestResult2.png" alt="Drawing Test Result 2"/>
-    <br/>
-    <img src="images/App Screenshots/AudioReadingTest1.png" alt="Audio Reading Test 1"/>
-    <br/>
-    <img src="images/App Screenshots/AudioReadingTest2.png" alt="Audio Reading Test 2"/>
   </p>
 </details>
 
