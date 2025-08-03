@@ -24,17 +24,46 @@ class ReportService {
   // Kullanıcının raporlarını getirme
   Stream<List<Report>> getUserReports() {
     final userId = _auth.currentUser?.uid;
-    if (userId == null) throw Exception('Kullanıcı giriş yapmamış');
+    if (userId == null) return Stream.value([]);
 
     return _firestore
         .collection('reports')
         .where('userId', isEqualTo: userId)
         .orderBy('date', descending: true)
         .snapshots()
-        .map((snapshot) {
-          return snapshot.docs
-              .map((doc) => Report.fromMap(doc.data() as Map<String, dynamic>))
-              .toList();
-        });
+        .map(
+          (snapshot) =>
+              snapshot.docs.map((doc) => Report.fromMap(doc.data())).toList(),
+        );
+  }
+
+  Future<void> addDrawingTestReport({
+    required String testType,
+    required String testTitle,
+    required String analysisResult,
+    required String geminiEvaluation,
+  }) async {
+    try {
+      final user = _auth.currentUser;
+      if (user == null) throw Exception('Kullanıcı giriş yapmamış');
+
+      final report = Report(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        title: '$testTitle Test Raporu',
+        content:
+            '''
+  **Test Türü:** ${testType.toUpperCase()}
+  **Analiz Sonucu:** $analysisResult
+  **Değerlendirme:** $geminiEvaluation
+  ''',
+        date: DateTime.now(),
+        type: 'drawing',
+        userId: user.uid,
+      );
+
+      await addReport(report);
+    } catch (e) {
+      throw Exception('Çizim testi raporu eklenemedi: $e');
+    }
   }
 }

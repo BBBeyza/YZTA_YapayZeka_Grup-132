@@ -3,7 +3,7 @@ class Report {
   final String title;
   final String content;
   final DateTime date;
-  final String type;
+  final String type; // 'cognitive', 'drawing', 'voice'
   final String userId;
 
   Report({

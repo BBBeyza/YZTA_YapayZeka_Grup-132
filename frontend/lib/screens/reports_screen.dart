@@ -1,8 +1,8 @@
+import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../models/report_model.dart';
 import '../services/report_service.dart';
-import 'package:flutter/material.dart';
 
 class ReportsScreen extends StatefulWidget {
   const ReportsScreen({super.key});
@@ -76,12 +76,25 @@ class _ReportsScreenState extends State<ReportsScreen> {
         case 'cognitive':
           return const Color(0xFFC8A2C8);
         case 'drawing':
+          // Çizim testleri için alt türlere göre renk
+          if (report.title.contains('Spiral')) return const Color(0xFFF9A825);
+          if (report.title.contains('Meander')) return const Color(0xFF4CAF50);
+          if (report.title.contains('Clock')) return const Color(0xFF2196F3);
           return const Color(0xFFF9A825);
         case 'voice':
           return const Color.fromARGB(255, 191, 118, 135);
         default:
           return Colors.grey;
       }
+    }
+
+    String getTestType() {
+      if (report.title.contains('Spiral')) return 'Spiral Testi Raporu';
+      if (report.title.contains('Meander')) return 'Meander Testi Raporu';
+      if (report.title.contains('Clock')) return 'Saat Çizimi Raporu';
+      return report.type == 'cognitive'
+          ? 'Bilişsel Değerlendirme Raporu'
+          : 'Sesli Okuma Raporu';
     }
 
     return Card(
@@ -115,11 +128,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        report.type == 'cognitive'
-                            ? 'Bilişsel Değerlendirme Raporu'
-                            : report.type == 'drawing'
-                            ? 'Çizim Testi Raporu'
-                            : 'Sesli Okuma Raporu',
+                        getTestType(),
                         style: Theme.of(
                           context,
                         ).textTheme.bodySmall?.copyWith(color: Colors.white70),

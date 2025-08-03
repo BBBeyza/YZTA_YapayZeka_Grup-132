@@ -450,7 +450,5 @@ Yarışma başlangıcında belirlenen tüm hedefler ve önceki sprintlerde planl
 
   **Neler iyileştirilmeli?**
   - Proje başarılı bir şekilde tamamlandığı için iyileştirilmesi gereken bir şey kalmadı.
-  
-
 
 </details>

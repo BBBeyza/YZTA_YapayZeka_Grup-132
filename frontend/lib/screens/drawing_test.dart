@@ -7,7 +7,16 @@ import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:http_parser/http_parser.dart'; // MediaType için
+import 'package:http_parser/http_parser.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import '../models/report_model.dart';
+import '../services/report_service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/services.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'dart:async';
+import '../screens/reports_screen.dart';
 
 class InstructionSection extends StatelessWidget {
   final String title;
@@ -96,7 +105,7 @@ class DrawingTestButtons extends StatelessWidget {
 }
 
 class DrawingTestScreen extends StatefulWidget {
-  final String testKey; // 'spiral', 'meander', 'clock' veya 'handwriting'
+  final String testKey;
   final String testTitle;
   final String testInstruction;
 
@@ -148,199 +157,33 @@ class _DrawingTestScreenState extends State<DrawingTestScreen> {
     );
   }
 
-  Future<void> _finishTest() async {
-    setState(() {
-      _isLoading = true;
-    });
+  String _parseResult(Map<String, dynamic> jsonResponse) {
+    switch (widget.testKey) {
+      case 'clock':
+        return "Shulman Puanı: ${jsonResponse['shulman_score']} "
+            "(Güven: ${(jsonResponse['confidence'] as double).toStringAsFixed(2)})";
 
-    Uint8List? drawingImageBytes;
-    try {
-      drawingImageBytes = await _canvasKey.currentState
-          ?.exportDrawingAsPngBytes();
-      if (drawingImageBytes == null || drawingImageBytes.isEmpty) {
-        setState(() {
-          _isLoading = false;
-        });
-        if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              'Hiç çizim verisi bulunamadı veya resim oluşturulamadı!',
-            ),
-          ),
-        );
-        return;
-      }
-    } catch (e) {
-      print('Çizim resmi dışa aktarılırken hata: $e');
-      drawingImageBytes = null;
-      setState(() {
-        _isLoading = false;
-      });
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Çizim resmi dışa aktarılırken hata oluştu: $e'),
-        ),
-      );
-      return;
+      case 'spiral':
+      case 'meander':
+        final controlProb = jsonResponse['control_probability'] as double;
+        final patientProb = jsonResponse['patients_probability'] as double;
+        return patientProb > controlProb
+            ? "🟡 Titreme Algılandı — Güven: ${patientProb.toStringAsFixed(2)}"
+            : "✅ Temiz Çizim — Güven: ${controlProb.toStringAsFixed(2)}";
+
+      default:
+        return "Test sonucu: ${jsonResponse.toString()}";
     }
+  }
 
-    String classificationResult = "Analiz yapılamadı.";
-    try {
-      var request = http.MultipartRequest('POST', Uri.parse(_backendUrl));
-      request.files.add(
-        http.MultipartFile.fromBytes(
-          'image',
-          drawingImageBytes,
-          filename: 'drawing.png',
-          contentType: MediaType('image', 'png'),
-        ),
-      );
-
-      var response = await request.send();
-
-      if (response.statusCode == 200) {
-        String responseBody = await response.stream.bytesToString();
-        print('Backend yanıtı: $responseBody');
-
-        try {
-          final Map<String, dynamic> jsonResponse = json.decode(responseBody);
-
-          if (widget.testKey == 'clock') {
-            final int shulmanScore = jsonResponse['shulman_score'];
-            final double confidence = jsonResponse['confidence'];
-            classificationResult =
-                "Shulman Puanı: $shulmanScore (Güven: ${confidence.toStringAsFixed(2)})";
-          } else if (widget.testKey == 'spiral' ||
-              widget.testKey == 'meander') {
-            final double controlProbability =
-                jsonResponse['control_probability'];
-            final double patientsProbability =
-                jsonResponse['patients_probability'];
-            if (patientsProbability > controlProbability) {
-              classificationResult =
-                  "🟡 Titreme Algılandı — Güven: ${patientsProbability.toStringAsFixed(2)}";
-            } else {
-              classificationResult =
-                  "✅ Temiz Çizim — Güven: ${controlProbability.toStringAsFixed(2)}";
-            }
-          } else if (widget.testKey == 'handwriting') {
-            final List<dynamic> lineResults =
-                jsonResponse['line_analysis_results'];
-            if (lineResults.isNotEmpty) {
-              // Enhanced handwriting analysis results
-              final double overallQuality =
-                  jsonResponse['overall_quality_score'] ?? 0.0;
-              final String qualityLevel =
-                  jsonResponse['overall_handwriting_quality'] ?? 'unknown';
-              final double micrographyScore =
-                  jsonResponse['overall_micrography_score'] ?? 0.0;
-              final String micrographySeverity =
-                  jsonResponse['micrography_severity'] ?? 'none';
-              final double sizeConsistency =
-                  jsonResponse['size_consistency_score'] ?? 0.0;
-              final double alignmentQuality =
-                  jsonResponse['alignment_quality_score'] ?? 0.0;
-              final double spacingRegularity =
-                  jsonResponse['spacing_regularity_score'] ?? 0.0;
-              final double baselineStability =
-                  jsonResponse['baseline_stability_score'] ?? 0.0;
-
-              // Canvas size analysis - only show warnings for extreme cases
-              String canvasSizeNote = "";
-              if (lineResults.isNotEmpty) {
-                final firstLine = lineResults.first;
-                final canvasAnalysis =
-                    firstLine['canvas_size_analysis'] ?? 'normal';
-                switch (canvasAnalysis) {
-                  case 'characters_too_small':
-                    canvasSizeNote =
-                        "💡 Harfler çok küçük - daha büyük yazmayı deneyin";
-                    break;
-                  case 'characters_too_large':
-                    canvasSizeNote =
-                        "💡 Harfler çok büyük - daha küçük yazmayı deneyin";
-                    break;
-                  case 'optimal_size':
-                  default:
-                    canvasSizeNote = ""; // Don't show anything for optimal size
-                }
-              }
-
-              String qualityEmoji = "✅";
-              if (qualityLevel == "poor")
-                qualityEmoji = "❌";
-              else if (qualityLevel == "fair")
-                qualityEmoji = "⚠️";
-              else if (qualityLevel == "good")
-                qualityEmoji = "✅";
-
-              String micrographyEmoji = "";
-              if (micrographySeverity == "severe")
-                micrographyEmoji = "🔴";
-              else if (micrographySeverity == "moderate")
-                micrographyEmoji = "🟡";
-              else if (micrographySeverity == "mild")
-                micrographyEmoji = "🟠";
-              else
-                micrographyEmoji = "✅";
-
-              classificationResult =
-                  "$qualityEmoji Metin Kalitesi: ${qualityLevel.toUpperCase()}\n"
-                  "$micrographyEmoji Mikrografi: ${micrographySeverity.toUpperCase()} (${micrographyScore.toStringAsFixed(2)})\n"
-                  "📊 Medyan harf yüksekliğinden %40 farklı olan harfler: ${(micrographyScore * 100).toStringAsFixed(0)}%\n"
-                  "$canvasSizeNote";
-            } else {
-              classificationResult = "El yazısı tespit edilemedi.";
-            }
-          }
-        } on FormatException catch (e) {
-          classificationResult =
-              "Backend yanıtı işlenirken hata: Yanıt bir JSON değil. Hata: $e";
-        } catch (e) {
-          classificationResult =
-              "Backend yanıtı işlenirken beklenmeyen hata: $e";
-        }
-      } else {
-        String errorBody = await response.stream.bytesToString();
-        classificationResult =
-            "Backend hatası: ${response.statusCode} - $errorBody";
-        print("Backend Hata Yanıtı: $errorBody");
-      }
-    } catch (e) {
-      print('Backend ile iletişim hatası: $e');
-      classificationResult = "Backend ile iletişim hatası: $e";
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
-    }
-
-    final prompt =
-        '''
-Kullanıcının yaptığı "${widget.testTitle}" adlı ${widget.testKey} çizim testinin sonuçlarını değerlendirir misin?
-Test Talimatı: "${widget.testInstruction}"
-Cihaz üzerindeki ML modelinden gelen analiz sonucu (backend'den): "$classificationResult"
-
-Bu bilgilere dayanarak, çizimin genel durumunu ve varsa potansiyel anomalileri kullanıcıya anlaşılır bir dille kısa bir şekilde raporla. Bilimsel terimlerden kaçın, nazik ve destekleyici ol. Sadece verilen bilgilere odaklan, çizim hakkında doğrudan görsel yorum yapma. Yüzdelik olarak skorunu belirt ve kullanıcıya çizimlerini geliştirmesi için önerilerde bulun. Eğer çizim temizse, bunu da belirt. Kalın font kullanma.
-''';
-    final evaluation = await _geminiService.askGemini(prompt);
-
+  Future<void> _showResult(dynamic result) async {
     if (!mounted) return;
-    Navigator.pop(context);
 
-    showDialog(
+    await showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('${widget.testTitle} Değerlendirme Raporu'),
-        content: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [const SizedBox(height: 20), Text(evaluation)],
-          ),
-        ),
+        title: Text('${widget.testTitle} Sonucu'),
+        content: SingleChildScrollView(child: Text(result.toString())),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -349,6 +192,245 @@ Bu bilgilere dayanarak, çizimin genel durumunu ve varsa potansiyel anomalileri 
         ],
       ),
     );
+  }
+
+  Future<void> _finishTest() async {
+    if (!mounted) return;
+
+    setState(() => _isLoading = true);
+
+    try {
+      // 1. Çizimi al
+      final drawingImageBytes = await _canvasKey.currentState
+          ?.exportDrawingAsPngBytes();
+      if (drawingImageBytes == null || drawingImageBytes.isEmpty) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Çizim alınamadı! Lütfen tekrar deneyin.'),
+          ),
+        );
+        return;
+      }
+
+      // 2. Backend'e gönder
+      var request = http.MultipartRequest('POST', Uri.parse(_backendUrl));
+      request.files.add(
+        http.MultipartFile.fromBytes(
+          'image',
+          drawingImageBytes,
+          filename: '${widget.testKey}_drawing.png',
+          contentType: MediaType('image', 'png'),
+        ),
+      );
+
+      final response = await request.send().timeout(
+        const Duration(seconds: 30),
+      );
+      final responseBody = await response.stream.bytesToString();
+
+      if (response.statusCode != 200) {
+        throw Exception(
+          'Backend hatası: ${response.statusCode} - $responseBody',
+        );
+      }
+
+      final jsonResponse = json.decode(responseBody);
+      final analysisResult = _parseAnalysisResult(jsonResponse);
+
+      // 3. Gemini ile değerlendirme yap
+      final evaluation = await _getGeminiEvaluation(analysisResult);
+
+      // 4. Raporu kaydet ve ekranı güncelle
+      await _saveAndShowReport(analysisResult, evaluation);
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Hata: ${e.toString()}')));
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
+
+  String _parseAnalysisResult(Map<String, dynamic> jsonResponse) {
+    switch (widget.testKey) {
+      case 'clock':
+        return "Shulman Puanı: ${jsonResponse['shulman_score']} "
+            "(Güven: ${(jsonResponse['confidence'] as double).toStringAsFixed(2)})";
+
+      case 'spiral':
+      case 'meander':
+        final controlProb = jsonResponse['control_probability'] as double;
+        final patientProb = jsonResponse['patients_probability'] as double;
+        return patientProb > controlProb
+            ? "🟡 Titreme Algılandı — Güven: ${patientProb.toStringAsFixed(2)}"
+            : "✅ Temiz Çizim — Güven: ${controlProb.toStringAsFixed(2)}";
+
+      default:
+        return "Test sonucu: ${jsonResponse.toString()}";
+    }
+  }
+
+  Future<void> _saveAndShowReport(
+    String analysisResult,
+    String evaluation,
+  ) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    final report = Report(
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      title: '${widget.testTitle} Raporu',
+      content:
+          '''
+**Test Türü:** ${widget.testKey.toUpperCase()}
+**Analiz Sonucu:** $analysisResult
+**Değerlendirme:** $evaluation
+''',
+      date: DateTime.now(),
+      type: 'drawing',
+      userId: user.uid,
+    );
+
+    await FirebaseFirestore.instance
+        .collection('reports')
+        .doc(report.id)
+        .set(report.toMap());
+
+    if (!mounted) return;
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => ReportsScreen()),
+      (route) => false,
+    );
+  }
+
+  String _parseSpiralResult(Map<String, dynamic> json) {
+    final controlProb = json['control_probability'] as double;
+    final patientProb = json['patients_probability'] as double;
+
+    return patientProb > controlProb
+        ? "🟡 Titreme Algılandı (Güven: ${patientProb.toStringAsFixed(2)})"
+        : "✅ Normal Çizim (Güven: ${controlProb.toStringAsFixed(2)})";
+  }
+
+  Future<String> _analyzeDrawing(Uint8List drawingImageBytes) async {
+    final request = http.MultipartRequest('POST', Uri.parse(_backendUrl));
+    request.files.add(
+      http.MultipartFile.fromBytes(
+        'image',
+        drawingImageBytes,
+        filename: 'drawing.png',
+        contentType: MediaType('image', 'png'),
+      ),
+    );
+
+    final response = await request.send().timeout(const Duration(seconds: 30));
+    final responseBody = await response.stream.bytesToString();
+
+    if (response.statusCode != 200) {
+      throw Exception('Backend hatası: ${response.statusCode} - $responseBody');
+    }
+
+    final jsonResponse = json.decode(responseBody) as Map<String, dynamic>;
+
+    switch (widget.testKey) {
+      case 'clock':
+        return "Shulman Puanı: ${jsonResponse['shulman_score']} "
+            "(Güven: ${(jsonResponse['confidence'] as double).toStringAsFixed(2)})";
+
+      case 'spiral':
+      case 'meander':
+        final controlProb = jsonResponse['control_probability'] as double;
+        final patientProb = jsonResponse['patients_probability'] as double;
+        return patientProb > controlProb
+            ? "🟡 Titreme Algılandı — Güven: ${patientProb.toStringAsFixed(2)}"
+            : "✅ Temiz Çizim — Güven: ${controlProb.toStringAsFixed(2)}";
+
+      default:
+        return "Test sonucu: ${jsonResponse.toString()}";
+    }
+  }
+
+  Future<void> _showEvaluationResult(String evaluation) async {
+    await showDialog(
+      context: context,
+      barrierDismissible: false, // Kullanıcı dokunmayla kapatamasın
+      builder: (context) => AlertDialog(
+        title: Text('${widget.testTitle} Sonucu'),
+        content: SingleChildScrollView(child: Text(evaluation)),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context); // Dialog'u kapat
+              Navigator.pop(context); // Çizim ekranından çık
+            },
+            child: const Text('Tamam'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<String> _getGeminiEvaluation(String analysisResult) async {
+    final prompt =
+        '''
+Kullanıcının yaptığı "${widget.testTitle}" adlı ${widget.testKey} çizim testinin sonuçlarını değerlendirir misin?
+Test Talimatı: "${widget.testInstruction}"
+Analiz Sonucu: "$analysisResult"
+
+Bu bilgilere dayanarak, çizimin genel durumunu ve varsa potansiyel anomalileri kullanıcıya anlaşılır bir dille kısa bir şekilde raporla.
+''';
+    return await _geminiService.askGemini(prompt);
+  }
+
+  Future<void> _showResultDialog(String evaluation) async {
+    return showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        title: Text('${widget.testTitle} Değerlendirme Raporu'),
+        content: SingleChildScrollView(child: Text(evaluation)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Tamam'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _saveTestReport(String analysisResult, String evaluation) async {
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) throw Exception('Kullanıcı giriş yapmamış');
+
+      final report = Report(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        title: '${widget.testTitle} Test Raporu',
+        content:
+            '''
+**Test Türü:** ${widget.testKey.toUpperCase()}
+**Analiz Sonucu:** $analysisResult
+**Değerlendirme:** $evaluation
+''',
+        date: DateTime.now(),
+        type: 'drawing',
+        userId: user.uid,
+      );
+
+      await FirebaseFirestore.instance
+          .collection('reports')
+          .doc(report.id)
+          .set(report.toMap());
+    } catch (e) {
+      print('Rapor kaydedilirken hata: $e');
+      throw Exception('Rapor kaydedilemedi: $e');
+    }
   }
 
   @override
