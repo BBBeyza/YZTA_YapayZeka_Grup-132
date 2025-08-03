@@ -38,23 +38,24 @@
 <h4>Uygulamanın Arayüz Tasarımı</h4>
 <br/>
 <p align="center">
-  <img src="images/Latest App Screenshots/Login.png" alt="Onboarding 1"/>
+  <img src="images/Latest App Screenshots/Login.png" alt="1" width="600" height="300"/>
   <br/>
-  <img src="images/Latest App Screenshots/Info.png" alt="Onboarding 2"/>
+  <img src="images/Latest App Screenshots/Info.png" alt="2" width="600" height="300"/>
   <br/>
-  <img src="images/Latest App Screenshots/HomePage.png" alt="Login Screen"/>
+  <img src="images/Latest App Screenshots/HomePage.png" alt="3" width="600" height="300"/>
   <br/>
-  <img src="images/Latest App Screenshots/ChatBot.png" alt="Home Page"/>
+  <img src="images/Latest App Screenshots/ChatBot.png" alt="4" width="600" height="300"/>
   <br/>
-  <img src="images/Latest App Screenshots/Profile.png" alt="Cognitive Test 1"/>
+  <img src="images/Latest App Screenshots/Profile.png" alt="5" width="600" height="300"/>
   <br/>
-  <img src="images/Latest App Screenshots/CognitiveTest1.png" alt="Cognitive Test 2"/>
+  <img src="images/Latest App Screenshots/CognitiveTest1.png" alt="6" width="600" height="300"/>
   <br/>
-  <img src="images/Latest App Screenshots/DrawingTest.png" alt="Cognitive Test 3"/>
+  <img src="images/Latest App Screenshots/DrawingTest.png" alt="7" width="600" height="300"/>
   <br/>
-  <img src="images/Latest App Screenshots/Records.png" alt="Cognitive Test 4"/>
+  <img src="images/Latest App Screenshots/Records.png" alt="8" width="600" height="300"/>
   <br/>
 </p>
+
 
 <details>
 <summary><h2>Product Backlog</h2></summary>
