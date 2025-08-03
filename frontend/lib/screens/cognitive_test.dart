@@ -669,7 +669,11 @@ class _CognitiveTestScreenState extends State<CognitiveTestScreen> {
                                   ?.copyWith(color: Colors.white54),
                             ),
                           ),
+                        // DÜZELTME: TextField dinamik yükseklik için optimize edildi
                         Container(
+                          constraints: BoxConstraints(
+                            maxHeight: MediaQuery.of(context).size.height * 0.6,
+                          ),
                           padding: const EdgeInsets.all(24),
                           decoration: BoxDecoration(
                             color: Colors.white.withOpacity(0.95),
@@ -696,33 +700,49 @@ class _CognitiveTestScreenState extends State<CognitiveTestScreen> {
                                 textAlign: TextAlign.center,
                               ),
                               const SizedBox(height: 20),
+                              
+                              // DÜZELTME: TextField dinamik yükseklik
                               if (!_isLoading && _currentQuestion != null)
-                                TextField(
-                                  controller: _answerController,
-                                  style: Theme.of(context).textTheme.bodyLarge
-                                      ?.copyWith(color: Colors.black87),
-                                  decoration: InputDecoration(
-                                    hintText: 'Cevabınızı yazın...',
-                                    hintStyle: Theme.of(context)
-                                        .textTheme
-                                        .bodyLarge
-                                        ?.copyWith(color: Colors.grey.shade500),
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(12.0),
-                                      borderSide: BorderSide.none,
+                                Flexible(
+                                  child: Container(
+                                    constraints: BoxConstraints(
+                                      minHeight: 60, // Minimum yükseklik
+                                      maxHeight: MediaQuery.of(context).size.height * 0.3, // Maksimum yükseklik
                                     ),
-                                    filled: true,
-                                    fillColor: Colors.grey.shade200,
-                                    contentPadding: const EdgeInsets.symmetric(
-                                      horizontal: 20.0,
-                                      vertical: 15.0,
+                                    child: TextField(
+                                      controller: _answerController,
+                                      style: Theme.of(context).textTheme.bodyLarge
+                                          ?.copyWith(color: Colors.black87),
+                                      decoration: InputDecoration(
+                                        hintText: 'Cevabınızı yazın...',
+                                        hintStyle: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge
+                                            ?.copyWith(color: Colors.grey.shade500),
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(12.0),
+                                          borderSide: BorderSide.none,
+                                        ),
+                                        filled: true,
+                                        fillColor: Colors.grey.shade200,
+                                        contentPadding: const EdgeInsets.symmetric(
+                                          horizontal: 20.0,
+                                          vertical: 15.0,
+                                        ),
+                                      ),
+                                      maxLines: null, // Sınırsız satır
+                                      minLines: 2,    // Minimum 2 satır başla
+                                      keyboardType: TextInputType.multiline,
+                                      textAlignVertical: TextAlignVertical.top,
+                                      scrollPadding: const EdgeInsets.all(20.0),
+                                      onSubmitted: (_) => _submitAnswer(),
                                     ),
                                   ),
-                                  maxLines: null,
-                                  keyboardType: TextInputType.multiline,
-                                  onSubmitted: (_) => _submitAnswer(),
                                 ),
+                              
                               const SizedBox(height: 20),
+                              
+                              // Buton ve diğer elemanlar
                               if (!_isLoading && _currentQuestion != null)
                                 ElevatedButton(
                                   onPressed: _submitAnswer,
@@ -746,11 +766,14 @@ class _CognitiveTestScreenState extends State<CognitiveTestScreen> {
                                     ),
                                   ),
                                 ),
+                              
                               if (_isLoading)
                                 const CircularProgressIndicator(
                                   color: Color(0xFF72B0D3),
                                 ),
+                              
                               const SizedBox(height: 20),
+                              
                               Text(
                                 'Soru: ${_currentQuestionIndex + 1}/$_maxQuestions',
                                 style: Theme.of(context).textTheme.bodyMedium

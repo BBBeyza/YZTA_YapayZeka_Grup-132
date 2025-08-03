@@ -64,7 +64,7 @@ def get_gemini_feedback(qa_list):
 
     prompt = f"""
     Görev:
-    Bir kullanıcıya yöneltilen 10 soruluk bir bilişsel değerlendirme testinin sonuçlarını analiz et. Kullanıcının verdiği cevapları, bilişsel sağlık göstergeleri (oryantasyon, hafıza, dikkat, hesaplama) açısından değerlendirerek hasta hakkında ayrıntılı bir geri bildirim raporu oluştur.
+    Bir kullanıcıya yöneltilen 10 soruluk bir bilişsel değerlendirme testinin sonuçlarını analiz et. Kullanıcının verdiği cevapları, bilişsel sağlık göstergeleri (oryantasyon, hafıza, dikkat, hesaplama) açısından değerlendirerek hasta hakkında ayrıntılı bir geri bildirim raporu oluştur. Kalın font kullanma, soruları ve cevapları olduğu gibi bırak, sadece analiz ve öneri kısmını yaz. Raporu net ve anlaşılır bir dilde yaz, tıbbi terimlerden kaçın.
 
     Analiz Kriterleri:
     1. Zaman ve Mekan Oryantasyonu: Tarih, gün, mevsim ve yer ile ilgili sorulara verilen cevapların doğruluğunu kontrol et. Yanlış veya belirsiz cevaplar oryantasyon bozukluğuna işaret edebilir.
@@ -82,7 +82,7 @@ def get_gemini_feedback(qa_list):
     İşte Analiz Edilecek Sorular ve Cevaplar:
     {qa_block}
 
-    Lütfen yukarıdaki verilere dayanarak ayrıntılı geri bildirim raporunu oluştur. Kalın font kullanma, soruları ve cevapları olduğu gibi bırak, sadece analiz ve öneri kısmını yaz. Raporu net ve anlaşılır bir dilde yaz, tıbbi terimlerden kaçın.
+    Lütfen yukarıdaki verilere dayanarak ayrıntılı geri bildirim raporunu oluştur. 
     """
     try:
         response = model.generate_content(prompt)

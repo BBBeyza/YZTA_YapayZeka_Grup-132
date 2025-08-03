@@ -122,7 +122,6 @@ class _ReadingTestScreenState extends State<ReadingTestScreen>
 
     if (micStatus != PermissionStatus.granted ||
         storageStatus != PermissionStatus.granted) {
-      _showCustomSnackBar('Mikrofon ve depolama izinleri gerekli.', false);
     }
   }
 

@@ -196,13 +196,13 @@ Widget _buildGreetingSectionModern(BuildContext context) {
   IconData greetingIcon;
   
   if (hour < 12) {
-    greeting = 'Günaydın';
+    greeting = 'Günaydın,';
     greetingIcon = Icons.wb_sunny;
   } else if (hour < 17) {
-    greeting = 'İyi öğleden sonralar';
+    greeting = 'İyi günler,';
     greetingIcon = Icons.wb_sunny_outlined;
   } else {
-    greeting = 'İyi akşamlar';
+    greeting = 'İyi akşamlar,';
     greetingIcon = Icons.brightness_3;
   }
 
@@ -250,7 +250,8 @@ Widget _buildGreetingSectionModern(BuildContext context) {
               Text(
                 userName,
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w500,
+                  fontSize: 20,
                   color: const Color(0xFF2E2E2E),
                 ),
               ),
@@ -267,9 +268,9 @@ Widget _buildGreetingSectionModern(BuildContext context) {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Test Durumun',
+          'Testler',
           style: Theme.of(context).textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w500,
             color: Colors.black87,
           ),
         ),
