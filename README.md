@@ -320,7 +320,7 @@
 
 </details>
 <details>
-  <summary><h2>Sprint 2</h2></summary>
+  <summary><h2>Sprint 3</h2></summary>
 
 ---
 
@@ -362,12 +362,14 @@
 </details>
 
 <details>
-  <summary><h3>Sprint 2 - Sprint Board Update Screenshots</h3></summary>
+  <summary><h3>Sprint 3 - Sprint Board Update Screenshots</h3></summary>
   https://docs.google.com/spreadsheets/d/1Cv6z4U5Twf6dg4QvCqDg6eEn2MUoXFmWakvXuv8ObM0/edit?gid=0#gid=0
 </details>
 
 - <h3>Sprint Notes</h3>
-  İkinci sprintte ürün geliştirme sürecinde daha teknik ve fonksiyonel adımlara geçildi. Özellikle test altyapılarının kurulması, kullanıcı kimlik doğrulama sisteminin entegre edilmesi ve yapay zekâ destekli test sistemlerinin oluşturulması bu sprintin ana hedefleri arasında yer aldı. Ekip üyeleri, görev dağılımı ve zaman planlamasına sadık kalarak başarılı bir sprint süreci yürüttü.
+  Sprint 3 süreci, projenin teknik altyapısının sağlamlaştırıldığı ve kullanıcıya sunulacak tüm test sistemlerinin işlevsel hale getirildiği bir dönemi temsil etmektedir. Önceki sprintlerde tamamlanan temel yapıların üzerine; artık kullanıcı arayüzü tamamlanmış, testlerin otomatik değerlendirme süreçleri çalışır hale getirilmiş ve uygulamanın kullanıcı odaklı tüm bölümleri neredeyse tamamlanmıştır.
+
+Bu sprintte ekip, yalnızca geliştirme değil aynı zamanda kullanıcı deneyimini artırmaya yönelik birçok önemli adım atmıştır. Ekranlar tamamlanmış, sesli-sözel test yapıları çalıştırılmış, yapay zekâ (LLM) destekli analiz süreçleri başarıyla devreye alınmıştır. Ekip başarılı bir şekilde projeyi tamamlamıştır.
 
 - <h3>Tahmin Edilen Puan ve Tamamlanan Puan</h3> 
 
@@ -376,11 +378,9 @@
   - Tamamlanan: 500 puan 
 
 - <h3>Puan Tamamlama Mantığı</h3> 
-  İkinci sprintte toplam 500 puanlık bir hedef belirlenmesinin temel nedeni, ekibin ilk sprintte gösterdiği yüksek performans ve hızlı adaptasyon oldu. İlk sprint sonunda ekip üyeleri hem birbirine alıştı hem de proje yapısına hâkimiyet kazandı. Bu sayede görev dağılımı daha net yapılabildi ve iş akışı daha verimli ilerledi. 
+  İkinci sprint sonunda da ekip uyumu üst seviyeye ulaşmıştı. Görevler net biçimde dağılmış, iletişim ve teknik destek ihtiyaçları hızlıca karşılanmıştı. Bu sinerjiyi sürdürebilmek adına Sprint 3 için yine 500 puanlık görev hedefi belirlendi.
 
-  Takım üyeleri arasındaki iletişim ve koordinasyon önemli ölçüde güçlendi. Görevlerin zamanında teslim edilmesi, teknik problemlere birlikte çözüm aranması ve sorumluluk bilinciyle hareket edilmesi, yüksek puanlı bir sprint planlamasını mümkün kıldı.
-
-  Bu sprintte hem frontend hem backend tarafında yoğun geliştirmeler yapıldığı, API entegrasyonları, test ekranları, veritabanı yapıları ve güvenlik sistemleri üzerinde çalışıldığı göz önüne alındığında; 500 puanlık hedef, sprintin kapsamına uygun ve gerçekçi bir hedef olarak belirlendi. Tüm görevler eksiksiz şekilde tamamlandı.
+Sprint süresince hem frontend (arayüz), hem backend (sunucu taraflı işleyiş) hem de test mantığı gibi çok yönlü geliştirmeler yürütüldü. Bu çapta bir ilerleme için 500 puanlık tahmin yerinde oldu ve ekip bu hedefi başarıyla tamamladı. Proje başarılı bir şekilde tamamlandı.
 
 - <h3>Daily Scrum</h3>
   </br>
@@ -401,23 +401,15 @@
   </p>
   </br>
   </br>
-  Sprint 2 sürecinde ekip olarak ürünün işlevsel yönlerini geliştirmeye odaklandık. İlk sprintte temeli atılan yapının üzerine, bu kez kullanıcı etkileşimini sağlayacak sistemler ve test altyapıları inşa edilmeye başlandı. Her ekip üyesi, görev dağılımına uygun şekilde sorumluluklarını yerine getirdi ve teknik gelişmeler adım adım ilerletildi.
+  Fatma Işıl Fidan, onboarding ekranı, login sayfası ve ana sayfa (homepage) arayüzlerini tasarlayıp uygulamaya entegre etti. Kullanıcı deneyimi odaklı, sade ve anlaşılır bir yapı oluşturdu.
 
-  Sprintin başında, uygulamanın kullanıcı giriş güvenliğini sağlamak amacıyla kimlik doğrulama sisteminin kurulmasına öncelik verildi. Fatma Işıl Fidan tarafından Firebase Authentication entegrasyonu gerçekleştirildi. Bu sayede kullanıcıların e-posta ve şifreyle güvenli şekilde giriş yapmaları sağlandı. Oturum açmış kullanıcıların uygulamayı yeniden açtıklarında otomatik olarak ana sayfaya yönlendirilmeleri sağlanarak kullanıcı deneyimi geliştirildi.
+Melisa Bayramoğlu, uygulamanın geri kalan tüm ekranlarının kullanıcı arayüz tasarımlarını gerçekleştirdi. Görsel bütünlüğü sağladı, kullanıcı akışlarını optimize etti ve ses tonu gibi detayları değerlendirmeye dahil etme fikrini önerdi.
 
-  Cognitive test ekranı, Melisa Bayramoğlu tarafından oluşturuldu. Melisa, bu bölümde kullanılan soruların MMSE (Mini Mental State Examination) ve MoCA (Montreal Cognitive Assessment) testlerinden uyarlanarak hazırlandığını belirtti. cognitive_test.dart dosyasında geliştirilen arayüz üzerinden kullanıcıya Gemini API aracılığıyla dinamik sorular sunulmakta ve kullanıcı cevapları toplanmaktadır. API’nin puanlaması ve değerlendirme çıktıları, Firebase Firestore veritabanına, kullanıcıların benzersiz UID’leri altında düzenli şekilde kaydedilmektedir.
+Harun Benli, cognitive test ekranının işlevsel yapısını geliştirdi. MMSE ve MoCA temelli 10 sözel soru hazırladı. Kullanıcı yanıtlarını LLM ile analiz ederek kişiselleştirilmiş rapor sistemini oluşturdu.
 
-  Ayrıca Melisa, testin yalnızca doğru cevap odaklı olmaması gerektiğini; özellikle metin okuma testinde ses tonu, vurgu ve konuşma ritmi gibi faktörlerin de değerlendirilmesi gerektiğini ifade etti. Bu doğrultuda ses analizi özellikleri ileriki sprintlerde test sistemine entegre edilecektir.
+Muhammet Emin Balmuk, kullanıcı yetkilendirme (authorization) işlemleri için backend altyapısını kurdu. Test modüllerinin sunucu taraflı veri işleyişini yapılandırdı ve LLM entegrasyonunun API bağlantılarını yönetti.
 
-  Muhammet Emin Balmuk, kısa metin anlatımı ve detaylı paragraf okuma testlerinin backend altyapısını oluşturdu. Giriş ekranına dair sunucu taraflı kodlamalar ve kullanıcı yönlendirme mekanizmaları da bu sprintte başarıyla tamamlandı.
-
-  Fatma Işıl Fidan, Firebase Authentication dışında, test sonuçlarının güvenli ve doğru şekilde veritabanına aktarılmasını sağladı. Ayrıca çizim testlerine yönelik el yazısı verileriyle çalışan makine öğrenmesi modelleri eğitildi ve prototip süreci başlatıldı.
-
-  Harun Benli, testlerin bilimsel altyapısı konusunda destek sağladı. MMSE ve MoCA test yapılarına yönelik içerik araştırmaları yaparak, kullanılabilecek soru formatlarının oluşturulmasına katkıda bulundu.
-
-  Sprint boyunca tüm bu süreçlerin takibi, dökümantasyonu ve toplantı planlamaları Beyza Yaylak tarafından yürütüldü. Ekip içi koordinasyon sağlandı, ilerlemeler gözlemlendi ve günlük görev takibi titizlikle sürdürüldü.
-
-  Sprint 2, ürünün teknik altyapısının derinleştirildiği ve kullanıcı deneyimi boyutunun güçlendirildiği bir dönem olarak başarıyla tamamlandı.
+Beyza Yaylak, tüm sprint boyunca toplantı planlamalarını organize etti, süreç takibini ve görev koordinasyonunu sağladı. Günlük durum kontrollerini yaptı, sprint dokümantasyonlarını hazırladı ve projenin zamanında ilerlemesini sağladı.
 
 - <h3>Product Backlog URL</h3> 
 <p align="center">
@@ -426,8 +418,9 @@
   
 
 - <h3>Sprint Review</h3>  
-  Sprint sonunda ekip, gerçekleştirilen tüm görevleri gözden geçirdi ve test sistemlerinin çalışır durumda olduğu doğrulandı. Giriş sistemi, test ekranları ve veri kaydetme yapısı başarıyla çalıştı.
-  Gemini API’den alınan veriler üzerinden yapılan dinamik soru-cevap işlemleri düzgün çalıştı. Firebase sisteminde veri kayıtları incelendi ve test sonuçlarının doğru şekilde aktarıldığı görüldü.
+  Sprint sonunda geliştirilen cognitive test ekranı ve kullanıcı arayüzleri test edildi. LLM tabanlı değerlendirme sisteminin başarılı bir şekilde çalıştığı gözlemlendi. Uygulama artık kullanıcıdan aldığı açık uçlu cevapları analiz edebilmekte ve bunları anlamlı geri bildirimlerle raporlayabilmektedir.
+
+Kullanıcı deneyimi tarafında da olumlu geri bildirimler alındı. UI tasarımlarının tamamlanmasıyla birlikte uygulama bütünsel bir yapıya kavuştu. Testlerin işlevsel altyapısı ve ekranların kullanıma uygunluğu doğrulandı.
 
 - <h3>Sprint Review Participants</h3>
   
@@ -438,21 +431,26 @@
   - Fatma Işıl Fidan
 
 - <h3>Sprint Retrospective</h3>
+Yarışma başlangıcında belirlenen tüm hedefler ve önceki sprintlerde planlanan işlevler eksiksiz bir şekilde hayata geçirildi; proje, planlanan kapsam doğrultusunda başarıyla tamamlandı.
 
   **Neler iyi gitti?**
-  - Firebase Authentication başarılı şekilde entegre edildi.
-  - Gemini API ile test sistemi entegre edildi.
-  - Test sonuçlarının otomatik ve kullanıcı bazlı olarak veritabanına kaydedilmesi sağlandı.
-  - Takım içi iletişim güçlüydü ve görev dağılımı dengeliydi.
-  - Belirlenen sürede hedeflenen görevler tamamlandı.
+- Ekip içi iletişim ve iş birliği güçlüydü. Görevler zamanında tamamlandı ve ekip üyeleri arasında sürekli bilgi paylaşımı sağlandı.
+
+- Kullanıcı arayüz tasarımları planlandığı şekilde tamamlandı. Tüm ekranlar tutarlı bir görsel yapı ve kullanıcı dostu tasarım ilkelerine uygun şekilde oluşturuldu.
+
+- Cognitive test sistemi başarıyla çalıştırıldı. Sorular ve değerlendirme süreci uygulamaya entegre edildi.
+
+- Yapay zekâ destekli (LLM) analiz sistemi sorunsuz şekilde uygulamaya entegre edildi. Kullanıcılardan alınan yanıtlar otomatik olarak değerlendirildi ve raporlandı.
+
+- Backend ve frontend arasında güçlü bir entegrasyon sağlandı. Veri akışı kesintisiz gerçekleşti.
+
+- Toplantı planlamaları ve süreç takibi düzenli şekilde yürütüldü. Proje yönetimi iş planına uygun şekilde sürdürüldü.
+
+- Sprint hedefleri eksiksiz tamamlandı. Tüm görevler planlanan sürede bitirildi, puan hedefi tam olarak karşılandı.
 
   **Neler iyileştirilmeli?**
-  - Bazı görevlerde teknik detaylara daha fazla yer verilmesi gerekiyor.
-  - Test sonrası değerlendirme sonuçlarının daha kullanıcı dostu şekilde sunulması planlanmalı.
+  - Proje başarılı bir şekilde tamamlandığı için iyileştirilmesi gereken bir şey kalmadı.
+  
 
-  **Gelecek Sprint İçin Aksiyonlar**
-  - Kullanıcı arayüzlerinin sadeleştirilmesi ve kullanıcı deneyiminin iyileştirilmesi.
-  - Çizim testlerinin tamamlanarak sisteme entegre edilmesi.
-  - MMSE ve MoCA sorularının uygulamaya eklenip test edilmesi.
 
 </details>
