@@ -63,26 +63,26 @@ def get_gemini_feedback(qa_list):
         qa_block += f"- Soru: {soru}\n  - Cevap: {cevap}\n\n"
 
     prompt = f"""
-    **Görev:**
+    Görev:
     Bir kullanıcıya yöneltilen 10 soruluk bir bilişsel değerlendirme testinin sonuçlarını analiz et. Kullanıcının verdiği cevapları, bilişsel sağlık göstergeleri (oryantasyon, hafıza, dikkat, hesaplama) açısından değerlendirerek hasta hakkında ayrıntılı bir geri bildirim raporu oluştur.
 
-    **Analiz Kriterleri:**
-    1. **Zaman ve Mekan Oryantasyonu:** Tarih, gün, mevsim ve yer ile ilgili sorulara verilen cevapların doğruluğunu kontrol et. Yanlış veya belirsiz cevaplar oryantasyon bozukluğuna işaret edebilir.
-    2. **Dikkat ve Hesaplama:** Geriye doğru sayma gibi dikkat ve basit hesaplama gerektiren görevlerdeki performansı değerlendir. Hata yapması veya yavaşlaması dikkat eksikliğini gösterebilir.
-    3. **Kısa Süreli Hafıza ve Dil Becerileri:** Kelimeyi tersten yazma gibi görevler hem dikkat hem de dil becerilerini ölçer. Bu alandaki performansı yorumla.
-    4. **Genel Tutarlılık:** Cevaplardaki genel mantık ve tutarlılığı gözlemle.
+    Analiz Kriterleri:
+    1. Zaman ve Mekan Oryantasyonu: Tarih, gün, mevsim ve yer ile ilgili sorulara verilen cevapların doğruluğunu kontrol et. Yanlış veya belirsiz cevaplar oryantasyon bozukluğuna işaret edebilir.
+    2. Dikkat ve Hesaplama: Geriye doğru sayma gibi dikkat ve basit hesaplama gerektiren görevlerdeki performansı değerlendir. Hata yapması veya yavaşlaması dikkat eksikliğini gösterebilir.
+    3. Kısa Süreli Hafıza ve Dil Becerileri: Kelimeyi tersten yazma gibi görevler hem dikkat hem de dil becerilerini ölçer. Bu alandaki performansı yorumla.
+    4. Genel Tutarlılık: Cevaplardaki genel mantık ve tutarlılığı gözlemle.
 
-    **Format:**
+    Format:
     Raporu yapılandırılmış bir metin olarak, aşağıdaki başlıkları içerecek şekilde hazırla:
-    * **Genel Değerlendirme:** Testin genel bir özeti.
-    * **Güçlü Yönler:** Kullanıcının doğru ve hızlı cevap verdiği alanlar.
-    * **Gözlem ve Değerlendirme Alanları:** Hatalı, eksik veya yavaş cevapların analizi ve bunların olası bilişsel yansımaları.
-    * **Öneri:** Sonuçlara dayanarak profesyonel bir tıbbi değerlendirme gerekip gerekmediği hakkında genel bir tavsiye. (Bu raporun tıbbi bir teşhis olmadığını önemle belirt.)
+    - Genel Değerlendirme: Testin genel bir özeti.
+    - Güçlü Yönler: Kullanıcının doğru ve hızlı cevap verdiği alanlar.
+    - Gözlem ve Değerlendirme Alanları:** Hatalı, eksik veya yavaş cevapların analizi ve bunların olası bilişsel yansımaları.
+    - Öneri: Sonuçlara dayanarak profesyonel bir tıbbi değerlendirme gerekip gerekmediği hakkında genel bir tavsiye. (Bu raporun tıbbi bir teşhis olmadığını önemle belirt.)
 
-    **İşte Analiz Edilecek Sorular ve Cevaplar:**
+    İşte Analiz Edilecek Sorular ve Cevaplar:
     {qa_block}
 
-    **Lütfen yukarıdaki verilere dayanarak ayrıntılı geri bildirim raporunu oluştur.**
+    Lütfen yukarıdaki verilere dayanarak ayrıntılı geri bildirim raporunu oluştur.
     """
     try:
         response = model.generate_content(prompt)
@@ -190,9 +190,10 @@ async def get_questions_simple():
     try:
         logger.info("Sorular yükleniyor (GET endpoint)...")
         df_sorular = load_questions()
-        soru_indices = random.sample(range(len(df_sorular)), 10)
-        secilen_sorular = df_sorular.iloc[soru_indices].copy()
-        
+        # soru_indices = random.sample(range(len(df_sorular)), 10)
+        # secilen_sorular = df_sorular.iloc[soru_indices].copy()
+        secilen_sorular = df_sorular.iloc[:10].copy()
+
         sonuc = secilen_sorular[['Index', 'Soru']].to_dict(orient='records')
         logger.info("Dönen sorular: %s", sonuc)
         return sonuc
@@ -207,9 +208,11 @@ async def get_questions():
     try:
         logger.info("Sorular yükleniyor...")
         df_sorular = load_questions()
-        soru_indices = random.sample(range(len(df_sorular)), 10)
-        secilen_sorular = df_sorular.iloc[soru_indices].copy()
+        # soru_indices = random.sample(range(len(df_sorular)), 10)
+        # secilen_sorular = df_sorular.iloc[soru_indices].copy()
         
+        secilen_sorular = df_sorular.iloc[:10].copy()
+
         sonuc = secilen_sorular[['Index', 'Soru']].to_dict(orient='records')
         logger.info("Dönen sorular: %s", sonuc)
         return sonuc

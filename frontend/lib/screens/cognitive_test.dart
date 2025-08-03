@@ -155,7 +155,6 @@ class _CognitiveTestScreenState extends State<CognitiveTestScreen> {
   Future<void> _startTest() async {
     setState(() {
       _isLoading = true;
-      _statusMessage = 'Backend bağlantısı test ediliyor...';
     });
 
     try {

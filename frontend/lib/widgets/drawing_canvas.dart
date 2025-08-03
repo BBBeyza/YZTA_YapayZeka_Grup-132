@@ -34,7 +34,6 @@ class DrawingCanvasState extends State<DrawingCanvas> {
     Colors.green,
     Color.fromARGB(255, 52, 95, 235),
     Color.fromARGB(255, 113, 26, 163),
-    Color.fromARGB(255, 243, 89, 179),
   ];
 
   void _onPanStart(DragStartDetails details) {
