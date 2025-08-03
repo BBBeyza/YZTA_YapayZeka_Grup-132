@@ -385,19 +385,16 @@ Sprint süresince hem frontend (arayüz), hem backend (sunucu taraflı işleyiş
 - <h3>Daily Scrum</h3>
   </br>
   <p align="center">
-    <img src="images/Daily Scrum/sprint2_dailyscrum_1.jpeg" alt="Daily Scrum 1" width="600"/>
+    <img src="images/Daily Scrum/sprint3_dailyscrum_1.jpeg" alt="Daily Scrum 1" width="600"/>
     </br>
     </br>
-    <img src="images/Daily Scrum/sprint2_dailyscrum_2.jpeg" alt="Daily Scrum 2" width="600"/>
+    <img src="images/Daily Scrum/sprint3_dailyscrum_2.jpeg" alt="Daily Scrum 2" width="600"/>
     </br>
     </br>
-    <img src="images/Daily Scrum/sprint2_dailyscrum_3.jpeg" alt="Daily Scrum 3" width="600"/>
+    <img src="images/Daily Scrum/sprint3_dailyscrum_3.jpeg" alt="Daily Scrum 3" width="600"/>
     </br>
     </br>
-    <img src="images/Daily Scrum/sprint2_dailyscrum_4.jpeg" alt="Daily Scrum 4" width="600"/>
-    </br>
-    </br>
-    <img src="images/Daily Scrum/sprint2_dailyscrum_5.jpeg" alt="Daily Scrum 5" width="600"/>
+    <img src="images/Daily Scrum/sprint3_dailyscrum_4.jpeg" alt="Daily Scrum 4" width="600"/>
   </p>
   </br>
   </br>
@@ -413,7 +410,11 @@ Beyza Yaylak, tüm sprint boyunca toplantı planlamalarını organize etti, sür
 
 - <h3>Product Backlog URL</h3> 
 <p align="center">
-  <img src="images/sprint_board_update_ss_2.jpg" alt="Screenshoot 1" />
+  <img src="images/sprint_board_update_ss_3.jpg" alt="Screenshoot 1" />
+  </br>
+  <img src="images/sprint_board_update_ss_4.jpg" alt="Screenshoot 1" />
+  </br>
+  <img src="images/sprint_board_update_ss_5.jpg" alt="Screenshoot 1" />
   </p>
   
 
