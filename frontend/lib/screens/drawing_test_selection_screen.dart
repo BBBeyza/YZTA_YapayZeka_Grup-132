@@ -3,73 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:neurograph/screens/drawing_test.dart';
 import 'tutorial_screen.dart';
-import 'package:neurograph/widgets/modern_bottom_navigation_bar.dart';
-
-// Assuming these are separate screens within the DrawingTest flow,
-// or placeholder for other content when this tab is selected.
-// For demonstration, these are simplified.
-class DrawingTestHomeContent extends StatelessWidget {
-  const DrawingTestHomeContent({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    // This is the content for the 'Drawing Tests' tab's default view
-    // It will contain your GridView.builder for test selections
-    return _DrawingTestSelectionScreenContent(); // Use the existing content logic
-  }
-}
-
-class CompletedDrawingsScreen extends StatelessWidget {
-  const CompletedDrawingsScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            Color(0xFFF8F4FF),
-            Color(0xFFEDE7F6),
-          ],
-        ),
-      ),
-      child: const Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.palette,
-              size: 80,
-              color: Color(0xFFE1BEE7),
-            ),
-            SizedBox(height: 16),
-            Text(
-              'Tamamlanmış Çizimler',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.w600,
-                color: Color(0xFF6A1B9A),
-              ),
-            ),
-            SizedBox(height: 8),
-            Text(
-              'Henüz tamamlanmış çizim bulunmuyor',
-              style: TextStyle(
-                fontSize: 16,
-                color: Color(0xFF9E9E9E),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
 
 class DrawingTestSelectionScreen extends StatefulWidget {
-  // initialTabIndex is no longer needed here if HomePage manages the main tabs
   const DrawingTestSelectionScreen({super.key});
 
   @override
@@ -77,28 +12,6 @@ class DrawingTestSelectionScreen extends StatefulWidget {
 }
 
 class _DrawingTestSelectionScreenState extends State<DrawingTestSelectionScreen> {
-  // This _selectedIndex now manages the internal tabs of DrawingTestSelectionScreen
-  int _internalSelectedIndex = 0;
-
-  // These are the screens for the internal bottom navigation bar of DrawingTestSelectionScreen
-  static const List<Widget> _internalWidgetOptions = <Widget>[
-    DrawingTestHomeContent(),    // Represents the main selection grid for drawing tests
-    CompletedDrawingsScreen(), // Example: A screen for viewing past drawings
-  ];
-
-  void _onInternalItemTapped(int index) {
-    setState(() {
-      _internalSelectedIndex = index;
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    // SystemChrome.setSystemUIOverlayStyle is usually set once at the app's root
-    // or by the main HomePage, so it's often not needed here.
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -132,9 +45,9 @@ class _DrawingTestSelectionScreenState extends State<DrawingTestSelectionScreen>
             backgroundColor: Colors.transparent,
             foregroundColor: Colors.white,
             elevation: 0,
-            title: Text(
-              _getAppBarTitle(_internalSelectedIndex),
-              style: const TextStyle(
+            title: const Text(
+              '🎨 Çizim Testleri',
+              style: TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
                 fontSize: 22,
@@ -162,80 +75,25 @@ class _DrawingTestSelectionScreenState extends State<DrawingTestSelectionScreen>
             ],
           ),
         ),
-        child: _internalWidgetOptions.elementAt(_internalSelectedIndex),
-      ),
-      bottomNavigationBar: Container(
-        decoration: const BoxDecoration(
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(25),
-            topRight: Radius.circular(25),
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Color(0x20000000),
-              blurRadius: 10,
-              offset: Offset(0, -5),
-            ),
-          ],
-        ),
-        child: ClipRRect(
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(25),
-            topRight: Radius.circular(25),
-          ),
-          child: BottomNavigationBar(
-            currentIndex: _internalSelectedIndex,
-            onTap: _onInternalItemTapped,
-            selectedItemColor: const Color(0xFF6A1B9A),
-            unselectedItemColor: const Color(0xFFBDBDBD),
-            backgroundColor: Colors.white,
-            type: BottomNavigationBarType.fixed,
-            selectedLabelStyle: const TextStyle(fontWeight: FontWeight.w600),
-            items: const [
-              BottomNavigationBarItem(
-                icon: Icon(Icons.palette_outlined),
-                activeIcon: Icon(Icons.palette),
-                label: 'Testler',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.history_outlined),
-                activeIcon: Icon(Icons.history),
-                label: 'Geçmiş',
-              ),
-            ],
-          ),
-        ),
+        child: const _DrawingTestSelectionScreenContent(),
       ),
     );
   }
-
-  String _getAppBarTitle(int index) {
-    switch (index) {
-      case 0:
-        return '🎨 Çizim Testleri';
-      case 1:
-        return '📋 Tamamlanmış Çizimler';
-      default:
-        return '🎨 Çizim Testleri';
-    }
-  }
 }
 
-// Extracting the content of DrawingTestSelectionScreen into a separate stateless widget
-// so it can be used as one of the _internalWidgetOptions
 class _DrawingTestSelectionScreenContent extends StatelessWidget {
-  _DrawingTestSelectionScreenContent({super.key});
+  const _DrawingTestSelectionScreenContent({super.key});
 
   static const String _meanderTutorialVideoUrl = 'assets/videos/MeanderTutorialVideo.mp4';
   static const String _spiralTutorialVideoUrl = 'assets/videos/SpiralTutorialVideo.mp4';
 
-  final List<Map<String, dynamic>> _testOptions = [
+  final List<Map<String, dynamic>> _testOptions = const [
     {
       'key': 'clock',
       'title': 'Saat Çizimi Testi',
-      'iconWidget': const Icon(Icons.access_time, size: 32, color: Colors.white),
+      'iconWidget': Icon(Icons.access_time, size: 32, color: Colors.white),
       'description': 'Görsel-mekansal becerilerinizi test edin.',
-      'gradient': const LinearGradient(
+      'gradient': LinearGradient(
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
         colors: [Color(0xFFC8A2C8), Color(0xFFB190B8)],
@@ -245,14 +103,8 @@ class _DrawingTestSelectionScreenContent extends StatelessWidget {
     {
       'key': 'spiral',
       'title': 'Spiral Çizimi Testi',
-      'iconWidget': SvgPicture.asset(
-          'assets/images/spiralCircle.svg',
-          width: 32,
-          height: 32,
-          colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn)
-      ),
       'description': 'Akıcılık ve koordinasyonunuzu spiral ile ölçün.',
-      'gradient': const LinearGradient(
+      'gradient': LinearGradient(
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
         colors: [Color(0xFFF9A825), Color(0xFFE19315)],
@@ -262,14 +114,8 @@ class _DrawingTestSelectionScreenContent extends StatelessWidget {
     {
       'key': 'meander',
       'title': 'Meander Çizimi Testi',
-      'iconWidget': SvgPicture.asset(
-          'assets/images/spiralSquare.svg',
-          width: 32,
-          height: 32,
-          colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn)
-      ),
       'description': 'Karmaşık çizgilerle el-göz koordinasyonunuzu geliştirin.',
-      'gradient': const LinearGradient(
+      'gradient': LinearGradient(
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
         colors: [Color(0xFFBF7687), Color(0xFFAF6677)],
@@ -279,9 +125,9 @@ class _DrawingTestSelectionScreenContent extends StatelessWidget {
     {
       'key': 'handwriting',
       'title': 'El Yazısı Testi',
-      'iconWidget': const Icon(Icons.edit, size: 32, color: Colors.white),
+      'iconWidget': Icon(Icons.edit, size: 32, color: Colors.white),
       'description': 'Doğal el yazınızın akıcılığını ve okunabilirliğini değerlendirin.',
-      'gradient': const LinearGradient(
+      'gradient': LinearGradient(
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
         colors: [Color(0xFF64AA95), Color(0xFF549A85)],
@@ -338,12 +184,33 @@ class _DrawingTestSelectionScreenContent extends StatelessWidget {
               itemCount: _testOptions.length,
               itemBuilder: (context, index) {
                 final test = _testOptions[index];
+                Widget iconWidget;
+                
+                // Handle different icon types
+                if (test['key'] == 'spiral') {
+                  iconWidget = SvgPicture.asset(
+                    'assets/images/spiralCircle.svg',
+                    width: 32,
+                    height: 32,
+                    colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn)
+                  );
+                } else if (test['key'] == 'meander') {
+                  iconWidget = SvgPicture.asset(
+                    'assets/images/spiralSquare.svg',
+                    width: 32,
+                    height: 32,
+                    colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn)
+                  );
+                } else {
+                  iconWidget = test['iconWidget'] as Widget;
+                }
+                
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 16.0),
                   child: DrawingSelectionCard(
                     title: test['title']!,
                     description: test['description']!,
-                    iconWidget: test['iconWidget'] as Widget,
+                    iconWidget: iconWidget,
                     gradient: test['gradient'] as LinearGradient,
                     emoji: test['emoji']!,
                     onTap: () {

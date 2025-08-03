@@ -322,29 +322,77 @@ class _ReportsScreenState extends State<ReportsScreen>
           return const Color(0xFFC8A2C8);
         case 'drawing':
           if (report.title.contains('Spiral')) return const Color(0xFFF9A825);
-          if (report.title.contains('Meander')) return const Color(0xFF4CAF50);
-          if (report.title.contains('Clock')) return const Color(0xFF2196F3);
-          return const Color(0xFFF9A825);
-        case 'voice':
-          return const Color.fromARGB(255, 191, 118, 135);
+          if (report.title.contains('Meander')) return const Color(0xFFBF7687);
+          if (report.title.contains('Clock') || report.title.contains('Saat')) return const Color(0xFFC8A2C8);
+          if (report.title.contains('Handwriting') || report.title.contains('El Yazısı')) return const Color(0xFF64AA95);
+          break;
         default:
-          return Colors.grey;
+          return const Color(0xFF9E9E9E);
       }
+      // Default color if none of the above conditions match
+      return const Color(0xFF9E9E9E);
     }
 
     IconData getTestIcon() {
       if (report.title.contains('Spiral')) return Icons.all_out;
       if (report.title.contains('Meander')) return Icons.waves;
-      if (report.title.contains('Clock')) return Icons.access_time;
+      if (report.title.contains('Clock') || report.title.contains('Saat')) return Icons.access_time;
+      if (report.title.contains('Handwriting') || report.title.contains('El Yazısı')) return Icons.edit;
       if (report.type == 'cognitive') return Icons.psychology;
-      return Icons.record_voice_over;
+      return Icons.assignment;
     }
 
     String getTestType() {
-      if (report.title.contains('Spiral')) return 'Spiral Testi';
-      if (report.title.contains('Meander')) return 'Meander Testi';
-      if (report.title.contains('Clock')) return 'Saat Çizimi';
-      return report.type == 'cognitive' ? 'Bilişsel Test' : 'Sesli Okuma';
+      if (report.title.contains('Spiral')) return 'Spiral Çizimi Testi';
+      if (report.title.contains('Meander')) return 'Meander Çizimi Testi';
+      if (report.title.contains('Clock') || report.title.contains('Saat')) return 'Saat Çizimi Testi';
+      if (report.title.contains('Handwriting') || report.title.contains('El Yazısı')) return 'El Yazısı Testi';
+      if (report.type == 'cognitive') return 'Bilişsel Test';
+      return 'Test Raporu';
+    }
+
+    String formatReportContent(String content) {
+      // Rapor içeriğini daha okunabilir hale getir
+      String formatted = content;
+      
+      // Gereksiz boşlukları temizle
+      formatted = formatted.trim();
+      
+      // Yıldızları (*) kaldır
+      formatted = formatted.replaceAll(RegExp(r'\*+'), '');
+      
+      // Markdown formatlarını temizle
+      formatted = formatted.replaceAll(RegExp(r'#+\s*'), ''); // # başlıkları
+      formatted = formatted.replaceAll(RegExp(r'_{2,}'), ''); // __altçizgi__
+      formatted = formatted.replaceAll(RegExp(r'-{2,}'), ''); // --çizgi--
+      
+      // Emojileri ve başlık formatlarını temizle
+      formatted = formatted.replaceAll(RegExp(r'🕐|🌀|〰️|✍️|📊|📈|🤖|🧠'), '');
+      
+      // Test türü bilgisini kaldır (zaten başlıkta var)
+      formatted = formatted.replaceAll(RegExp(r'Test Türü:.*?\n'), '');
+      formatted = formatted.replaceAll(RegExp(r'Analiz Sonucu:?\s*'), '');
+      formatted = formatted.replaceAll(RegExp(r'Değerlendirme:?\s*'), '');
+      formatted = formatted.replaceAll(RegExp(r'Detaylı Değerlendirme:?\s*'), '');
+      formatted = formatted.replaceAll(RegExp(r'Analiz Sonuçları:?\s*'), '');
+      
+      // Başlık satırlarını temizle
+      formatted = formatted.replaceAll(RegExp(r'.*?Testi\s*-\s*.*?\n'), '');
+      formatted = formatted.replaceAll(RegExp(r'Bu test.*?\n'), '');
+      
+      // Çoklu boşlukları ve satır sonlarını temizle
+      formatted = formatted.replaceAll(RegExp(r'\n{2,}'), '\n');
+      formatted = formatted.replaceAll(RegExp(r'\s{2,}'), ' ');
+      
+      // Gereksiz boşlukları temizle
+      formatted = formatted.trim();
+      
+      // Çok uzun ise kısalt
+      if (formatted.length > 150) {
+        formatted = '${formatted.substring(0, 150)}...';
+      }
+      
+      return formatted.trim();
     }
 
     return Container(
@@ -464,9 +512,7 @@ class _ReportsScreenState extends State<ReportsScreen>
                       ),
                       const SizedBox(height: 12),
                       Text(
-                        report.content.length > 120
-                            ? '${report.content.substring(0, 120)}...'
-                            : report.content,
+                        formatReportContent(report.content),
                         style: TextStyle(
                           fontSize: 14,
                           color: Colors.grey.shade600,
@@ -513,7 +559,7 @@ class _ReportsScreenState extends State<ReportsScreen>
                                         size: 18,
                                       ),
                                       SizedBox(width: 8),
-                                      Text(
+                                                                          Text(
                                         'Detayları Gör',
                                         style: TextStyle(
                                           color: Colors.white,
@@ -539,7 +585,6 @@ class _ReportsScreenState extends State<ReportsScreen>
       ),
     );
   }
-
   void _showFullReportDialog(BuildContext context, Report report) {
     showDialog(
       context: context,

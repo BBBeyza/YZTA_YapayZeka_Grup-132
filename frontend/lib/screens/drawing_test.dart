@@ -205,6 +205,7 @@ class _DrawingTestScreenState extends State<DrawingTestScreen> {
   }
 
   /// Çizim verisini backend'e gönderir ve ham analiz sonucunu döndürür.
+/// Çizim verisini backend'e gönderir ve ham analiz sonucunu döndürür.
   Future<String> _analyzeDrawing(Uint8List drawingImageBytes) async {
     final request = http.MultipartRequest('POST', Uri.parse(_backendUrl));
     request.files.add(
@@ -237,6 +238,9 @@ class _DrawingTestScreenState extends State<DrawingTestScreen> {
         return patientProb > controlProb
             ? "🟡 Titreme Algılandı — Güven: ${patientProb.toStringAsFixed(2)}"
             : "✅ Temiz Çizim — Güven: ${controlProb.toStringAsFixed(2)}";
+      case 'handwriting':
+        // El yazısı testi için teknik detayları gizle - sadece genel durum bilgisi
+        return "El yazısı analizi tamamlandı";
       default:
         return "Test sonucu: ${jsonResponse.toString()}";
     }
@@ -244,14 +248,34 @@ class _DrawingTestScreenState extends State<DrawingTestScreen> {
 
   /// Ham analiz sonucunu alıp Gemini'den bir değerlendirme metni ister.
   Future<String> _getGeminiEvaluation(String analysisResult) async {
-    final prompt =
-        '''
-Kullanıcının yaptığı "${widget.testTitle}" adlı çizim testinin sonuçlarını değerlendirir misin?
+    String prompt;
+    
+    if (widget.testKey == 'handwriting') {
+      // El yazısı testi için özel prompt - teknik sonuçları kullanma
+      prompt = '''
+Kullanıcının yaptığı el yazısı testini değerlendirir misin? El yazısının genel okunabilirliği, düzenliliği ve akıcılığı hakkında genel bir değerlendirme yap. 
+
+Test Talimatı: "${widget.testInstruction}"
+
+Bu el yazısı testine dayanarak:
+- Yazının genel okunabilirliği
+- Harflerin düzenliliği
+- Yazı akıcılığı
+- Genel motor beceri durumu
+
+konularında kullanıcıya anlaşılır, pozitif ve kısa bir değerlendirme raporla. Teknik puanlardan veya sayısal değerlerden bahsetme.
+''';
+    } else {
+      // Diğer testler için mevcut prompt
+      prompt = '''
+Kullanıcının yaptığı "${widget.testTitle}" adlı çizim testinin sonuçlarını değerlendirir misin? Eğer gelen test saat çizimi ise Shulman puanını kullanarak değerlendirme yap. Spiral ve meander testleri için ise titreme olasılıklarını kullanarak bir değerlendirme yap. El yazısı testi için ise el yazısının genel durumunu değerlendir diğer test türlerinden ve puanlamasından bahsetme. 
 Test Talimatı: "${widget.testInstruction}"
 Analiz Sonucu: "$analysisResult"
 
 Bu bilgilere dayanarak, çizimin genel durumunu ve varsa potansiyel anomalileri kullanıcıya anlaşılır, kısa ve tıbbi olmayan bir dille raporla.
 ''';
+    }
+    
     return await _geminiService.askGemini(prompt);
   }
   
@@ -261,14 +285,24 @@ Bu bilgilere dayanarak, çizimin genel durumunu ve varsa potansiyel anomalileri 
       final user = FirebaseAuth.instance.currentUser;
       if (user == null) throw Exception('Kullanıcı giriş yapmamış');
 
+      String reportContent;
+      
+      if (widget.testKey == 'handwriting') {
+        // El yazısı testi için sadece değerlendirmeyi kaydet
+        reportContent = evaluation;
+      } else {
+        // Diğer testler için hem analiz hem değerlendirme
+        reportContent = '''
+Test Türü: ${widget.testKey.toUpperCase()}
+Analiz Sonucu: $analysisResult
+Değerlendirme: $evaluation
+''';
+      }
+
       final report = Report(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
         title: '${widget.testTitle} Test Raporu',
-        content: '''
-**Test Türü:** ${widget.testKey.toUpperCase()}
-**Analiz Sonucu:** $analysisResult
-**Değerlendirme:** $evaluation
-''',
+        content: reportContent,
         date: DateTime.now(),
         type: 'drawing',
         userId: user.uid,

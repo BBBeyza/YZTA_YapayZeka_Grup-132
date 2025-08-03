@@ -127,9 +127,7 @@ class _HomeContent extends StatelessWidget {
                   const SizedBox(height: 10),
                   _buildAppBar(context),
                   const SizedBox(height: 30),
-                  _buildGreetingSection(context),
-                  const SizedBox(height: 30),
-                  _buildProgressSection(context),
+                  _buildGreetingSectionModern(context),
                   const SizedBox(height: 32),
                   _buildTestStatusSection(context),
                 ],
@@ -192,60 +190,77 @@ class _HomeContent extends StatelessWidget {
     );
   }
 
-  Widget _buildGreetingSection(BuildContext context) {
-    return Text(
-      'Hoşgeldin, $userName',
-      style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-        fontWeight: FontWeight.bold,
-        color: Colors.black87,
-      ),
-    );
+Widget _buildGreetingSectionModern(BuildContext context) {
+  final hour = DateTime.now().hour;
+  String greeting;
+  IconData greetingIcon;
+  
+  if (hour < 12) {
+    greeting = 'Günaydın';
+    greetingIcon = Icons.wb_sunny;
+  } else if (hour < 17) {
+    greeting = 'İyi öğleden sonralar';
+    greetingIcon = Icons.wb_sunny_outlined;
+  } else {
+    greeting = 'İyi akşamlar';
+    greetingIcon = Icons.brightness_3;
   }
 
-  Widget _buildProgressSection(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.grey.shade100,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            spreadRadius: 1,
-            blurRadius: 5,
-            offset: const Offset(0, 3),
+  return Container(
+    margin: const EdgeInsets.all(16),
+    padding: const EdgeInsets.all(20),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(16),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.05),
+          blurRadius: 10,
+          offset: const Offset(0, 2),
+        ),
+      ],
+    ),
+    child: Row(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: const Color(0xFFE1BEE7).withOpacity(0.1),
+            borderRadius: BorderRadius.circular(12),
           ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Test ilerlemen',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: Colors.black87,
-            ),
+          child: Icon(
+            greetingIcon,
+            color: const Color(0xFFE1BEE7),
+            size: 24,
           ),
-          const SizedBox(height: 10),
-          LinearProgressIndicator(
-            value: progressValue,
-            backgroundColor: Colors.grey.shade300,
-            color: Theme.of(context).colorScheme.primary,
-            minHeight: 10,
-            borderRadius: BorderRadius.circular(10),
+        ),
+        const SizedBox(width: 16),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                greeting,
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: const Color(0xFF9E9E9E),
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                userName,
+                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: const Color(0xFF2E2E2E),
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 10),
-          Text(
-            progressText,
-            style: Theme.of(
-              context,
-            ).textTheme.bodySmall?.copyWith(color: Colors.black54),
-          ),
-        ],
-      ),
-    );
-  }
+        ),
+      ],
+    ),
+  );
+}
 
   Widget _buildTestStatusSection(BuildContext context) {
     return Column(
