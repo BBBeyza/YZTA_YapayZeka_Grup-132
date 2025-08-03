@@ -118,7 +118,7 @@ class _DrawingTestScreenState extends State<DrawingTestScreen> {
   bool _isLoading = false;
 
   String get _backendUrl {
-    const String baseUrl = 'http://192.168.1.160:8000';
+    const String baseUrl = 'http://10.0.2.2:8000';
     if (widget.testKey == 'spiral') {
       return '$baseUrl/spiral/predict_tremor';
     } else if (widget.testKey == 'meander') {
@@ -338,10 +338,7 @@ Bu bilgilere dayanarak, çizimin genel durumunu ve varsa potansiyel anomalileri 
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
-            children: [
-              const SizedBox(height: 20),
-              Text(evaluation),
-            ],
+            children: [const SizedBox(height: 20), Text(evaluation)],
           ),
         ),
         actions: [

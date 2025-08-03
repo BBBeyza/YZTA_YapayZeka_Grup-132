@@ -16,14 +16,14 @@ class ReadingTestScreen extends StatefulWidget {
   State<ReadingTestScreen> createState() => _ReadingTestScreenState();
 }
 
-class _ReadingTestScreenState extends State<ReadingTestScreen> 
+class _ReadingTestScreenState extends State<ReadingTestScreen>
     with TickerProviderStateMixin {
   final AudioPlayer _audioPlayer = AudioPlayer();
   final AudioRecorder _audioRecorder = AudioRecorder();
   String? _recordedFilePath;
   Map<String, dynamic>? _analysisResult;
   DateTime? _recordingStartTime;
-  
+
   late AnimationController _recordingController;
   late AnimationController _pulseController;
   late Animation<double> _scaleAnimation;
@@ -85,27 +85,19 @@ class _ReadingTestScreenState extends State<ReadingTestScreen>
       duration: const Duration(seconds: 1),
       vsync: this,
     );
-    
+
     _pulseController = AnimationController(
       duration: const Duration(milliseconds: 1500),
       vsync: this,
     );
 
-    _scaleAnimation = Tween<double>(
-      begin: 1.0,
-      end: 1.1,
-    ).animate(CurvedAnimation(
-      parent: _recordingController,
-      curve: Curves.easeInOut,
-    ));
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 1.1).animate(
+      CurvedAnimation(parent: _recordingController, curve: Curves.easeInOut),
+    );
 
-    _pulseAnimation = Tween<double>(
-      begin: 1.0,
-      end: 1.3,
-    ).animate(CurvedAnimation(
-      parent: _pulseController,
-      curve: Curves.easeInOut,
-    ));
+    _pulseAnimation = Tween<double>(begin: 1.0, end: 1.3).animate(
+      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
+    );
   }
 
   Color _getTestColor() {
@@ -156,11 +148,11 @@ class _ReadingTestScreenState extends State<ReadingTestScreen>
             ),
           ],
         ),
-        backgroundColor: isSuccess ? Colors.green.shade600 : Colors.blue.shade600,
+        backgroundColor: isSuccess
+            ? Colors.green.shade600
+            : Colors.blue.shade600,
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         margin: const EdgeInsets.all(16),
       ),
     );
@@ -192,7 +184,7 @@ class _ReadingTestScreenState extends State<ReadingTestScreen>
 
         _recordingController.repeat(reverse: true);
         _pulseController.repeat();
-        
+
         _showCustomSnackBar('Kayıt başladı, lütfen konuşun...', true);
       }
     } catch (e) {
@@ -251,7 +243,7 @@ class _ReadingTestScreenState extends State<ReadingTestScreen>
 
       var request = http.MultipartRequest(
         'POST',
-        Uri.parse('http://192.168.1.160:8000/text/record_and_analyze'),
+        Uri.parse('http://10.0.2.2:8000/text/record_and_analyze'),
       );
 
       request.files.add(
@@ -407,9 +399,7 @@ class _ReadingTestScreenState extends State<ReadingTestScreen>
         ),
       ),
       body: Container(
-        decoration: BoxDecoration(
-          color: Colors.grey.shade50,
-        ),
+        decoration: BoxDecoration(color: Colors.grey.shade50),
         child: Padding(
           padding: EdgeInsets.all(screenWidth * 0.04),
           child: SingleChildScrollView(
@@ -417,7 +407,7 @@ class _ReadingTestScreenState extends State<ReadingTestScreen>
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 SizedBox(height: screenHeight * 0.02),
-                
+
                 // Main Text Card
                 Container(
                   decoration: BoxDecoration(
@@ -473,19 +463,19 @@ class _ReadingTestScreenState extends State<ReadingTestScreen>
                             ],
                           ),
                         ),
-                        
+
                         SizedBox(height: screenHeight * 0.03),
-                        
+
                         Container(
                           height: screenHeight * 0.22,
                           padding: const EdgeInsets.all(20),
                           decoration: BoxDecoration(
-                            color: _isRecording 
+                            color: _isRecording
                                 ? testColor.withOpacity(0.05)
                                 : Colors.grey.shade50,
                             borderRadius: BorderRadius.circular(20),
                             border: Border.all(
-                              color: _isRecording 
+                              color: _isRecording
                                   ? testColor.withOpacity(0.3)
                                   : Colors.grey.shade200,
                               width: 2,
@@ -496,8 +486,12 @@ class _ReadingTestScreenState extends State<ReadingTestScreen>
                               duration: const Duration(milliseconds: 300),
                               style: TextStyle(
                                 fontSize: screenWidth * 0.045,
-                                color: _isRecording ? testColor : Colors.black87,
-                                fontWeight: _isRecording ? FontWeight.w600 : FontWeight.normal,
+                                color: _isRecording
+                                    ? testColor
+                                    : Colors.black87,
+                                fontWeight: _isRecording
+                                    ? FontWeight.w600
+                                    : FontWeight.normal,
                                 height: 1.6,
                               ),
                               child: Text(
@@ -507,9 +501,9 @@ class _ReadingTestScreenState extends State<ReadingTestScreen>
                             ),
                           ),
                         ),
-                        
+
                         SizedBox(height: screenHeight * 0.03),
-                        
+
                         // Recording Controls
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -519,13 +513,15 @@ class _ReadingTestScreenState extends State<ReadingTestScreen>
                               animation: _scaleAnimation,
                               builder: (context, child) {
                                 return Transform.scale(
-                                  scale: _isRecording ? _scaleAnimation.value : 1.0,
+                                  scale: _isRecording
+                                      ? _scaleAnimation.value
+                                      : 1.0,
                                   child: Container(
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(20),
                                       boxShadow: [
                                         BoxShadow(
-                                          color: _isRecording 
+                                          color: _isRecording
                                               ? Colors.red.withOpacity(0.3)
                                               : testColor.withOpacity(0.3),
                                           blurRadius: _isRecording ? 15 : 8,
@@ -534,14 +530,20 @@ class _ReadingTestScreenState extends State<ReadingTestScreen>
                                       ],
                                     ),
                                     child: ElevatedButton.icon(
-                                      onPressed: _isRecording ? _stopRecording : _startRecording,
+                                      onPressed: _isRecording
+                                          ? _stopRecording
+                                          : _startRecording,
                                       icon: AnimatedBuilder(
                                         animation: _pulseAnimation,
                                         builder: (context, child) {
                                           return Transform.scale(
-                                            scale: _isRecording ? _pulseAnimation.value : 1.0,
+                                            scale: _isRecording
+                                                ? _pulseAnimation.value
+                                                : 1.0,
                                             child: Icon(
-                                              _isRecording ? Icons.stop_rounded : Icons.mic_rounded,
+                                              _isRecording
+                                                  ? Icons.stop_rounded
+                                                  : Icons.mic_rounded,
                                               size: screenWidth * 0.06,
                                             ),
                                           );
@@ -564,7 +566,9 @@ class _ReadingTestScreenState extends State<ReadingTestScreen>
                                           vertical: screenHeight * 0.018,
                                         ),
                                         shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(20),
+                                          borderRadius: BorderRadius.circular(
+                                            20,
+                                          ),
                                         ),
                                         elevation: 0,
                                       ),
@@ -573,7 +577,7 @@ class _ReadingTestScreenState extends State<ReadingTestScreen>
                                 );
                               },
                             ),
-                            
+
                             // Play Button
                             if (_recordedFilePath != null && !_isRecording)
                               Container(
@@ -588,9 +592,13 @@ class _ReadingTestScreenState extends State<ReadingTestScreen>
                                   ],
                                 ),
                                 child: ElevatedButton.icon(
-                                  onPressed: _isPlaybackPlaying ? _stopPlayback : _playRecordedAudio,
+                                  onPressed: _isPlaybackPlaying
+                                      ? _stopPlayback
+                                      : _playRecordedAudio,
                                   icon: Icon(
-                                    _isPlaybackPlaying ? Icons.stop_rounded : Icons.play_arrow_rounded,
+                                    _isPlaybackPlaying
+                                        ? Icons.stop_rounded
+                                        : Icons.play_arrow_rounded,
                                     size: screenWidth * 0.06,
                                   ),
                                   label: Text(
@@ -620,7 +628,7 @@ class _ReadingTestScreenState extends State<ReadingTestScreen>
                     ),
                   ),
                 ),
-                
+
                 // Results Card
                 if (_recordedFilePath != null && !_isRecording)
                   Container(
@@ -657,7 +665,9 @@ class _ReadingTestScreenState extends State<ReadingTestScreen>
                               ),
                               const SizedBox(width: 12),
                               Text(
-                                _analysisResult != null ? 'Analiz Sonucu' : 'Analiz Ediliyor...',
+                                _analysisResult != null
+                                    ? 'Analiz Sonucu'
+                                    : 'Analiz Ediliyor...',
                                 style: TextStyle(
                                   fontSize: screenWidth * 0.045,
                                   fontWeight: FontWeight.bold,
@@ -666,10 +676,10 @@ class _ReadingTestScreenState extends State<ReadingTestScreen>
                               ),
                             ],
                           ),
-                          
+
                           if (_analysisResult != null) ...[
                             SizedBox(height: screenHeight * 0.02),
-                            
+
                             Container(
                               padding: const EdgeInsets.all(16),
                               decoration: BoxDecoration(
@@ -688,7 +698,9 @@ class _ReadingTestScreenState extends State<ReadingTestScreen>
                                         padding: const EdgeInsets.all(8),
                                         decoration: BoxDecoration(
                                           color: Colors.green.shade600,
-                                          borderRadius: BorderRadius.circular(20),
+                                          borderRadius: BorderRadius.circular(
+                                            20,
+                                          ),
                                         ),
                                         child: const Icon(
                                           Icons.percent_rounded,
@@ -707,21 +719,26 @@ class _ReadingTestScreenState extends State<ReadingTestScreen>
                                       ),
                                     ],
                                   ),
-                                  
+
                                   SizedBox(height: screenHeight * 0.015),
-                                  
+
                                   Row(
                                     children: [
                                       Container(
                                         padding: const EdgeInsets.all(8),
                                         decoration: BoxDecoration(
-                                          color: _analysisResult!['basari'] == 'Başarılı'
+                                          color:
+                                              _analysisResult!['basari'] ==
+                                                  'Başarılı'
                                               ? Colors.green.shade600
                                               : Colors.orange.shade600,
-                                          borderRadius: BorderRadius.circular(20),
+                                          borderRadius: BorderRadius.circular(
+                                            20,
+                                          ),
                                         ),
                                         child: Icon(
-                                          _analysisResult!['basari'] == 'Başarılı'
+                                          _analysisResult!['basari'] ==
+                                                  'Başarılı'
                                               ? Icons.check_circle_rounded
                                               : Icons.warning_rounded,
                                           color: Colors.white,
@@ -734,7 +751,9 @@ class _ReadingTestScreenState extends State<ReadingTestScreen>
                                         style: TextStyle(
                                           fontSize: screenWidth * 0.043,
                                           fontWeight: FontWeight.w600,
-                                          color: _analysisResult!['basari'] == 'Başarılı'
+                                          color:
+                                              _analysisResult!['basari'] ==
+                                                  'Başarılı'
                                               ? Colors.green.shade800
                                               : Colors.orange.shade800,
                                         ),
@@ -775,9 +794,9 @@ class _ReadingTestScreenState extends State<ReadingTestScreen>
                       ),
                     ),
                   ),
-                
+
                 SizedBox(height: screenHeight * 0.04),
-                
+
                 // Next Button
                 Container(
                   decoration: BoxDecoration(
@@ -795,7 +814,9 @@ class _ReadingTestScreenState extends State<ReadingTestScreen>
                     style: ElevatedButton.styleFrom(
                       backgroundColor: testColor,
                       foregroundColor: Colors.white,
-                      padding: EdgeInsets.symmetric(vertical: screenHeight * 0.02),
+                      padding: EdgeInsets.symmetric(
+                        vertical: screenHeight * 0.02,
+                      ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20),
                       ),

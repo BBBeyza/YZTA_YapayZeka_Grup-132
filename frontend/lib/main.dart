@@ -7,32 +7,63 @@ import 'firebase_options.dart';
 import 'screens/loginScreen.dart';
 import 'screens/homePage.dart';
 import 'services/auth_service.dart';
+import 'dart:async';
 
-void main() async {
+Future<void> main() async {
+  // Flutter engine ile iletişim için gerekli
   WidgetsFlutterBinding.ensureInitialized();
-  
+
+  // Çoklu başlatmayı engellemek için runZonedGuarded kullanıyoruz
+  await runZonedGuarded(
+    () async {
+      // Çevresel değişkenleri yükle
+      await _loadEnvironmentVariables();
+
+      // Firebase'i güvenli şekilde başlat
+      await _initializeFirebase();
+
+      // Uygulamayı başlat
+      runApp(const MyApp());
+    },
+    (error, stack) {
+      print('Global error caught: $error');
+      print(stack);
+    },
+  );
+}
+
+Future<void> _loadEnvironmentVariables() async {
   try {
-    await dotenv.load();
+    await dotenv.load(fileName: '.env');
   } catch (e) {
     print('Dotenv yükleme hatası: $e');
   }
+}
 
+Future<void> _initializeFirebase() async {
   try {
-    // Firebase'in zaten başlatılıp başlatılmadığını kontrol et
+    // Firebase uygulamalar listesini kontrol et
     if (Firebase.apps.isEmpty) {
       await Firebase.initializeApp(
         options: DefaultFirebaseOptions.currentPlatform,
       );
       print('Firebase başarıyla başlatıldı');
-    } else {
-      print('Firebase zaten başlatılmış');
+
+      // Firebase başlatma sonrası ek ayarlar
+      await _configureFirebaseSettings();
     }
   } catch (e) {
     print('Firebase başlatma hatası: $e');
-    // Firebase başlatılamasa bile uygulamayı çalıştır
+    // Firebase başlatılamazsa uygulama çalışmaya devam etsin
   }
+}
 
-  runApp(const MyApp());
+Future<void> _configureFirebaseSettings() async {
+  // Firebase Auth ayarları
+  await FirebaseAuth.instance.setPersistence(Persistence.LOCAL);
+
+  // Firebase performans ayarları (isteğe bağlı)
+  // await FirebasePerformance.instance.setPerformanceCollectionEnabled(true);
 }
 
 class MyApp extends StatelessWidget {
@@ -45,7 +76,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: _buildThemeData(context),
       builder: (context, child) {
-        // Sistem navigation bar'ını beyaz yap
+        // Sistem UI ayarları
         SystemChrome.setSystemUIOverlayStyle(
           const SystemUiOverlayStyle(
             systemNavigationBarColor: Colors.white,
@@ -56,7 +87,7 @@ class MyApp extends StatelessWidget {
         );
         return child!;
       },
-      home: AuthWrapper(),
+      home: const AuthWrapper(),
     );
   }
 }
@@ -75,10 +106,15 @@ class _AuthWrapperState extends State<AuthWrapper> {
   @override
   void initState() {
     super.initState();
+    _initializeAuthStream();
+  }
+
+  void _initializeAuthStream() {
     try {
       _authStream = _authService.user;
     } catch (e) {
       print('Auth stream başlatma hatası: $e');
+      // Hata durumunda boş bir stream oluştur
       _authStream = Stream.value(null);
     }
   }
@@ -88,18 +124,24 @@ class _AuthWrapperState extends State<AuthWrapper> {
     return StreamBuilder<User?>(
       stream: _authStream,
       builder: (context, snapshot) {
+        // Veri yükleniyor durumu
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
+            body: Center(
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFE1BEE7)),
+              ),
+            ),
           );
         }
 
+        // Hata durumu
         if (snapshot.hasError) {
           debugPrint('Auth error: ${snapshot.error}');
-          // Hata durumunda login ekranına yönlendir
-          return const LoginPage();
+          return const LoginPage(); // Hata durumunda login ekranına yönlendir
         }
 
+        // Kullanıcı durumuna göre yönlendirme
         return snapshot.data != null ? const HomeScreen() : const LoginPage();
       },
     );

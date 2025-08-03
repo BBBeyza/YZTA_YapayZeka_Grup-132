@@ -1,6 +1,10 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import '../services/report_service.dart';
+import '../models/report_model.dart';
+import 'package:intl/intl.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class QuestionAnswer {
   final String question, answer, type;
@@ -69,7 +73,7 @@ class _CognitiveTestScreenState extends State<CognitiveTestScreen> {
     'http://localhost:8000/cognitive',
     'http://127.0.0.1:8000/cognitive',
     'http://10.0.2.2:8000/cognitive', // Android emulator
-    'http://192.168.1.160:8000/cognitive', // Your original IP
+    'http://10.0.2.2:8000/cognitive', // Your original IP
   ];
 
   int _currentQuestionIndex = 0;
@@ -78,6 +82,7 @@ class _CognitiveTestScreenState extends State<CognitiveTestScreen> {
   List<QuestionAnswer> _history = [];
   List<Map<String, dynamic>> _questions = [];
   String? _workingBaseUrl; // Store the working URL
+  final ReportService _reportService = ReportService();
 
   @override
   void dispose() {
@@ -87,18 +92,22 @@ class _CognitiveTestScreenState extends State<CognitiveTestScreen> {
 
   void _showSnackBar(String message) {
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
   }
 
   // NEW: Function to test which base URL works
   Future<String?> _findWorkingBaseUrl() async {
     for (String baseUrl in baseUrls) {
       try {
-        final response = await http.get(
-          Uri.parse('${baseUrl.replaceAll('/cognitive', '')}/'),
-          headers: {'Content-Type': 'application/json'},
-        ).timeout(const Duration(seconds: 3));
-        
+        final response = await http
+            .get(
+              Uri.parse('${baseUrl.replaceAll('/cognitive', '')}/'),
+              headers: {'Content-Type': 'application/json'},
+            )
+            .timeout(const Duration(seconds: 3));
+
         if (response.statusCode == 200) {
           print('Working base URL found: $baseUrl');
           return baseUrl;
@@ -134,7 +143,9 @@ class _CognitiveTestScreenState extends State<CognitiveTestScreen> {
         _answerController.clear();
         _currentQuestionIndex++;
         _currentQuestion = _questions[_currentQuestionIndex]['Soru'];
-        print('Sonraki soru: $_currentQuestion (Index: $_currentQuestionIndex)');
+        print(
+          'Sonraki soru: $_currentQuestion (Index: $_currentQuestionIndex)',
+        );
       });
     } else {
       setState(() {
@@ -145,8 +156,12 @@ class _CognitiveTestScreenState extends State<CognitiveTestScreen> {
         print('Tüm sorular cevaplandı, değerlendirme başlıyor: $_history');
         await _evaluateTest();
       } else {
-        _showSnackBar('Hata: Tüm sorular cevaplanmadı. Lütfen son soruya cevap verin.');
-        print('Hata: _history uzunluğu ${_history.length}, beklenen: $_maxQuestions');
+        _showSnackBar(
+          'Hata: Tüm sorular cevaplanmadı. Lütfen son soruya cevap verin.',
+        );
+        print(
+          'Hata: _history uzunluğu ${_history.length}, beklenen: $_maxQuestions',
+        );
       }
     }
   }
@@ -160,9 +175,11 @@ class _CognitiveTestScreenState extends State<CognitiveTestScreen> {
     try {
       // First, find a working base URL
       _workingBaseUrl = await _findWorkingBaseUrl();
-      
+
       if (_workingBaseUrl == null) {
-        throw Exception('Backend sunucusuna erişilemiyor. Lütfen sunucunun çalıştığından emin olun.');
+        throw Exception(
+          'Backend sunucusuna erişilemiyor. Lütfen sunucunun çalıştığından emin olun.',
+        );
       }
 
       setState(() {
@@ -170,10 +187,12 @@ class _CognitiveTestScreenState extends State<CognitiveTestScreen> {
       });
 
       // Get questions using the working URL
-      final response = await http.get(
-        Uri.parse('$_workingBaseUrl/get_questions_simple'),
-        headers: {'Content-Type': 'application/json'},
-      ).timeout(const Duration(seconds: 10));
+      final response = await http
+          .get(
+            Uri.parse('$_workingBaseUrl/get_questions_simple'),
+            headers: {'Content-Type': 'application/json'},
+          )
+          .timeout(const Duration(seconds: 10));
 
       print('Sorular API Yanıtı: ${response.statusCode} - ${response.body}');
 
@@ -188,10 +207,12 @@ class _CognitiveTestScreenState extends State<CognitiveTestScreen> {
           _history = [];
           _currentQuestionIndex = 0;
         });
-        
+
         _showSnackBar('Test başarıyla başlatıldı!');
       } else {
-        throw Exception('Backend hatası: ${response.statusCode} - ${response.body}');
+        throw Exception(
+          'Backend hatası: ${response.statusCode} - ${response.body}',
+        );
       }
     } catch (e) {
       print('Test başlatma hatası: $e');
@@ -199,21 +220,23 @@ class _CognitiveTestScreenState extends State<CognitiveTestScreen> {
         _isLoading = false;
         _statusMessage = null;
       });
-      
+
       String errorMessage = 'Test başlatılamadı: ';
-      if (e.toString().contains('SocketException') || e.toString().contains('Connection refused')) {
-        errorMessage += 'Backend sunucusuna bağlanılamıyor. Sunucunun çalıştığından ve doğru IP adresini kullandığınızdan emin olun.';
+      if (e.toString().contains('SocketException') ||
+          e.toString().contains('Connection refused')) {
+        errorMessage +=
+            'Backend sunucusuna bağlanılamıyor. Sunucunun çalıştığından ve doğru IP adresini kullandığınızdan emin olun.';
       } else if (e.toString().contains('TimeoutException')) {
-        errorMessage += 'Bağlantı zaman aşımına uğradı. Internet bağlantınızı kontrol edin.';
+        errorMessage +=
+            'Bağlantı zaman aşımına uğradı. Internet bağlantınızı kontrol edin.';
       } else {
         errorMessage += e.toString();
       }
-      
+
       _showSnackBar(errorMessage);
     }
   }
 
-  // UPDATED: Use working base URL for evaluation
   Future<void> _evaluateTest() async {
     if (_workingBaseUrl == null) {
       _showSnackBar('Hata: Backend bağlantısı kurulamadı.');
@@ -232,24 +255,51 @@ class _CognitiveTestScreenState extends State<CognitiveTestScreen> {
 
       print('Gönderilen cevaplar: ${jsonEncode(qaList)}');
 
-      final response = await http.post(
-        Uri.parse('$_workingBaseUrl/run_cognitive_test'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode(qaList),
-      ).timeout(const Duration(seconds: 30));
+      final response = await http
+          .post(
+            Uri.parse('$_workingBaseUrl/evaluate_answers'), // Yeni endpoint
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode(qaList),
+          )
+          .timeout(const Duration(seconds: 30));
 
-      print('Değerlendirme API Yanıtı: ${response.statusCode} - ${response.body}');
+      print(
+        'Değerlendirme API Yanıtı: ${response.statusCode} - ${response.body}',
+      );
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
+        final reportContent = data['analysis_report'];
+
+        // Firebase'e rapor kaydetme işlemi
+        try {
+          final report = Report(
+            id: DateTime.now().millisecondsSinceEpoch.toString(),
+            title:
+                'Bilişsel Test Raporu - ${DateFormat('dd/MM/yyyy HH:mm').format(DateTime.now())}',
+            content: reportContent,
+            date: DateTime.now(),
+            type: 'cognitive',
+            userId: FirebaseAuth.instance.currentUser?.uid ?? 'anonymous',
+          );
+
+          await ReportService().addReport(report);
+          print('Rapor başarıyla Firebase\'e kaydedildi');
+        } catch (firebaseError) {
+          print('Firebase kayıt hatası: $firebaseError');
+          // Firebase hatası testi durdurmaz, sadece loglarız
+        }
+
         setState(() {
-          _evaluationResult = data['analysis_report'];
+          _evaluationResult = reportContent;
           _testFinished = true;
           _isLoading = false;
           _statusMessage = null;
         });
       } else {
-        throw Exception('Değerlendirme hatası: ${response.statusCode} - ${response.body}');
+        throw Exception(
+          'Değerlendirme hatası: ${response.statusCode} - ${response.body}',
+        );
       }
     } catch (e) {
       print('Değerlendirme hatası: $e');
@@ -307,7 +357,10 @@ class _CognitiveTestScreenState extends State<CognitiveTestScreen> {
       appBar: AppBar(
         title: const Text(
           'Bilişsel Test',
-          style: TextStyle(color: Color.fromARGB(255, 0, 0, 0), fontWeight: FontWeight.w600),
+          style: TextStyle(
+            color: Color.fromARGB(255, 0, 0, 0),
+            fontWeight: FontWeight.w600,
+          ),
         ),
         backgroundColor: const Color(0xFFE1BEE7),
         centerTitle: true,
@@ -398,209 +451,152 @@ class _CognitiveTestScreenState extends State<CognitiveTestScreen> {
                       ],
                     )
                   : _testFinished
-                      ? SingleChildScrollView(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Text(
-                                'Test Tamamlandı!',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.bold,
+                  ? SingleChildScrollView(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text(
+                            'Test Tamamlandı!',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 10),
+                          const Text(
+                            'Değerlendirme:',
+                            style: TextStyle(
+                              color: Colors.white70,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 20),
+                          Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.95),
+                              borderRadius: BorderRadius.circular(16),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.2),
+                                  blurRadius: 8,
+                                  offset: const Offset(0, 4),
                                 ),
-                                textAlign: TextAlign.center,
-                              ),
-                              const SizedBox(height: 10),
-                              const Text(
-                                'Değerlendirme:',
-                                style: TextStyle(
-                                  color: Colors.white70,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w600,
+                              ],
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Soru Detayları:',
+                                  style: Theme.of(context).textTheme.titleLarge
+                                      ?.copyWith(
+                                        color: const Color(0xFF1E3A8A),
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                 ),
-                                textAlign: TextAlign.center,
-                              ),
-                              const SizedBox(height: 20),
-                              Container(
-                                padding: const EdgeInsets.all(16),
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.95),
-                                  borderRadius: BorderRadius.circular(16),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.grey.withOpacity(0.2),
-                                      blurRadius: 8,
-                                      offset: const Offset(0, 4),
+                                const SizedBox(height: 12),
+                                ..._history.asMap().entries.map((entry) {
+                                  final index = entry.key;
+                                  final qa = entry.value;
+                                  return Container(
+                                    margin: const EdgeInsets.only(bottom: 16),
+                                    padding: const EdgeInsets.all(12),
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFFF4F7FA),
+                                      borderRadius: BorderRadius.circular(12),
+                                      border: Border.all(
+                                        color: Colors.grey.withOpacity(0.2),
+                                      ),
                                     ),
-                                  ],
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Soru Detayları:',
-                                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                            color: const Color(0xFF1E3A8A),
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                    ),
-                                    const SizedBox(height: 12),
-                                    ..._history.asMap().entries.map((entry) {
-                                      final index = entry.key;
-                                      final qa = entry.value;
-                                      return Container(
-                                        margin: const EdgeInsets.only(bottom: 16),
-                                        padding: const EdgeInsets.all(12),
-                                        decoration: BoxDecoration(
-                                          color: const Color(0xFFF4F7FA),
-                                          borderRadius: BorderRadius.circular(12),
-                                          border: Border.all(
-                                            color: Colors.grey.withOpacity(0.2),
-                                          ),
-                                        ),
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
                                           children: [
-                                            Row(
-                                              children: [
-                                                Container(
-                                                  padding: const EdgeInsets.symmetric(
+                                            Container(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
                                                     horizontal: 10,
                                                     vertical: 5,
                                                   ),
-                                                  decoration: BoxDecoration(
-                                                    color: const Color(0xFF72B0D3),
-                                                    borderRadius: BorderRadius.circular(15),
-                                                  ),
-                                                  child: Text(
-                                                    'Soru ${index + 1}',
-                                                    style: const TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 12,
-                                                      fontWeight: FontWeight.bold,
-                                                    ),
-                                                  ),
+                                              decoration: BoxDecoration(
+                                                color: const Color(0xFF72B0D3),
+                                                borderRadius:
+                                                    BorderRadius.circular(15),
+                                              ),
+                                              child: Text(
+                                                'Soru ${index + 1}',
+                                                style: const TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.bold,
                                                 ),
-                                                const SizedBox(width: 8),
-                                                Container(
-                                                  padding: const EdgeInsets.symmetric(
+                                              ),
+                                            ),
+                                            const SizedBox(width: 8),
+                                            Container(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
                                                     horizontal: 10,
                                                     vertical: 5,
                                                   ),
-                                                  decoration: BoxDecoration(
-                                                    color: const Color(0xFF1E3A8A).withOpacity(0.7),
-                                                    borderRadius: BorderRadius.circular(15),
-                                                  ),
-                                                  child: Text(
-                                                    qa.type.toUpperCase(),
-                                                    style: const TextStyle(
-                                                      color: Colors.white70,
-                                                      fontSize: 10,
-                                                    ),
-                                                  ),
+                                              decoration: BoxDecoration(
+                                                color: const Color(
+                                                  0xFF1E3A8A,
+                                                ).withOpacity(0.7),
+                                                borderRadius:
+                                                    BorderRadius.circular(15),
+                                              ),
+                                              child: Text(
+                                                qa.type.toUpperCase(),
+                                                style: const TextStyle(
+                                                  color: Colors.white70,
+                                                  fontSize: 10,
                                                 ),
-                                              ],
-                                            ),
-                                            const SizedBox(height: 10),
-                                            Text(
-                                              'Soru: ${qa.question}',
-                                              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                                    color: Colors.black87,
-                                                    fontWeight: FontWeight.w500,
-                                                    fontSize: 16,
-                                                  ),
-                                            ),
-                                            const SizedBox(height: 8),
-                                            Text(
-                                              'Cevabınız: ${qa.answer}',
-                                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                                    color: Colors.grey.shade700,
-                                                    fontSize: 14,
-                                                  ),
+                                              ),
                                             ),
                                           ],
                                         ),
-                                      );
-                                    }).toList(),
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(height: 20),
-                              if (_evaluationResult != null) ...[
-                                Container(
-                                  padding: const EdgeInsets.all(16),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white.withOpacity(0.95),
-                                    borderRadius: BorderRadius.circular(16),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.grey.withOpacity(0.2),
-                                        blurRadius: 8,
-                                        offset: const Offset(0, 4),
-                                      ),
-                                    ],
-                                  ),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'Genel Değerlendirme:',
-                                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                              color: const Color(0xFF1E3A8A),
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                      ),
-                                      const SizedBox(height: 12),
-                                      Text(
-                                        _evaluationResult!,
-                                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                              color: Colors.black87,
-                                            ),
-                                        textAlign: TextAlign.left,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                const SizedBox(height: 20),
+                                        const SizedBox(height: 10),
+                                        Text(
+                                          'Soru: ${qa.question}',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge
+                                              ?.copyWith(
+                                                color: Colors.black87,
+                                                fontWeight: FontWeight.w500,
+                                                fontSize: 16,
+                                              ),
+                                        ),
+                                        const SizedBox(height: 8),
+                                        Text(
+                                          'Cevabınız: ${qa.answer}',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyMedium
+                                              ?.copyWith(
+                                                color: Colors.grey.shade700,
+                                                fontSize: 14,
+                                              ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                }).toList(),
                               ],
-                              ElevatedButton(
-                                onPressed: _isLoading ? null : () => Navigator.pop(context),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color(0xFF72B0D3),
-                                  foregroundColor: Colors.white,
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 40,
-                                    vertical: 15,
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  elevation: 5,
-                                ),
-                                child: const Text(
-                                  'Anasayfaya Dön',
-                                  style: TextStyle(fontSize: 16),
-                                ),
-                              ),
-                            ],
+                            ),
                           ),
-                        )
-                      : Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            if (_statusMessage != null)
-                              Padding(
-                                padding: const EdgeInsets.only(bottom: 16.0),
-                                child: Text(
-                                  _statusMessage!,
-                                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                        color: Colors.white54,
-                                      ),
-                                ),
-                              ),
+                          const SizedBox(height: 20),
+                          if (_evaluationResult != null) ...[
                             Container(
-                              padding: const EdgeInsets.all(24),
+                              padding: const EdgeInsets.all(16),
                               decoration: BoxDecoration(
                                 color: Colors.white.withOpacity(0.95),
                                 borderRadius: BorderRadius.circular(16),
@@ -613,84 +609,158 @@ class _CognitiveTestScreenState extends State<CognitiveTestScreen> {
                                 ],
                               ),
                               child: Column(
-                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    _currentQuestion ?? 'Soru Yükleniyor...',
-                                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                                    'Genel Değerlendirme:',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleLarge
+                                        ?.copyWith(
                                           color: const Color(0xFF1E3A8A),
                                           fontWeight: FontWeight.bold,
-                                          fontSize: 20,
                                         ),
-                                    textAlign: TextAlign.center,
                                   ),
-                                  const SizedBox(height: 20),
-                                  if (!_isLoading && _currentQuestion != null)
-                                    TextField(
-                                      controller: _answerController,
-                                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                            color: Colors.black87,
-                                          ),
-                                      decoration: InputDecoration(
-                                        hintText: 'Cevabınızı yazın...',
-                                        hintStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                              color: Colors.grey.shade500,
-                                            ),
-                                        border: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(12.0),
-                                          borderSide: BorderSide.none,
-                                        ),
-                                        filled: true,
-                                        fillColor: Colors.grey.shade200,
-                                        contentPadding: const EdgeInsets.symmetric(
-                                          horizontal: 20.0,
-                                          vertical: 15.0,
-                                        ),
-                                      ),
-                                      maxLines: null,
-                                      keyboardType: TextInputType.multiline,
-                                      onSubmitted: (_) => _submitAnswer(),
-                                    ),
-                                  const SizedBox(height: 20),
-                                  if (!_isLoading && _currentQuestion != null)
-                                    ElevatedButton(
-                                      onPressed: _submitAnswer,
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: const Color(0xFF72B0D3),
-                                        foregroundColor: Colors.white,
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 40,
-                                          vertical: 15,
-                                        ),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(12),
-                                        ),
-                                        elevation: 5,
-                                      ),
-                                      child: const Text(
-                                        'Gönder',
-                                        style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                  if (_isLoading)
-                                    const CircularProgressIndicator(
-                                      color: Color(0xFF72B0D3),
-                                    ),
-                                  const SizedBox(height: 20),
+                                  const SizedBox(height: 12),
                                   Text(
-                                    'Soru: ${_currentQuestionIndex + 1}/$_maxQuestions',
-                                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                          color: Colors.grey.shade600,
-                                        ),
+                                    _evaluationResult!,
+                                    style: Theme.of(context).textTheme.bodyLarge
+                                        ?.copyWith(color: Colors.black87),
+                                    textAlign: TextAlign.left,
                                   ),
                                 ],
                               ),
                             ),
+                            const SizedBox(height: 20),
                           ],
+                          ElevatedButton(
+                            onPressed: _isLoading
+                                ? null
+                                : () => Navigator.pop(context),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF72B0D3),
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 40,
+                                vertical: 15,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              elevation: 5,
+                            ),
+                            child: const Text(
+                              'Anasayfaya Dön',
+                              style: TextStyle(fontSize: 16),
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  : Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        if (_statusMessage != null)
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 16.0),
+                            child: Text(
+                              _statusMessage!,
+                              style: Theme.of(context).textTheme.bodyMedium
+                                  ?.copyWith(color: Colors.white54),
+                            ),
+                          ),
+                        Container(
+                          padding: const EdgeInsets.all(24),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.95),
+                            borderRadius: BorderRadius.circular(16),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.2),
+                                blurRadius: 8,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                _currentQuestion ?? 'Soru Yükleniyor...',
+                                style: Theme.of(context).textTheme.headlineSmall
+                                    ?.copyWith(
+                                      color: const Color(0xFF1E3A8A),
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 20,
+                                    ),
+                                textAlign: TextAlign.center,
+                              ),
+                              const SizedBox(height: 20),
+                              if (!_isLoading && _currentQuestion != null)
+                                TextField(
+                                  controller: _answerController,
+                                  style: Theme.of(context).textTheme.bodyLarge
+                                      ?.copyWith(color: Colors.black87),
+                                  decoration: InputDecoration(
+                                    hintText: 'Cevabınızı yazın...',
+                                    hintStyle: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge
+                                        ?.copyWith(color: Colors.grey.shade500),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(12.0),
+                                      borderSide: BorderSide.none,
+                                    ),
+                                    filled: true,
+                                    fillColor: Colors.grey.shade200,
+                                    contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 20.0,
+                                      vertical: 15.0,
+                                    ),
+                                  ),
+                                  maxLines: null,
+                                  keyboardType: TextInputType.multiline,
+                                  onSubmitted: (_) => _submitAnswer(),
+                                ),
+                              const SizedBox(height: 20),
+                              if (!_isLoading && _currentQuestion != null)
+                                ElevatedButton(
+                                  onPressed: _submitAnswer,
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color(0xFF72B0D3),
+                                    foregroundColor: Colors.white,
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 40,
+                                      vertical: 15,
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    elevation: 5,
+                                  ),
+                                  child: const Text(
+                                    'Gönder',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              if (_isLoading)
+                                const CircularProgressIndicator(
+                                  color: Color(0xFF72B0D3),
+                                ),
+                              const SizedBox(height: 20),
+                              Text(
+                                'Soru: ${_currentQuestionIndex + 1}/$_maxQuestions',
+                                style: Theme.of(context).textTheme.bodyMedium
+                                    ?.copyWith(color: Colors.grey.shade600),
+                              ),
+                            ],
+                          ),
                         ),
+                      ],
+                    ),
             ),
           ),
         ),
