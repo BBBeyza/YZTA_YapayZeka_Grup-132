@@ -211,7 +211,7 @@ class _UserProfileScreenState extends State<UserProfileScreen>
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: ColorScheme.light(
-              primary: const Color(0xFF72B0D3),
+              primary: const Color(0xFFE1BEE7),
               onPrimary: Colors.white,
               surface: Colors.white,
               onSurface: Colors.black87,
@@ -287,7 +287,7 @@ class _UserProfileScreenState extends State<UserProfileScreen>
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF72B0D3),
+        backgroundColor: const Color(0xFFE1BEE7),
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_rounded, color: Colors.white),
@@ -316,7 +316,7 @@ class _UserProfileScreenState extends State<UserProfileScreen>
               bottomRight: Radius.circular(30),
             ),
             gradient: LinearGradient(
-              colors: [Color(0xFF72B0D3), Color(0xFF4A90E2)],
+              colors: [Color(0xFFE1BEE7), Color.fromARGB(255, 184, 107, 198)],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
@@ -388,7 +388,7 @@ class _UserProfileScreenState extends State<UserProfileScreen>
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFF72B0D3).withOpacity(0.3),
+                  color: const Color(0xFFE1BEE7).withOpacity(0.3),
                   blurRadius: 20,
                   spreadRadius: 5,
                 ),
@@ -402,8 +402,8 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                     shape: BoxShape.circle,
                     gradient: LinearGradient(
                       colors: [
-                        const Color(0xFF72B0D3).withOpacity(0.3),
-                        const Color(0xFF4A90E2).withOpacity(0.3),
+                        const Color(0xFFE1BEE7).withOpacity(0.3),
+                        const Color.fromARGB(255, 179, 86, 196).withOpacity(0.3),
                       ],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
@@ -428,7 +428,7 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                     child: Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF72B0D3),
+                        color: const Color(0xFFE1BEE7),
                         shape: BoxShape.circle,
                         boxShadow: [
                           BoxShadow(
@@ -527,7 +527,7 @@ class _UserProfileScreenState extends State<UserProfileScreen>
               _currentUser.displayName ?? 'Kullanıcı',
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.bold,
-                color: const Color(0xFF1E3A8A),
+                color: const Color.fromARGB(255, 109, 30, 138),
               ),
             ),
             const SizedBox(height: 8),
@@ -565,7 +565,7 @@ class _UserProfileScreenState extends State<UserProfileScreen>
             children: [
               Icon(
                 Icons.person_outline_rounded,
-                color: const Color(0xFF72B0D3),
+                color: const Color(0xFFE1BEE7),
                 size: 24,
               ),
               const SizedBox(width: 12),
@@ -573,7 +573,7 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                 'Kişisel Bilgiler',
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: const Color(0xFF1E3A8A),
+                  color: const Color.fromARGB(255, 118, 30, 138),
                 ),
               ),
             ],
@@ -686,7 +686,7 @@ class _UserProfileScreenState extends State<UserProfileScreen>
             children: [
               Icon(
                 Icons.analytics_rounded,
-                color: const Color(0xFF72B0D3),
+                color: const Color(0xFFE1BEE7),
                 size: 24,
               ),
               const SizedBox(width: 12),
@@ -694,7 +694,7 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                 'Test İstatistikleri',
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: const Color(0xFF1E3A8A),
+                  color: const Color.fromARGB(255, 115, 30, 138),
                 ),
               ),
             ],
@@ -798,7 +798,7 @@ class _UserProfileScreenState extends State<UserProfileScreen>
             children: [
               Icon(
                 Icons.account_circle_rounded,
-                color: const Color(0xFF72B0D3),
+                color: const Color(0xFFE1BEE7),
                 size: 24,
               ),
               const SizedBox(width: 12),
@@ -806,7 +806,7 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                 'Hesap Bilgileri',
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: const Color(0xFF1E3A8A),
+                  color: const Color.fromARGB(255, 115, 30, 138),
                 ),
               ),
             ],
@@ -861,7 +861,7 @@ class _UserProfileScreenState extends State<UserProfileScreen>
       children: [
         Icon(
           icon,
-          color: const Color(0xFF72B0D3).withOpacity(0.7),
+          color: const Color(0xFFE1BEE7).withOpacity(0.7),
           size: 20,
         ),
         const SizedBox(width: 12),
@@ -881,7 +881,7 @@ class _UserProfileScreenState extends State<UserProfileScreen>
               Text(
                 value,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: const Color(0xFF1E3A8A),
+                  color: const Color.fromARGB(255, 111, 30, 138),
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -901,13 +901,13 @@ class _UserProfileScreenState extends State<UserProfileScreen>
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(16),
               gradient: const LinearGradient(
-                colors: [Color(0xFF72B0D3), Color(0xFF4A90E2)],
+                colors: [Color(0xFFE1BEE7), Color.fromARGB(255, 193, 74, 226)],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFF72B0D3).withOpacity(0.4),
+                  color: const Color(0xFFE1BEE7).withOpacity(0.4),
                   blurRadius: 15,
                   offset: const Offset(0, 6),
                 ),
@@ -976,13 +976,13 @@ class _UserProfileScreenState extends State<UserProfileScreen>
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(16),
               gradient: const LinearGradient(
-                colors: [Color(0xFF72B0D3), Color(0xFF4A90E2)],
+                colors: [Color(0xFFE1BEE7), Color(0xFF4A90E2)],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFF72B0D3).withOpacity(0.4),
+                  color: const Color(0xFFE1BEE7).withOpacity(0.4),
                   blurRadius: 15,
                   offset: const Offset(0, 6),
                 ),
@@ -1220,7 +1220,7 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                       onPressed: () => Navigator.pop(context),
                       child: Text(
                         'Kapat',
-                        style: const TextStyle(color: Color(0xFF72B0D3)),
+                        style: const TextStyle(color: Color(0xFFE1BEE7)),
                       ),
                       ),
                     ],
@@ -1245,7 +1245,7 @@ class _UserProfileScreenState extends State<UserProfileScreen>
               onPressed: () => Navigator.pop(context),
               child: Text(
                 'Kapat',
-                style: TextStyle(color: const Color(0xFF72B0D3)),
+                style: TextStyle(color: const Color(0xFFE1BEE7)),
               ),
             ),
           ],
@@ -1264,7 +1264,7 @@ class _UserProfileScreenState extends State<UserProfileScreen>
           ),
           title: Row(
             children: [
-              Icon(Icons.info_rounded, color: const Color(0xFF72B0D3)),
+              Icon(Icons.info_rounded, color: const Color(0xFFE1BEE7)),
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
@@ -1286,7 +1286,7 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                 'Neurograph',
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: const Color(0xFF1E3A8A),
+                  color: const Color.fromARGB(255, 107, 30, 138),
                 ),
               ),
               const SizedBox(height: 8),
@@ -1314,7 +1314,7 @@ class _UserProfileScreenState extends State<UserProfileScreen>
               onPressed: () => Navigator.pop(context),
               child: Text(
                 'Tamam',
-                style: TextStyle(color: const Color(0xFF72B0D3)),
+                style: TextStyle(color: const Color(0xFFE1BEE7)),
               ),
             ),
           ],
